@@ -3,13 +3,17 @@
 <div align="center">
   <img src="app/static/images/ui_logo.png" alt="University of Ibadan Logo" width="340"/>
   <br/>
-  <h3><b>An Open-Source Logistics & Fleet Optimization Research Project</b></h3>
+  <h2><b>Intelligent Campus Fleet & Logistics Management System</b></h2>
   <p><b>Academic Case Study: University of Ibadan (UI), Ibadan, Nigeria</b></p>
-  <p><i>Real-time telematics, vehicle routing problem (CVRP) heuristics, and live campus dispatch.</i></p>
+  <p><i>Real-Time 3D Digital Twin • Autonomous CVRP Dispatch Solver • Live Telematics</i></p>
+
   <br/>
+
   <a href="https://university-of-ibadan-fleet-management.onrender.com/" target="_blank">
-    <img src="https://img.shields.io/badge/🚀%20Live%20Demo-Render%20Cloud-46E3B7?style=for-the-badge&logo=render&logoColor=white" alt="Live Demo on Render"/>
+    <img src="https://img.shields.io/badge/🎮%20LAUNCH%20LIVE%203D%20SIMULATION-EXPLORE%20CAMPUS%20TWIN-002147?style=for-the-badge&logo=threedotjs&logoColor=F59E0B&labelColor=001633" alt="Launch Live 3D Simulation" height="42"/>
   </a>
+  <br/>
+  <sub>⚡ <b>Direct Live Demo:</b> <a href="https://university-of-ibadan-fleet-management.onrender.com/" target="_blank">https://university-of-ibadan-fleet-management.onrender.com/</a> — Free instant access in any browser, zero install or login required.</sub>
 </div>
 
 ---
@@ -19,7 +23,7 @@
 
 ---
 
-[![Live Demo](https://img.shields.io/badge/Demo-Live%20on%20Render-46E3B7.svg?logo=render&logoColor=white)](https://university-of-ibadan-fleet-management.onrender.com/)
+[![Live Demo](https://img.shields.io/badge/Live%20Simulation-Online%20Now-10B981.svg?logo=googlechrome&logoColor=white)](https://university-of-ibadan-fleet-management.onrender.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
@@ -33,12 +37,15 @@
 
 ## 📸 User Interface Showcase
 
-| View | Live UI Preview |
+> [!TIP]
+> Click any screenshot below to open that exact live view in your browser.
+
+| View | Live UI Preview (Click to Launch) |
 |---|---|
-| **Live 3D Digital Twin Viewport**<br>• Real OpenStreetMap Satellite & Street Layouts<br>• Flat Dynamic Highway Navigation Ribbons<br>• Authentic Campus Fleet (Bajaj, TVS, Piaggio, Carry, HiAce)<br>• Live Telematics Sidebar Drawer | ![Live 3D Digital Twin](docs/screenshots/ui_campus_3d_viewport.png) |
-| **Analytics & SLA KPIs Dashboard**<br>• Authentic shadcn/ui Dashboard block<br>• 4-card metric block (Deliveries, Fleet Utilization, Odometer, CO₂ Conserved)<br>• Campus Delivery Velocity & Throughput Area Chart<br>• Real-time dispatches stream | ![shadcn Analytics Dashboard](docs/screenshots/analytics_dashboard_shadcn.png) |
-| **Fleet & Drivers Management Roster**<br>• Authentic shadcn/ui Data Table block<br>• Monospace plate tags, battery/fuel progress bars, driver ratings<br>• Real-time asset filtering & modal registration | ![shadcn Fleet & Drivers Table](docs/screenshots/fleet_drivers_shadcn.png) |
-| **Campus Consignments & Orders Ledger**<br>• Capacitated Vehicle Routing Problem (CVRP) queue<br>• Priority badges (Urgent, High, Medium, Low)<br>• Consignment ledger with 1-click batch solver | ![shadcn Orders & Logistics Table](docs/screenshots/orders_logistics_shadcn.png) |
+| **Live 3D Digital Twin Viewport**<br>• Real OpenStreetMap Satellite & Street Layouts<br>• Flat Dynamic Highway Navigation Ribbons<br>• Authentic Campus Fleet (Bajaj, TVS, Piaggio, Carry, HiAce)<br>• Live Telematics Sidebar Drawer<br><br>[**▶ Launch Interactive 3D Twin**](https://university-of-ibadan-fleet-management.onrender.com/) | [![Live 3D Digital Twin](docs/screenshots/ui_campus_3d_viewport.png)](https://university-of-ibadan-fleet-management.onrender.com/) |
+| **Analytics & SLA KPIs Dashboard**<br>• Authentic shadcn/ui Dashboard block<br>• 4-card metric block (Deliveries, Fleet Utilization, Odometer, CO₂ Conserved)<br>• Campus Delivery Velocity & Throughput Area Chart<br>• Real-time dispatches stream<br><br>[**▶ Open Live Analytics**](https://university-of-ibadan-fleet-management.onrender.com/analytics) | [![shadcn Analytics Dashboard](docs/screenshots/analytics_dashboard_shadcn.png)](https://university-of-ibadan-fleet-management.onrender.com/analytics) |
+| **Fleet & Drivers Management Roster**<br>• Authentic shadcn/ui Data Table block<br>• Monospace plate tags, battery/fuel progress bars, driver ratings<br>• Real-time asset filtering & modal registration<br><br>[**▶ Open Live Fleet Roster**](https://university-of-ibadan-fleet-management.onrender.com/vehicles) | [![shadcn Fleet & Drivers Table](docs/screenshots/fleet_drivers_shadcn.png)](https://university-of-ibadan-fleet-management.onrender.com/vehicles) |
+| **Campus Consignments & Orders Ledger**<br>• Capacitated Vehicle Routing Problem (CVRP) queue<br>• Priority badges (Urgent, High, Medium, Low)<br>• Consignment ledger with 1-click batch solver<br><br>[**▶ Open Live Orders Desk**](https://university-of-ibadan-fleet-management.onrender.com/orders) | [![shadcn Orders & Logistics Table](docs/screenshots/orders_logistics_shadcn.png)](https://university-of-ibadan-fleet-management.onrender.com/orders) |
 
 ---
 
@@ -168,15 +175,15 @@ python run.py
 
 The database (`fleet.db`) will automatically initialize with sample case study data.
 
-### 🌐 Live Production Deployment
+### 🌐 Live Interactive Platform
 
-The project is deployed and live on Render:
-- 🚀 **Live 3D Operations Dashboard**: [https://university-of-ibadan-fleet-management.onrender.com/](https://university-of-ibadan-fleet-management.onrender.com/)
-- 🚚 **Campus Fleet & Drivers Roster**: [https://university-of-ibadan-fleet-management.onrender.com/vehicles](https://university-of-ibadan-fleet-management.onrender.com/vehicles)
-- 📦 **Campus Consignments & Orders Ledger**: [https://university-of-ibadan-fleet-management.onrender.com/orders](https://university-of-ibadan-fleet-management.onrender.com/orders)
-- 📊 **Logistics Analytics & KPIs**: [https://university-of-ibadan-fleet-management.onrender.com/analytics](https://university-of-ibadan-fleet-management.onrender.com/analytics)
-- 📖 **Interactive API Documentation (Docs)**: [https://university-of-ibadan-fleet-management.onrender.com/docs](https://university-of-ibadan-fleet-management.onrender.com/docs)
-- 📑 **ReDoc API Specifications**: [https://university-of-ibadan-fleet-management.onrender.com/redoc](https://university-of-ibadan-fleet-management.onrender.com/redoc)
+Experience the full live operational deployment directly in your browser:
+- 🚀 **Live 3D Operations Dashboard**: [university-of-ibadan-fleet-management.onrender.com](https://university-of-ibadan-fleet-management.onrender.com/)
+- 🚚 **Campus Fleet & Drivers Roster**: [university-of-ibadan-fleet-management.onrender.com/vehicles](https://university-of-ibadan-fleet-management.onrender.com/vehicles)
+- 📦 **Campus Consignments & Orders Ledger**: [university-of-ibadan-fleet-management.onrender.com/orders](https://university-of-ibadan-fleet-management.onrender.com/orders)
+- 📊 **Logistics Analytics & KPIs**: [university-of-ibadan-fleet-management.onrender.com/analytics](https://university-of-ibadan-fleet-management.onrender.com/analytics)
+- 📖 **Interactive API Documentation (Docs)**: [university-of-ibadan-fleet-management.onrender.com/docs](https://university-of-ibadan-fleet-management.onrender.com/docs)
+- 📑 **ReDoc API Specifications**: [university-of-ibadan-fleet-management.onrender.com/redoc](https://university-of-ibadan-fleet-management.onrender.com/redoc)
 
 ---
 
