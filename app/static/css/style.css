@@ -1,0 +1,119 @@
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #090d16;
+}
+::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #334155;
+}
+
+/* Leaflet Dark Map Tile adjustments */
+.leaflet-container {
+    background-color: #020617 !important;
+    font-family: inherit !important;
+}
+
+/* Custom Vehicle Map Marker with Heading Rotation */
+.vehicle-marker-icon {
+    background: transparent;
+    border: none;
+    transition: transform 0.3s ease-out;
+}
+
+.vehicle-marker-container {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #0f172a;
+    border: 2px solid #14b8a6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 15px rgba(20, 184, 166, 0.5);
+    position: relative;
+    transition: all 0.25s ease;
+}
+
+.vehicle-marker-container.active {
+    border-color: #10b981;
+    box-shadow: 0 0 18px rgba(16, 185, 129, 0.6);
+}
+
+.vehicle-marker-container.maintenance {
+    border-color: #f43f5e;
+    box-shadow: 0 0 12px rgba(244, 63, 94, 0.4);
+}
+
+.vehicle-marker-heading {
+    position: absolute;
+    top: -5px;
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 7px solid #14b8a6;
+}
+
+/* Depot Marker */
+.depot-marker-container {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: #1e40af;
+    border: 2px solid #60a5fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+}
+
+/* Customer Stop Marker */
+.stop-marker-container {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #d97706;
+    border: 2px solid #fef3c7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(217, 119, 6, 0.5);
+}
+
+.stop-marker-container.delivered {
+    background: #059669;
+    border-color: #a7f3d0;
+    box-shadow: 0 0 8px rgba(5, 150, 105, 0.4);
+}
+
+/* Leaflet Popup Styling */
+.leaflet-popup-content-wrapper {
+    background: #0f172a !important;
+    color: #f8fafc !important;
+    border: 1px solid #334155 !important;
+    border-radius: 14px !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5) !important;
+    padding: 2px !important;
+}
+
+.leaflet-popup-tip {
+    background: #0f172a !important;
+    border: 1px solid #334155 !important;
+}
+
+.leaflet-popup-content {
+    margin: 12px 14px !important;
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+}

@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics & Logistics Optimization - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="flex-1 overflow-y-auto p-8 max-w-7xl mx-auto w-full space-y-8">
+    <!-- Header -->
+    <div>
+        <h2 class="text-2xl font-bold text-white tracking-tight">Logistics Intelligence & Fleet Analytics</h2>
+        <p class="text-sm text-slate-400">Algorithmic routing efficiency, telematics telemetry KPIs, and environmental impact reporting</p>
+    </div>
+
+    <!-- Top KPI Stat Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase text-slate-400 tracking-wider">Fleet Utilization</span>
+                <div class="w-8 h-8 rounded-lg bg-teal-500/10 text-teal-400 flex items-center justify-center">
+                    <i class="fa-solid fa-gauge-high"></i>
+                </div>
+            </div>
+            <div id="kpi-utilization" class="text-3xl font-extrabold text-white">0%</div>
+            <p class="text-xs text-slate-500 mt-1">Active vs idle fleet capacity ratio</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase text-slate-400 tracking-wider">On-Time Delivery Rate</span>
+                <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                    <i class="fa-solid fa-bullseye"></i>
+                </div>
+            </div>
+            <div id="kpi-ontime" class="text-3xl font-extrabold text-white">0%</div>
+            <p class="text-xs text-slate-500 mt-1">SLA target compliance</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase text-slate-400 tracking-wider">Fleet Traveled</span>
+                <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center">
+                    <i class="fa-solid fa-road"></i>
+                </div>
+            </div>
+            <div id="kpi-distance" class="text-3xl font-extrabold text-white">0 km</div>
+            <p class="text-xs text-slate-500 mt-1">Combined odometer distance</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase text-slate-400 tracking-wider">CO2 Emissions Saved</span>
+                <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                    <i class="fa-solid fa-leaf"></i>
+                </div>
+            </div>
+            <div id="kpi-co2" class="text-3xl font-extrabold text-white">0 kg</div>
+            <p class="text-xs text-slate-500 mt-1">Consolidated routing & EV fleet</p>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Chart 1: Order Priority Breakdown -->
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl flex flex-col">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-chart-pie text-teal-400"></i>
+                    Orders by Priority Distribution
+                </h3>
+            </div>
+            <div class="flex-1 relative min-h-[260px] flex items-center justify-center">
+                <canvas id="priorityChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Chart 2: Fleet Status & Battery Levels -->
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl flex flex-col">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-battery-half text-teal-400"></i>
+                    Vehicle Battery / Fuel Telematics
+                </h3>
+            </div>
+            <div class="flex-1 relative min-h-[260px]">
+                <canvas id="batteryChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Technical / Academic Section: Optimization Algorithms -->
+    <div class="bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-xl space-y-6">
+        <div class="border-b border-slate-800 pb-4">
+            <div class="flex items-center gap-2 text-teal-400 text-xs font-bold uppercase tracking-wider mb-1">
+                <i class="fa-solid fa-brain"></i>
+                Algorithmic Logistics Architecture
+            </div>
+            <h3 class="text-lg font-bold text-white">Mathematical Modeling & Optimization Engine</h3>
+            <p class="text-xs text-slate-400 mt-1">
+                How FleetFlow optimizes multi-vehicle distribution using the Capacitated Vehicle Routing Problem (CVRP) heuristics.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-slate-300">
+            <!-- Algorithm 1 -->
+            <div class="bg-slate-950/60 p-5 rounded-xl border border-slate-800/80 space-y-2.5">
+                <div class="text-teal-400 font-bold text-sm flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-full bg-teal-500/10 flex items-center justify-center text-xs">1</span>
+                    Clarke-Wright Savings
+                </div>
+                <p class="text-slate-400 leading-relaxed">
+                    Computes cost savings obtained by combining separate depot round-trips into consolidated vehicle tours:
+                </p>
+                <div class="font-mono bg-slate-900 p-2.5 rounded-lg border border-slate-800 text-teal-300 text-center font-bold">
+                    S(i, j) = d(D, i) + d(D, j) - d(i, j)
+                </div>
+                <p class="text-slate-400 leading-relaxed">
+                    Pairs with highest savings are iteratively merged subject to maximum vehicle cargo capacity constraints (<span class="font-mono text-slate-200">Σw_i ≤ Q_v</span>).
+                </p>
+            </div>
+
+            <!-- Algorithm 2 -->
+            <div class="bg-slate-950/60 p-5 rounded-xl border border-slate-800/80 space-y-2.5">
+                <div class="text-teal-400 font-bold text-sm flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-full bg-teal-500/10 flex items-center justify-center text-xs">2</span>
+                    2-Opt TSP Local Search
+                </div>
+                <p class="text-slate-400 leading-relaxed">
+                    Once customer clusters are assigned to vehicles, the internal sequence is optimized via 2-opt edge-exchange operations:
+                </p>
+                <div class="font-mono bg-slate-900 p-2.5 rounded-lg border border-slate-800 text-teal-300 text-center font-bold">
+                    Route' = R[:i] + R[i:j]⁻¹ + R[j:]
+                </div>
+                <p class="text-slate-400 leading-relaxed">
+                    Eliminates crossing path segments, minimizing total travel distance and reducing urban transit delays.
+                </p>
+            </div>
+
+            <!-- Algorithm 3 -->
+            <div class="bg-slate-950/60 p-5 rounded-xl border border-slate-800/80 space-y-2.5">
+                <div class="text-teal-400 font-bold text-sm flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-full bg-teal-500/10 flex items-center justify-center text-xs">3</span>
+                    Real-Time Telematics
+                </div>
+                <p class="text-slate-400 leading-relaxed">
+                    Background asynchronous event loop interpolates street waypoints using great-circle Haversine navigation:
+                </p>
+                <div class="font-mono bg-slate-900 p-2.5 rounded-lg border border-slate-800 text-teal-300 text-center font-bold">
+                    a = sin²(Δφ/2) + cos φ₁ cos φ₂ sin²(Δλ/2)
+                </div>
+                <p class="text-slate-400 leading-relaxed">
+                    Broadcasts high-frequency GPS coordinates, heading bearings, battery consumption, and geofence drop-off triggers over WebSockets.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let priorityChartInstance = null;
+    let batteryChartInstance = null;
+
+    async function loadAnalytics() {
+        try {
+            const [kpisRes, ordersRes, vehRes] = await Promise.all([
+                fetch('/api/analytics/kpis'),
+                fetch('/api/orders'),
+                fetch('/api/vehicles')
+            ]);
+
+            const kpis = await kpisRes.json();
+            const orders = await ordersRes.json();
+            const vehicles = await vehRes.json();
+
+            // Populate KPIs
+            document.getElementById('kpi-utilization').textContent = `${kpis.fleet_utilization_pct}%`;
+            document.getElementById('kpi-ontime').textContent = `${kpis.on_time_rate_pct}%`;
+            document.getElementById('kpi-distance').textContent = `${kpis.total_distance_km} km`;
+            document.getElementById('kpi-co2').textContent = `${kpis.co2_saved_kg} kg`;
+
+            renderPriorityChart(orders);
+            renderBatteryChart(vehicles);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    function renderPriorityChart(orders) {
+        const counts = { low: 0, medium: 0, high: 0, urgent: 0 };
+        orders.forEach(o => {
+            if (counts[o.priority] !== undefined) counts[o.priority]++;
+        });
+
+        const ctx = document.getElementById('priorityChart').getContext('2d');
+        if (priorityChartInstance) priorityChartInstance.destroy();
+
+        priorityChartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Low', 'Medium', 'High', 'Urgent'],
+                datasets: [{
+                    data: [counts.low, counts.medium, counts.high, counts.urgent],
+                    backgroundColor: ['#64748b', '#3b82f6', '#f59e0b', '#f43f5e'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#94a3b8', font: { size: 11 } }
+                    }
+                }
+            }
+        });
+    }
+
+    function renderBatteryChart(vehicles) {
+        const labels = vehicles.map(v => v.plate_number);
+        const data = vehicles.map(v => v.battery_fuel_pct);
+
+        const ctx = document.getElementById('batteryChart').getContext('2d');
+        if (batteryChartInstance) batteryChartInstance.destroy();
+
+        batteryChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Battery / Fuel Level (%)',
+                    data: data,
+                    backgroundColor: data.map(val => val > 50 ? '#10b981' : (val > 20 ? '#f59e0b' : '#f43f5e')),
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: { color: '#64748b' },
+                        grid: { color: '#1e293b' }
+                    },
+                    x: {
+                        ticks: { color: '#94a3b8', font: { size: 10 } },
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', loadAnalytics);
+</script>
+{% endblock %}

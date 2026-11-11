@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+
+{% block title %}Fleet & Drivers - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="flex-1 overflow-y-auto p-8 max-w-7xl mx-auto w-full space-y-6">
+    <!-- Header with Action Button -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-2xl font-bold text-white tracking-tight">Fleet Vehicles & Drivers</h2>
+            <p class="text-sm text-slate-400">Manage vehicle telemetry profiles, maintenance status, and licensed driver assignments</p>
+        </div>
+        <button onclick="openAddVehicleModal()" class="px-4 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-600 text-white font-semibold text-xs shadow-lg shadow-teal-500/20 flex items-center gap-2 transition">
+            <i class="fa-solid fa-plus"></i>
+            <span>Register Vehicle</span>
+        </button>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-truck"></i>
+            </div>
+            <div>
+                <div class="text-xs text-slate-400 font-medium">Total Fleet</div>
+                <div id="stat-veh-total" class="text-2xl font-bold text-white">0</div>
+            </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-route"></i>
+            </div>
+            <div>
+                <div class="text-xs text-slate-400 font-medium">In Transit</div>
+                <div id="stat-veh-active" class="text-2xl font-bold text-white">0</div>
+            </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-warehouse"></i>
+            </div>
+            <div>
+                <div class="text-xs text-slate-400 font-medium">Idle at Hub</div>
+                <div id="stat-veh-idle" class="text-2xl font-bold text-white">0</div>
+            </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-wrench"></i>
+            </div>
+            <div>
+                <div class="text-xs text-slate-400 font-medium">In Maintenance</div>
+                <div id="stat-veh-maint" class="text-2xl font-bold text-white">0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vehicles Table Card -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+        <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-sm font-bold text-white uppercase tracking-wider">Fleet Roster</span>
+                <span id="vehicle-count-tag" class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">0 vehicles</span>
+            </div>
+            <!-- Search & Filter -->
+            <div class="flex items-center gap-3">
+                <select id="vehicle-type-filter" onchange="filterVehicles()" class="bg-slate-800 text-xs text-slate-300 rounded-lg px-3 py-1.5 border border-slate-700 focus:outline-none focus:border-teal-500">
+                    <option value="">All Vehicle Types</option>
+                    <option value="Electric Van">Electric Van</option>
+                    <option value="Cargo Truck">Cargo Truck</option>
+                    <option value="Cargo Bike">Cargo Bike</option>
+                    <option value="Hybrid Van">Hybrid Van</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                    <tr class="bg-slate-950/50 border-b border-slate-800 text-slate-400 uppercase font-semibold">
+                        <th class="py-3.5 px-6">Plate & Model</th>
+                        <th class="py-3.5 px-4">Type</th>
+                        <th class="py-3.5 px-4">Status</th>
+                        <th class="py-3.5 px-4">Driver</th>
+                        <th class="py-3.5 px-4">Max Capacity</th>
+                        <th class="py-3.5 px-4">Battery / Fuel</th>
+                        <th class="py-3.5 px-4">Odometer</th>
+                        <th class="py-3.5 px-6 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="vehicle-table-body" class="divide-y divide-slate-800/60 font-medium">
+                    <tr>
+                        <td colspan="8" class="text-center py-10 text-slate-500">Loading vehicles...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Add Vehicle -->
+<div id="add-vehicle-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
+        <h3 class="text-lg font-bold text-white mb-1">Register New Vehicle</h3>
+        <p class="text-xs text-slate-400 mb-4">Add a new delivery asset into the active fleet inventory</p>
+
+        <form id="add-vehicle-form" onsubmit="submitVehicleForm(event)" class="space-y-4 text-xs">
+            <div>
+                <label class="block text-slate-300 font-semibold mb-1">Plate Number</label>
+                <input type="text" id="veh-plate" required placeholder="e.g. EV-VAN-105" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-teal-500">
+            </div>
+            <div>
+                <label class="block text-slate-300 font-semibold mb-1">Make & Model</label>
+                <input type="text" id="veh-model" required placeholder="e.g. BrightDrop Zevo 600" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-teal-500">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-slate-300 font-semibold mb-1">Vehicle Type</label>
+                    <select id="veh-type" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-teal-500">
+                        <option value="Electric Van">Electric Van</option>
+                        <option value="Cargo Truck">Cargo Truck</option>
+                        <option value="Cargo Bike">Cargo Bike</option>
+                        <option value="Hybrid Van">Hybrid Van</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-slate-300 font-semibold mb-1">Capacity (kg)</label>
+                    <input type="number" id="veh-cap" required min="50" max="10000" value="800" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-teal-500">
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+                <button type="button" onclick="closeAddVehicleModal()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-lg bg-teal-500 hover:bg-teal-600 text-white font-semibold">Register</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let allVehicles = [];
+
+    async function loadVehicles() {
+        try {
+            const res = await fetch('/api/vehicles');
+            allVehicles = await res.json();
+            renderVehicles(allVehicles);
+            updateStats(allVehicles);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    function renderVehicles(vehicles) {
+        const tbody = document.getElementById('vehicle-table-body');
+        document.getElementById('vehicle-count-tag').textContent = `${vehicles.length} vehicles`;
+        
+        if (!vehicles.length) {
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-slate-500">No vehicles found.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = vehicles.map(v => {
+            const statusBadges = {
+                'idle': '<span class="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">Idle</span>',
+                'in_transit': '<span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 animate-pulse">In Transit</span>',
+                'delivering': '<span class="px-2.5 py-1 rounded-full bg-teal-500/10 text-teal-400 border border-teal-500/20">Delivering</span>',
+                'maintenance': '<span class="px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20">Maintenance</span>'
+            };
+
+            const fuelColor = v.battery_fuel_pct > 50 ? 'bg-emerald-400' : (v.battery_fuel_pct > 20 ? 'bg-amber-400' : 'bg-rose-500');
+
+            return `
+                <tr class="hover:bg-slate-800/40 transition">
+                    <td class="py-4 px-6">
+                        <div class="font-bold text-white text-sm">${v.plate_number}</div>
+                        <div class="text-slate-400 text-[11px]">${v.model}</div>
+                    </td>
+                    <td class="py-4 px-4 text-slate-300">
+                        <span class="inline-flex items-center gap-1.5">
+                            <i class="fa-solid fa-truck-ramp-box text-teal-400"></i>
+                            ${v.vehicle_type}
+                        </span>
+                    </td>
+                    <td class="py-4 px-4">${statusBadges[v.status] || v.status}</td>
+                    <td class="py-4 px-4 text-slate-300">
+                        ${v.driver ? `
+                            <div class="font-medium">${v.driver.name}</div>
+                            <div class="text-slate-500 text-[10px]">⭐ ${v.driver.rating.toFixed(2)}</div>
+                        ` : '<span class="text-slate-500 italic">None</span>'}
+                    </td>
+                    <td class="py-4 px-4 text-slate-300">${v.capacity_kg} kg</td>
+                    <td class="py-4 px-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-16 h-2 bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full ${fuelColor}" style="width: ${v.battery_fuel_pct}%"></div>
+                            </div>
+                            <span class="text-[11px] font-mono text-slate-300">${v.battery_fuel_pct}%</span>
+                        </div>
+                    </td>
+                    <td class="py-4 px-4 font-mono text-slate-300">${v.mileage_km} km</td>
+                    <td class="py-4 px-6 text-right">
+                        <button onclick="toggleMaintenance(${v.id})" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border ${v.status === 'maintenance' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20 hover:bg-rose-500/20'} transition">
+                            ${v.status === 'maintenance' ? 'Mark Operational' : 'Send to Maint.'}
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function updateStats(vehicles) {
+        document.getElementById('stat-veh-total').textContent = vehicles.length;
+        document.getElementById('stat-veh-active').textContent = vehicles.filter(v => v.status === 'in_transit').length;
+        document.getElementById('stat-veh-idle').textContent = vehicles.filter(v => v.status === 'idle').length;
+        document.getElementById('stat-veh-maint').textContent = vehicles.filter(v => v.status === 'maintenance').length;
+    }
+
+    function filterVehicles() {
+        const type = document.getElementById('vehicle-type-filter').value;
+        const filtered = type ? allVehicles.filter(v => v.vehicle_type === type) : allVehicles;
+        renderVehicles(filtered);
+    }
+
+    async function toggleMaintenance(id) {
+        try {
+            const res = await fetch(`/api/vehicles/${id}/maintenance`, { method: 'POST' });
+            if (res.ok) {
+                showToast("Vehicle status updated", "success");
+                loadVehicles();
+            }
+        } catch (err) {
+            showToast("Failed to update vehicle status", "error");
+        }
+    }
+
+    function openAddVehicleModal() {
+        document.getElementById('add-vehicle-modal').classList.remove('hidden');
+    }
+
+    function closeAddVehicleModal() {
+        document.getElementById('add-vehicle-modal').classList.add('hidden');
+    }
+
+    async function submitVehicleForm(e) {
+        e.preventDefault();
+        const payload = {
+            plate_number: document.getElementById('veh-plate').value,
+            model: document.getElementById('veh-model').value,
+            vehicle_type: document.getElementById('veh-type').value,
+            capacity_kg: parseFloat(document.getElementById('veh-cap').value),
+            current_lat: 37.78912,
+            current_lng: -122.39845,
+            status: "idle",
+            battery_fuel_pct: 100.0,
+            mileage_km: 0.0,
+            max_range_km: 250.0
+        };
+
+        try {
+            const res = await fetch('/api/vehicles', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                showToast("New vehicle registered successfully!", "success");
+                closeAddVehicleModal();
+                loadVehicles();
+            } else {
+                const err = await res.json();
+                showToast(err.detail || "Error registering vehicle", "error");
+            }
+        } catch (err) {
+            showToast("Network error registering vehicle", "error");
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadVehicles);
+</script>
+{% endblock %}

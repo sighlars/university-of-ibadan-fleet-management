@@ -1,0 +1,390 @@
+{% extends "base.html" %}
+
+{% block title %}Orders & Dispatch Logistics - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="flex-1 overflow-y-auto p-8 max-w-7xl mx-auto w-full space-y-6">
+    <!-- Header with Action Buttons -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-2xl font-bold text-white tracking-tight">Delivery Orders & Logistics Dispatch</h2>
+            <p class="text-sm text-slate-400">Order queue, Capacitated Vehicle Routing Problem (CVRP) optimizer, and dispatch control</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="addSampleOrders(5)" class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs border border-slate-700 flex items-center gap-2 transition">
+                <i class="fa-solid fa-dice text-teal-400"></i>
+                <span>+5 Sample Orders</span>
+            </button>
+            <button onclick="openCreateOrderModal()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-slate-700 flex items-center gap-2 transition">
+                <i class="fa-solid fa-plus text-teal-400"></i>
+                <span>New Order</span>
+            </button>
+            <button onclick="optimizeAndDispatch()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white font-semibold text-xs shadow-lg shadow-teal-500/20 flex items-center gap-2 transition active:scale-[0.98]">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>Run VRP Optimization & Dispatch</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Metrics Row -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-box-archive"></i>
+            </div>
+            <div>
+                <div class="text-xs text-slate-400 font-medium">Total Orders</div>
+                <div id="stat-ord-total" class="text-2xl font-bold text-white">0</div>
+            </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-hourglass-start"></i>
+            </div>
+            <div>
+                <div class="text-xs text-slate-400 font-medium">Pending Dispatch</div>
+                <div id="stat-ord-pending" class="text-2xl font-bold text-white">0</div>
+            </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-truck-fast"></i>
+            </div>
+            <div>
+                <div class="text-xs text-slate-400 font-medium">Active In Transit</div>
+                <div id="stat-ord-intransit" class="text-2xl font-bold text-white">0</div>
+            </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+                <div class="text-xs text-slate-400 font-medium">Successfully Delivered</div>
+                <div id="stat-ord-delivered" class="text-2xl font-bold text-white">0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Optimization Routes Banner (if any) -->
+    <div id="active-routes-summary" class="hidden bg-slate-900 border border-teal-500/30 p-5 rounded-2xl shadow-xl space-y-3">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-route text-teal-400"></i>
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider">Optimized Fleet Routes</h3>
+            </div>
+            <button onclick="dispatchActivePlan()" class="px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-xs shadow-md transition">
+                Confirm & Launch Dispatch
+            </button>
+        </div>
+        <div id="routes-cards-container" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
+    </div>
+
+    <!-- Orders Table Card -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+        <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-sm font-bold text-white uppercase tracking-wider">Order Ledger</span>
+                <span id="order-count-tag" class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">0 orders</span>
+            </div>
+            <!-- Filter by Status -->
+            <div class="flex items-center gap-2">
+                <button onclick="filterOrders('')" class="order-tab-btn active px-3 py-1.5 rounded-lg text-xs font-semibold bg-teal-500/20 text-teal-300 border border-teal-500/30">All</button>
+                <button onclick="filterOrders('pending')" class="order-tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white bg-slate-800">Pending</button>
+                <button onclick="filterOrders('in_transit')" class="order-tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white bg-slate-800">In Transit</button>
+                <button onclick="filterOrders('delivered')" class="order-tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white bg-slate-800">Delivered</button>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                    <tr class="bg-slate-950/50 border-b border-slate-800 text-slate-400 uppercase font-semibold">
+                        <th class="py-3.5 px-6">Tracking #</th>
+                        <th class="py-3.5 px-4">Customer & Phone</th>
+                        <th class="py-3.5 px-4">Delivery Address</th>
+                        <th class="py-3.5 px-4">Weight</th>
+                        <th class="py-3.5 px-4">Priority</th>
+                        <th class="py-3.5 px-4">Status</th>
+                        <th class="py-3.5 px-4">Assigned Route</th>
+                        <th class="py-3.5 px-6 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="order-table-body" class="divide-y divide-slate-800/60 font-medium">
+                    <tr>
+                        <td colspan="8" class="text-center py-10 text-slate-500">Loading orders...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Create Order -->
+<div id="create-order-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
+        <h3 class="text-lg font-bold text-white mb-1">Create Delivery Order</h3>
+        <p class="text-xs text-slate-400 mb-4">Add a new package request to the dispatch queue</p>
+
+        <form id="create-order-form" onsubmit="submitOrderForm(event)" class="space-y-4 text-xs">
+            <div>
+                <label class="block text-slate-300 font-semibold mb-1">Customer / Business Name</label>
+                <input type="text" id="ord-name" required placeholder="e.g. Apex Biotech Lab" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-teal-500">
+            </div>
+            <div>
+                <label class="block text-slate-300 font-semibold mb-1">Customer Phone</label>
+                <input type="text" id="ord-phone" required placeholder="+1 415-555-0199" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-teal-500">
+            </div>
+            <div>
+                <label class="block text-slate-300 font-semibold mb-1">Delivery Address</label>
+                <input type="text" id="ord-address" required placeholder="e.g. 100 California St, San Francisco" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-teal-500">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-slate-300 font-semibold mb-1">Latitude</label>
+                    <input type="number" step="0.00001" id="ord-lat" required value="37.7935" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-teal-500">
+                </div>
+                <div>
+                    <label class="block text-slate-300 font-semibold mb-1">Longitude</label>
+                    <input type="number" step="0.00001" id="ord-lng" required value="-122.4010" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-teal-500">
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-slate-300 font-semibold mb-1">Weight (kg)</label>
+                    <input type="number" step="0.1" id="ord-weight" required min="0.5" max="500" value="12.0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-teal-500">
+                </div>
+                <div>
+                    <label class="block text-slate-300 font-semibold mb-1">Priority</label>
+                    <select id="ord-prio" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-teal-500">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                        <option value="urgent">Urgent</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+                <button type="button" onclick="closeCreateOrderModal()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-lg bg-teal-500 hover:bg-teal-600 text-white font-semibold">Queue Order</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let allOrders = [];
+    let currentFilter = '';
+
+    async function loadOrders() {
+        try {
+            const url = currentFilter ? `/api/orders?status_filter=${currentFilter}` : '/api/orders';
+            const res = await fetch(url);
+            allOrders = await res.json();
+            renderOrders(allOrders);
+            updateOrderStats();
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async function updateOrderStats() {
+        try {
+            const res = await fetch('/api/analytics/kpis');
+            const data = await res.json();
+            document.getElementById('stat-ord-total').textContent = data.total_orders;
+            document.getElementById('stat-ord-pending').textContent = data.pending_orders;
+            document.getElementById('stat-ord-intransit').textContent = data.in_transit_orders;
+            document.getElementById('stat-ord-delivered').textContent = data.delivered_orders;
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    function renderOrders(orders) {
+        const tbody = document.getElementById('order-table-body');
+        document.getElementById('order-count-tag').textContent = `${orders.length} orders`;
+
+        if (!orders.length) {
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-slate-500">No orders found.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = orders.map(o => {
+            const statusBadges = {
+                'pending': '<span class="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">Pending</span>',
+                'assigned': '<span class="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">Assigned</span>',
+                'in_transit': '<span class="px-2.5 py-1 rounded-full bg-teal-500/10 text-teal-400 border border-teal-500/20 animate-pulse">In Transit</span>',
+                'delivered': '<span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Delivered</span>',
+                'cancelled': '<span class="px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20">Cancelled</span>'
+            };
+
+            const prioBadges = {
+                'low': '<span class="text-slate-400">Low</span>',
+                'medium': '<span class="text-blue-400 font-semibold">Medium</span>',
+                'high': '<span class="text-amber-400 font-semibold">High</span>',
+                'urgent': '<span class="text-rose-400 font-bold flex items-center gap-1"><i class="fa-solid fa-bolt"></i> Urgent</span>'
+            };
+
+            return `
+                <tr class="hover:bg-slate-800/40 transition">
+                    <td class="py-4 px-6 font-mono font-bold text-white text-xs">${o.tracking_number}</td>
+                    <td class="py-4 px-4 text-slate-300">
+                        <div class="font-semibold text-white">${o.customer_name}</div>
+                        <div class="text-slate-500 text-[11px] font-mono">${o.customer_phone}</div>
+                    </td>
+                    <td class="py-4 px-4 text-slate-300 max-w-xs truncate" title="${o.delivery_address}">
+                        <div class="truncate">${o.delivery_address}</div>
+                        <div class="text-slate-500 text-[10px] font-mono">${o.destination_lat.toFixed(4)}, ${o.destination_lng.toFixed(4)}</div>
+                    </td>
+                    <td class="py-4 px-4 font-mono text-slate-300">${o.weight_kg} kg</td>
+                    <td class="py-4 px-4">${prioBadges[o.priority] || o.priority}</td>
+                    <td class="py-4 px-4">${statusBadges[o.status] || o.status}</td>
+                    <td class="py-4 px-4 text-slate-300 font-mono text-[11px]">
+                        ${o.assigned_route_id ? `Route #${o.assigned_route_id} (Stop ${o.stop_order})` : '<span class="text-slate-600">Unassigned</span>'}
+                    </td>
+                    <td class="py-4 px-6 text-right">
+                        ${o.status === 'pending' ? `
+                            <button onclick="cancelOrder(${o.id})" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 transition">
+                                Cancel
+                            </button>
+                        ` : '-'}
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function filterOrders(status) {
+        currentFilter = status;
+        document.querySelectorAll('.order-tab-btn').forEach(btn => {
+            btn.classList.remove('active', 'bg-teal-500/20', 'text-teal-300', 'border-teal-500/30');
+            btn.classList.add('bg-slate-800', 'text-slate-400');
+        });
+        event.target.classList.add('active', 'bg-teal-500/20', 'text-teal-300', 'border-teal-500/30');
+        event.target.classList.remove('bg-slate-800', 'text-slate-400');
+        loadOrders();
+    }
+
+    async function addSampleOrders(count = 5) {
+        try {
+            const res = await fetch(`/api/orders/batch-sample?count=${count}`, { method: 'POST' });
+            if (res.ok) {
+                showToast(`Added ${count} sample orders!`, "success");
+                loadOrders();
+            }
+        } catch (err) {
+            showToast("Failed to spawn sample orders", "error");
+        }
+    }
+
+    async function optimizeAndDispatch() {
+        try {
+            showToast("Running Clarke-Wright VRP solver...", "info");
+            const res = await fetch('/api/routes/optimize', { method: 'POST' });
+            if (!res.ok) {
+                const err = await res.json();
+                showToast(err.detail || "Optimization failed", "error");
+                return;
+            }
+            const routes = await res.json();
+            showToast(`Optimization complete! ${routes.length} vehicle routes planned.`, "success");
+
+            // Display routes summary banner
+            const summaryDiv = document.getElementById('active-routes-summary');
+            const container = document.getElementById('routes-cards-container');
+            summaryDiv.classList.remove('hidden');
+
+            container.innerHTML = routes.map(r => `
+                <div class="bg-slate-950/80 border border-slate-800 p-3.5 rounded-xl text-xs space-y-1.5">
+                    <div class="flex items-center justify-between font-bold">
+                        <span class="text-teal-400">Route #${r.id}</span>
+                        <span class="text-white">${r.vehicle_plate || 'Assigned'}</span>
+                    </div>
+                    <div class="text-slate-400">Stops: <span class="text-white font-semibold">${r.stops_count}</span></div>
+                    <div class="text-slate-400">Total Distance: <span class="text-white font-semibold">${r.total_distance_km} km</span></div>
+                    <div class="text-slate-400">Est. Duration: <span class="text-white font-semibold">${r.estimated_duration_mins} mins</span></div>
+                </div>
+            `).join('');
+
+            loadOrders();
+        } catch (err) {
+            showToast("Network error running route optimization", "error");
+        }
+    }
+
+    async function dispatchActivePlan() {
+        try {
+            const res = await fetch('/api/routes/dispatch-all', { method: 'POST' });
+            if (res.ok) {
+                showToast("Fleet successfully dispatched! Simulation active.", "success");
+                setTimeout(() => window.location.href = '/', 1200);
+            } else {
+                const err = await res.json();
+                showToast(err.detail || "Dispatch failed", "error");
+            }
+        } catch (err) {
+            showToast("Network error dispatching fleet", "error");
+        }
+    }
+
+    async function cancelOrder(id) {
+        if (!confirm("Are you sure you want to cancel this order?")) return;
+        try {
+            const res = await fetch(`/api/orders/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                showToast("Order cancelled", "info");
+                loadOrders();
+            }
+        } catch (err) {
+            showToast("Failed to cancel order", "error");
+        }
+    }
+
+    function openCreateOrderModal() {
+        document.getElementById('create-order-modal').classList.remove('hidden');
+    }
+
+    function closeCreateOrderModal() {
+        document.getElementById('create-order-modal').classList.add('hidden');
+    }
+
+    async function submitOrderForm(e) {
+        e.preventDefault();
+        const payload = {
+            customer_name: document.getElementById('ord-name').value,
+            customer_phone: document.getElementById('ord-phone').value,
+            delivery_address: document.getElementById('ord-address').value,
+            destination_lat: parseFloat(document.getElementById('ord-lat').value),
+            destination_lng: parseFloat(document.getElementById('ord-lng').value),
+            weight_kg: parseFloat(document.getElementById('ord-weight').value),
+            priority: document.getElementById('ord-prio').value
+        };
+
+        try {
+            const res = await fetch('/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                showToast("New order placed in queue!", "success");
+                closeCreateOrderModal();
+                loadOrders();
+            } else {
+                const err = await res.json();
+                showToast(err.detail || "Error creating order", "error");
+            }
+        } catch (err) {
+            showToast("Network error creating order", "error");
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadOrders);
+</script>
+{% endblock %}
