@@ -52,100 +52,288 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
-<body class="h-full flex flex-col font-sans antialiased overflow-hidden bg-slate-50 selection:bg-uinavy-100 selection:text-uinavy">
-    <!-- Top Header Bar (Light Theme, Crisp UI) -->
-    <header class="bg-white border-b border-slate-200/90 px-4 sm:px-6 py-2.5 flex items-center justify-between z-30 shrink-0 shadow-sm">
-        <!-- Brand & Identity -->
-        <div class="flex items-center space-x-3 sm:space-x-4">
-            <a href="/" class="flex items-center gap-2.5 sm:gap-3 group">
-                <img src="/static/images/ui_crest.svg" alt="University of Ibadan Crest" class="w-8 h-8 sm:w-9 sm:h-9">
-                <div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-sm font-bold tracking-tight text-uinavy group-hover:text-uinavy-light transition">UI-FleetFlow</span>
-                        <span class="text-[10px] px-2 py-0.5 rounded-full bg-uinavy-50 text-uinavy font-semibold border border-uinavy-200 hidden sm:inline-block">Academic Case Study</span>
+<body class="h-full flex overflow-hidden bg-slate-50 font-sans antialiased text-slate-900 selection:bg-uinavy-100 selection:text-uinavy">
+
+    <!-- Mobile Backdrop Overlay for Sidebar -->
+    <div id="sidebar-backdrop" onclick="toggleSidebar(false)" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-40 hidden lg:hidden transition-opacity"></div>
+
+    <!-- Shadcn App Sidebar -->
+    <aside id="app-sidebar" class="fixed inset-y-0 left-0 z-50 lg:static flex flex-col w-64 bg-white border-r border-slate-200/80 transition-all duration-300 ease-in-out shrink-0 -translate-x-full lg:translate-x-0 shadow-sm">
+        
+        <!-- Sidebar Header: Organization / Brand Identity -->
+        <div class="h-14 border-b border-slate-200/80 px-4 flex items-center justify-between shrink-0">
+            <a href="/" class="flex items-center gap-3 group min-w-0">
+                <img src="/static/images/ui_crest.svg" alt="UI Crest" class="w-8 h-8 shrink-0">
+                <div class="min-w-0 flex-1 truncate">
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-xs font-bold tracking-tight text-slate-900 truncate">UI-FleetFlow</span>
+                        <span class="text-[9px] px-1.5 py-0.2 rounded font-medium bg-uinavy-50 text-uinavy border border-uinavy-200/60 font-mono">v2.0</span>
                     </div>
-                    <div class="text-[11px] text-slate-500 font-medium hidden sm:block">Campus Logistics & Real-Time Tracking</div>
+                    <div class="text-[11px] text-slate-500 truncate">University of Ibadan</div>
                 </div>
             </a>
+            <button onclick="toggleSidebar(false)" class="lg:hidden p-1 text-slate-400 hover:text-slate-600 rounded">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
         </div>
 
-        <!-- Desktop Navigation Links -->
-        <nav class="hidden lg:flex items-center space-x-1">
-            <a href="/" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 {% if active_tab == 'dashboard' %}bg-uinavy text-white shadow-sm{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
-                <i class="fa-solid fa-map-location-dot text-[11px] {% if active_tab == 'dashboard' %}text-uigold-light{% else %}text-slate-400{% endif %}"></i>
-                <span>Live Map</span>
-            </a>
-            <a href="/vehicles" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 {% if active_tab == 'vehicles' %}bg-uinavy text-white shadow-sm{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
-                <i class="fa-solid fa-truck text-[11px] {% if active_tab == 'vehicles' %}text-uigold-light{% else %}text-slate-400{% endif %}"></i>
-                <span>Fleet & Drivers</span>
-            </a>
-            <a href="/orders" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 {% if active_tab == 'orders' %}bg-uinavy text-white shadow-sm{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
-                <i class="fa-solid fa-box-open text-[11px] {% if active_tab == 'orders' %}text-uigold-light{% else %}text-slate-400{% endif %}"></i>
-                <span>Dispatches</span>
-            </a>
-            <a href="/analytics" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 {% if active_tab == 'analytics' %}bg-uinavy text-white shadow-sm{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
-                <i class="fa-solid fa-chart-line text-[11px] {% if active_tab == 'analytics' %}text-uigold-light{% else %}text-slate-400{% endif %}"></i>
-                <span>Analytics</span>
-            </a>
-        </nav>
+        <!-- Sidebar Navigation Content -->
+        <div class="flex-1 overflow-y-auto px-3 py-3 space-y-6">
+            <!-- Platform Section -->
+            <div class="space-y-1">
+                <div class="px-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Platform</div>
+                
+                <a href="/" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition {% if active_tab == 'dashboard' %}bg-uinavy text-white font-semibold shadow-xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                    <i class="fa-solid fa-map-location-dot w-4 text-center {% if active_tab == 'dashboard' %}text-uigold-light{% else %}text-slate-400{% endif %}"></i>
+                    <span class="truncate">Live 3D & 2D Map</span>
+                </a>
 
-        <!-- Right Utilities & Mobile Menu Button -->
-        <div class="flex items-center space-x-2 sm:space-x-3">
-            <div id="ws-status" class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 border border-emerald-200 text-[11px] font-mono text-emerald-700 font-medium">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span id="ws-status-text" class="hidden sm:inline">Live Sync</span>
+                <a href="/vehicles" class="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition {% if active_tab == 'vehicles' %}bg-uinavy text-white font-semibold shadow-xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                    <div class="flex items-center gap-3 truncate">
+                        <i class="fa-solid fa-truck w-4 text-center {% if active_tab == 'vehicles' %}text-uigold-light{% else %}text-slate-400{% endif %}"></i>
+                        <span class="truncate">Fleet & Drivers</span>
+                    </div>
+                    <span class="px-1.5 py-0.5 rounded text-[10px] font-mono {% if active_tab == 'vehicles' %}bg-white/20 text-white{% else %}bg-slate-100 text-slate-600 border border-slate-200{% endif %}">6</span>
+                </a>
+
+                <a href="/orders" class="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition {% if active_tab == 'orders' %}bg-uinavy text-white font-semibold shadow-xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                    <div class="flex items-center gap-3 truncate">
+                        <i class="fa-solid fa-boxes-stacked w-4 text-center {% if active_tab == 'orders' %}text-uigold-light{% else %}text-slate-400{% endif %}"></i>
+                        <span class="truncate">Orders & Logistics</span>
+                    </div>
+                    <span class="px-1.5 py-0.5 rounded text-[10px] font-mono {% if active_tab == 'orders' %}bg-white/20 text-white{% else %}bg-slate-100 text-slate-600 border border-slate-200{% endif %}">18</span>
+                </a>
+
+                <a href="/analytics" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition {% if active_tab == 'analytics' %}bg-uinavy text-white font-semibold shadow-xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                    <i class="fa-solid fa-chart-line w-4 text-center {% if active_tab == 'analytics' %}text-uigold-light{% else %}text-slate-400{% endif %}"></i>
+                    <span class="truncate">Analytics & KPIs</span>
+                </a>
             </div>
 
-            <a href="/docs" target="_blank" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium border border-slate-200 transition flex items-center gap-1.5">
-                <i class="fa-solid fa-code text-[10px] text-uinavy"></i>
-                <span class="hidden sm:inline">API</span>
-            </a>
+            <!-- Operations Section -->
+            <div class="space-y-1">
+                <div class="px-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Operations & Tools</div>
+                
+                <button onclick="triggerOptimization()" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition text-left">
+                    <i class="fa-solid fa-wand-magic-sparkles w-4 text-center text-amber-500"></i>
+                    <span class="truncate">Run VRP Optimizer</span>
+                </button>
 
-            <button onclick="resetDemoData()" title="Reset to initial clean campus case study state" class="px-2.5 py-1 rounded-md bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-medium transition flex items-center gap-1.5">
-                <i class="fa-solid fa-rotate-left text-[10px]"></i>
-                <span class="hidden sm:inline">Reset</span>
-            </button>
+                <button onclick="resetDemoData()" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition text-left">
+                    <i class="fa-solid fa-rotate-left w-4 text-center text-slate-400"></i>
+                    <span class="truncate">Reset Demo Data</span>
+                </button>
 
-            <!-- Mobile Menu Toggle Button -->
-            <button onclick="toggleMobileMenu()" class="lg:hidden p-1.5 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200">
-                <i class="fa-solid fa-bars text-sm"></i>
-            </button>
+                <a href="/docs" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">
+                    <i class="fa-solid fa-code w-4 text-center text-slate-400"></i>
+                    <span class="truncate">FastAPI Swagger Docs</span>
+                </a>
+            </div>
         </div>
-    </header>
 
-    <!-- Mobile Dropdown Navigation -->
-    <div id="mobile-menu" class="hidden lg:hidden bg-white border-b border-slate-200 px-4 py-2.5 flex flex-col space-y-1 z-30 shrink-0 shadow-sm">
-        <a href="/" class="px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2 {% if active_tab == 'dashboard' %}bg-uinavy text-white font-semibold{% else %}text-slate-600 hover:bg-slate-100{% endif %}">
-            <i class="fa-solid fa-map-location-dot w-4 text-uinavy"></i>
-            <span>Live Campus Map</span>
-        </a>
-        <a href="/vehicles" class="px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2 {% if active_tab == 'vehicles' %}bg-uinavy text-white font-semibold{% else %}text-slate-600 hover:bg-slate-100{% endif %}">
-            <i class="fa-solid fa-truck w-4 text-uinavy"></i>
-            <span>Fleet & Drivers</span>
-        </a>
-        <a href="/orders" class="px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2 {% if active_tab == 'orders' %}bg-uinavy text-white font-semibold{% else %}text-slate-600 hover:bg-slate-100{% endif %}">
-            <i class="fa-solid fa-box-open w-4 text-uinavy"></i>
-            <span>Dispatches & Logistics</span>
-        </a>
-        <a href="/analytics" class="px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2 {% if active_tab == 'analytics' %}bg-uinavy text-white font-semibold{% else %}text-slate-600 hover:bg-slate-100{% endif %}">
-            <i class="fa-solid fa-chart-line w-4 text-uinavy"></i>
-            <span>Analytics & KPIs</span>
-        </a>
+        <!-- Sidebar Footer: Telemetry Badge & Dispatcher Profile -->
+        <div class="p-3 border-t border-slate-200/80 bg-slate-50/60 shrink-0 space-y-2">
+            <!-- Telemetry Status Card -->
+            <div class="p-2.5 rounded-lg bg-white border border-slate-200/80 shadow-xs flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-[11px] font-medium text-slate-700">Campus Fleet Sync</span>
+                </div>
+                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200/60">6/6 Active</span>
+            </div>
+
+            <!-- Dispatcher Profile -->
+            <div class="flex items-center gap-2.5 p-1.5 rounded-lg">
+                <div class="w-8 h-8 rounded-full bg-uinavy text-white flex items-center justify-center font-bold text-xs shrink-0 font-mono border border-uinavy-200">
+                    UI
+                </div>
+                <div class="min-w-0 flex-1">
+                    <div class="text-xs font-semibold text-slate-900 truncate">Central Transport Pool</div>
+                    <div class="text-[10px] text-slate-500 truncate">dispatch@ui.edu.ng</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
+        <!-- Shadcn App Header -->
+        <header id="app-header" class="h-14 border-b border-slate-200/80 bg-white/95 px-4 sm:px-6 flex items-center justify-between shrink-0 backdrop-blur-xs z-30 shadow-xs">
+            
+            <!-- Left: Sidebar Toggle + Breadcrumb -->
+            <div class="flex items-center gap-3 min-w-0">
+                <button onclick="toggleSidebar()" title="Toggle Sidebar" class="p-2 -ml-1 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition border border-transparent hover:border-slate-200">
+                    <i class="fa-solid fa-bars text-sm"></i>
+                </button>
+
+                <div class="h-4 w-[1px] bg-slate-200 hidden sm:block"></div>
+
+                <!-- Breadcrumbs -->
+                <nav class="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 truncate">
+                    <span class="text-slate-400">UI-FleetFlow</span>
+                    <i class="fa-solid fa-chevron-right text-[9px] text-slate-300"></i>
+                    <span class="text-slate-600 font-medium truncate">Campus Logistics</span>
+                    <i class="fa-solid fa-chevron-right text-[9px] text-slate-300"></i>
+                    <span class="text-slate-900 font-semibold truncate">
+                        {% if active_tab == 'analytics' %}Analytics & KPIs
+                        {% elif active_tab == 'vehicles' %}Fleet & Drivers
+                        {% elif active_tab == 'orders' %}Orders & Logistics
+                        {% else %}Live 3D & 2D Map{% endif %}
+                    </span>
+                </nav>
+            </div>
+
+            <!-- Center: Command Search Bar (⌘K) -->
+            <div class="hidden md:flex items-center max-w-sm w-full mx-4">
+                <div class="relative w-full">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                    <input type="text" id="global-search-input" placeholder="Search dispatches, vehicles, landmarks..." class="w-full pl-8 pr-12 py-1.5 text-xs rounded-lg border border-slate-200 bg-slate-50/50 hover:bg-white focus:bg-white focus:border-uinavy focus:outline-none focus:ring-1 focus:ring-uinavy transition placeholder:text-slate-400 text-slate-900">
+                    <kbd class="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[10px] font-mono text-slate-400 shadow-2xs pointer-events-none">⌘K</kbd>
+                </div>
+            </div>
+
+            <!-- Right: Simulation Controls, Status & Actions -->
+            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                <!-- Simulation Quick Deck -->
+                <div class="flex items-center bg-slate-50 rounded-lg p-0.5 border border-slate-200">
+                    <button id="header-sim-play-btn" onclick="toggleSimulation()" title="Play/Pause Simulation" class="px-2 py-1 rounded text-xs text-slate-700 hover:text-slate-900 transition flex items-center gap-1">
+                        <i class="fa-solid fa-pause text-[10px]" id="header-sim-icon"></i>
+                        <span class="text-[11px] font-medium hidden lg:inline">Sim</span>
+                    </button>
+                    <div class="h-3 w-[1px] bg-slate-200 mx-0.5"></div>
+                    <button onclick="setSimSpeed(1.0)" id="header-spd-1x" class="px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-uinavy text-white shadow-xs">1x</button>
+                    <button onclick="setSimSpeed(2.5)" id="header-spd-2x" class="px-1.5 py-0.5 rounded text-[10px] font-mono text-slate-600 hover:text-slate-900">2.5x</button>
+                    <button onclick="setSimSpeed(5.0)" id="header-spd-5x" class="px-1.5 py-0.5 rounded text-[10px] font-mono text-slate-600 hover:text-slate-900">5x</button>
+                </div>
+
+                <!-- Live WebSocket Pill -->
+                <div id="ws-status" class="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-md bg-emerald-50 border border-emerald-200/80 text-[11px] font-mono text-emerald-700 font-medium">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span id="ws-status-text">Live Sync</span>
+                </div>
+
+                <!-- GitHub Open Source Link -->
+                <a href="https://github.com/sighlars/university-of-ibadan-fleet-management" target="_blank" title="GitHub Repository" class="p-2 text-slate-400 hover:text-slate-700 rounded-lg transition border border-transparent hover:border-slate-200">
+                    <i class="fa-brands fa-github text-sm"></i>
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Content Viewport -->
+        <main class="flex-1 flex overflow-hidden relative">
+            {% block content %}{% endblock %}
+        </main>
     </div>
-
-    <!-- Main Content Area -->
-    <main class="flex-1 flex overflow-hidden relative">
-        {% block content %}{% endblock %}
-    </main>
 
     <!-- Toast Notification Container -->
     <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col space-y-2 pointer-events-none max-w-sm w-full px-4"></div>
 
     <script src="/static/js/websocket.js"></script>
     <script>
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            if (menu) menu.classList.toggle('hidden');
+        // Shadcn Sidebar Toggle Function
+        function toggleSidebar(forceState) {
+            const sidebar = document.getElementById('app-sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            if (!sidebar) return;
+
+            const isMobile = window.innerWidth < 1024;
+
+            if (isMobile) {
+                const isOpen = !sidebar.classList.contains('-translate-x-full');
+                const nextState = forceState !== undefined ? forceState : !isOpen;
+
+                if (nextState) {
+                    sidebar.classList.remove('-translate-x-full');
+                    if (backdrop) backdrop.classList.remove('hidden');
+                } else {
+                    sidebar.classList.add('-translate-x-full');
+                    if (backdrop) backdrop.classList.add('hidden');
+                }
+            } else {
+                // Desktop Collapse to Mini Icon Sidebar
+                sidebar.classList.toggle('lg:w-16');
+                sidebar.classList.toggle('w-64');
+                const textElements = sidebar.querySelectorAll('.truncate, .uppercase, .shadow-xs, .space-y-2');
+                textElements.forEach(el => {
+                    if (sidebar.classList.contains('lg:w-16')) {
+                        if (!el.closest('.h-14')) el.classList.add('lg:hidden');
+                    } else {
+                        el.classList.remove('lg:hidden');
+                    }
+                });
+            }
+        }
+
+        // Global Simulation Controls
+        let isGlobalSimRunning = true;
+        async function toggleSimulation() {
+            const action = isGlobalSimRunning ? 'pause' : 'start';
+            try {
+                const res = await fetch('/api/analytics/simulation/control', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: action })
+                });
+                const data = await res.json();
+                isGlobalSimRunning = data.is_running;
+
+                const icon = document.getElementById('header-sim-icon');
+                if (icon) icon.className = isGlobalSimRunning ? 'fa-solid fa-pause text-[10px]' : 'fa-solid fa-play text-[10px]';
+
+                const pageIcon = document.getElementById('sim-icon');
+                if (pageIcon) pageIcon.className = isGlobalSimRunning ? 'fa-solid fa-pause text-[10px]' : 'fa-solid fa-play text-[10px]';
+
+                showToast(isGlobalSimRunning ? "Simulation resumed" : "Simulation paused", "info");
+            } catch (err) {
+                console.error("Simulation control error", err);
+            }
+        }
+
+        async function setSimSpeed(multiplier) {
+            try {
+                await fetch('/api/analytics/simulation/control', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'speed', speed_multiplier: multiplier })
+                });
+
+                ['1x', '2.5x', '5x'].forEach(s => {
+                    const btn = document.getElementById(`header-spd-${s}`);
+                    const pageBtn = document.getElementById(`spd-${s}`);
+                    const isSelected = (s === `${multiplier}x`) || (multiplier === 1.0 && s === '1x');
+                    
+                    if (btn) {
+                        btn.className = isSelected 
+                            ? 'px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-uinavy text-white shadow-xs' 
+                            : 'px-1.5 py-0.5 rounded text-[10px] font-mono text-slate-600 hover:text-slate-900';
+                    }
+                    if (pageBtn) {
+                        pageBtn.className = isSelected 
+                            ? 'px-2 py-0.5 rounded text-[11px] font-mono font-semibold bg-uinavy text-white shadow-xs transition' 
+                            : 'px-2 py-0.5 rounded text-[11px] font-mono text-slate-600 hover:text-slate-900 transition';
+                    }
+                });
+
+                showToast(`Simulation speed set to ${multiplier}x`, "info");
+            } catch (err) {
+                console.error("Speed control error", err);
+            }
+        }
+
+        async function triggerOptimization() {
+            try {
+                showToast("Running Clarke-Wright heuristic VRP optimization...", "info");
+                const res = await fetch('/api/routes/optimize', { method: 'POST' });
+                const data = await res.json();
+                if (res.ok) {
+                    showToast(`Dispatched ${data.routes_generated} consolidated routes across campus quads!`, "success");
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    showToast("Optimization notice: routes active.", "info");
+                }
+            } catch (err) {
+                console.error("Error optimizing", err);
+            }
         }
 
         async function resetDemoData() {
@@ -153,7 +341,7 @@
             try {
                 const res = await fetch('/api/analytics/seed/reset', { method: 'POST' });
                 if (res.ok) {
-                    showToast("Campus case study data reset successfully.", "success");
+                    showToast("Campus case study fleet reseeded successfully.", "success");
                     setTimeout(() => window.location.reload(), 800);
                 } else {
                     showToast("Failed to reset data.", "error");
@@ -165,6 +353,7 @@
 
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
+            if (!container) return;
             const toast = document.createElement('div');
             const borderColors = {
                 success: 'border-emerald-200 text-emerald-800 bg-white shadow-emerald-50',
@@ -188,6 +377,15 @@
                 setTimeout(() => toast.remove(), 250);
             }, 3500);
         }
+
+        // Global Command Search (⌘K / Ctrl+K) Focus
+        document.addEventListener('keydown', (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                const search = document.getElementById('global-search-input');
+                if (search) search.focus();
+            }
+        });
     </script>
     {% block scripts %}{% endblock %}
 </body>
