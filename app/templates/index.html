@@ -1,135 +1,111 @@
 {% extends "base.html" %}
 
-{% block title %}Live Operations Map - {{ app_name }}{% endblock %}
+{% block title %}Live Campus Operations - {{ app_name }}{% endblock %}
 
 {% block content %}
-<div class="relative w-full h-full flex overflow-hidden">
-    <!-- Left Floating Fleet Sidebar -->
-    <aside class="absolute left-4 top-4 bottom-4 w-96 z-20 flex flex-col bg-slate-900/90 backdrop-blur-md border border-slate-800/80 rounded-2xl shadow-2xl overflow-hidden transition-all duration-300">
+<div class="relative w-full h-full flex flex-col lg:flex-row overflow-hidden bg-slate-950">
+    <!-- Desktop Left Sidebar / Mobile Collapsible Drawer -->
+    <aside id="fleet-sidebar" class="w-full lg:w-80 xl:w-96 bg-[#0B0F17] border-b lg:border-b-0 lg:border-r border-slate-800/80 z-20 flex flex-col shrink-0 max-h-[38vh] lg:max-h-full transition-all duration-300">
         <!-- Sidebar Header -->
-        <div class="p-4 border-b border-slate-800 flex items-center justify-between shrink-0 bg-[#001733]/60">
-            <div>
-                <h2 class="text-xs font-bold uppercase tracking-wider text-amber-300 flex items-center gap-2">
-                    <i class="fa-solid fa-satellite-dish text-amber-400"></i>
-                    UI Campus Telematics
-                </h2>
-                <p class="text-[11px] text-slate-400">Real-time GPS tracking & vehicle telemetry</p>
+        <div class="p-3.5 border-b border-slate-800/80 flex items-center justify-between shrink-0 bg-[#0E1522]">
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-200">Campus Telematics</h2>
             </div>
-            <span id="vehicle-count-badge" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-800 text-amber-300 border border-slate-700">0 Active</span>
+            <div class="flex items-center gap-2">
+                <span id="vehicle-count-badge" class="px-2 py-0.5 rounded text-[11px] font-mono bg-slate-800 text-slate-300 border border-slate-700">0 Active</span>
+            </div>
         </div>
 
         <!-- Vehicle List Container -->
-        <div id="vehicle-card-list" class="flex-1 overflow-y-auto p-3 space-y-2.5">
-            <div class="text-center py-10 text-slate-500 text-xs">
-                <i class="fa-solid fa-spinner fa-spin text-lg mb-2"></i>
-                <p>Loading UI fleet telematics...</p>
+        <div id="vehicle-card-list" class="flex-1 overflow-y-auto p-3 space-y-2">
+            <div class="text-center py-8 text-slate-500 text-xs">
+                <i class="fa-solid fa-circle-notch fa-spin text-sm mb-1 text-slate-400"></i>
+                <p>Loading telematics stream...</p>
             </div>
         </div>
 
-        <!-- Sidebar Quick Dispatch Action Bar -->
-        <div class="p-4 border-t border-slate-800 bg-slate-950/80 shrink-0 space-y-2">
-            <button id="btn-quick-optimize" onclick="triggerOptimization()" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-600 hover:to-yellow-600 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 transition active:scale-[0.98]">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                <span>Optimize & Dispatch UI Fleet</span>
+        <!-- Sidebar Dispatch & Quick Actions -->
+        <div class="p-3 border-t border-slate-800/80 bg-[#0B0F17] shrink-0 space-y-2">
+            <button id="btn-quick-optimize" onclick="triggerOptimization()" class="w-full py-2 px-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold text-xs transition flex items-center justify-center gap-1.5 active:scale-[0.99] shadow-sm">
+                <i class="fa-solid fa-wand-magic-sparkles text-[11px]"></i>
+                <span>Optimize & Dispatch All</span>
             </button>
-            <div class="flex gap-2">
-                <button onclick="addSampleOrders()" class="flex-1 py-1.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 flex items-center justify-center gap-1.5 transition">
-                    <i class="fa-solid fa-plus text-amber-400"></i>
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="addSampleOrders()" class="py-1.5 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700/80 flex items-center justify-center gap-1.5 transition">
+                    <i class="fa-solid fa-plus text-[10px] text-amber-400"></i>
                     <span>+5 Dispatches</span>
                 </button>
-                <a href="/orders" class="flex-1 py-1.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 flex items-center justify-center gap-1.5 transition text-center">
-                    <i class="fa-solid fa-list-check text-amber-400"></i>
+                <a href="/orders" class="py-1.5 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700/80 flex items-center justify-center gap-1.5 transition text-center">
+                    <i class="fa-solid fa-list-check text-[10px] text-amber-400"></i>
                     <span>Manage</span>
                 </a>
             </div>
         </div>
-
     </aside>
 
-    <!-- Map Canvas Container -->
-    <div id="map" class="w-full h-full z-10 bg-slate-950"></div>
+    <!-- Map & Floating Overlays -->
+    <div class="flex-1 relative w-full h-full min-h-[300px]">
+        <!-- Full Viewport Leaflet Map -->
+        <div id="map" class="w-full h-full z-10"></div>
 
-    <!-- Top Floating Metric Bar -->
-    <div class="absolute top-4 left-[26rem] right-4 z-20 flex items-center justify-between pointer-events-none">
-        <div class="flex items-center gap-3 pointer-events-auto">
-            <!-- Active Deliveries Pill -->
-            <div class="bg-slate-900/90 backdrop-blur-md border border-slate-800 px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg bg-teal-500/10 text-teal-400 flex items-center justify-center">
-                    <i class="fa-solid fa-truck-moving text-sm"></i>
+        <!-- Top Floating HUD: Metrics & Simulation Deck -->
+        <div class="absolute top-3 left-3 right-3 z-20 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+            <!-- Left Stat Badges -->
+            <div class="flex items-center gap-2 pointer-events-auto">
+                <div class="bg-[#0C121E]/90 backdrop-blur border border-slate-800/80 px-3 py-1.5 rounded-lg shadow-md flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                    <span class="text-[11px] text-slate-400 font-medium">In Transit:</span>
+                    <span id="stat-in-transit" class="font-mono text-xs font-bold text-white">0</span>
                 </div>
-                <div>
-                    <div class="text-xs text-slate-400 font-medium">In Transit</div>
-                    <div id="stat-in-transit" class="text-base font-bold text-white">0</div>
+                <div class="bg-[#0C121E]/90 backdrop-blur border border-slate-800/80 px-3 py-1.5 rounded-lg shadow-md flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                    <span class="text-[11px] text-slate-400 font-medium">Pending:</span>
+                    <span id="stat-pending" class="font-mono text-xs font-bold text-white">0</span>
+                </div>
+                <div class="bg-[#0C121E]/90 backdrop-blur border border-slate-800/80 px-3 py-1.5 rounded-lg shadow-md hidden sm:flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                    <span class="text-[11px] text-slate-400 font-medium">Delivered:</span>
+                    <span id="stat-delivered" class="font-mono text-xs font-bold text-white">0</span>
                 </div>
             </div>
 
-            <!-- Pending Orders Pill -->
-            <div class="bg-slate-900/90 backdrop-blur-md border border-slate-800 px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center">
-                    <i class="fa-solid fa-clock text-sm"></i>
-                </div>
-                <div>
-                    <div class="text-xs text-slate-400 font-medium">Pending Orders</div>
-                    <div id="stat-pending" class="text-base font-bold text-white">0</div>
-                </div>
-            </div>
+            <!-- Right Simulation Control Deck -->
+            <div class="bg-[#0C121E]/95 backdrop-blur border border-slate-800/80 px-2.5 py-1.5 rounded-lg shadow-md flex items-center gap-1.5 pointer-events-auto">
+                <span class="text-[10px] font-mono font-semibold text-slate-400 uppercase mr-1 hidden sm:inline">Sim</span>
+                
+                <button id="sim-play-btn" onclick="toggleSimulation()" title="Play / Pause Simulation" class="w-7 h-7 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center justify-center text-xs transition">
+                    <i class="fa-solid fa-play text-[10px]" id="sim-icon"></i>
+                </button>
+                <button onclick="stepSimulation()" title="Step 1 Tick" class="w-7 h-7 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center justify-center text-xs transition">
+                    <i class="fa-solid fa-forward-step text-[10px]"></i>
+                </button>
 
-            <!-- Delivered Pill -->
-            <div class="bg-slate-900/90 backdrop-blur-md border border-slate-800 px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
-                    <i class="fa-solid fa-circle-check text-sm"></i>
-                </div>
-                <div>
-                    <div class="text-xs text-slate-400 font-medium">Delivered Today</div>
-                    <div id="stat-delivered" class="text-base font-bold text-white">0</div>
+                <div class="flex items-center bg-slate-900 rounded p-0.5 border border-slate-800 ml-1">
+                    <button onclick="setSimSpeed(1.0)" id="spd-1x" class="px-2 py-0.5 rounded text-[11px] font-mono font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 transition">1x</button>
+                    <button onclick="setSimSpeed(2.5)" id="spd-2x" class="px-2 py-0.5 rounded text-[11px] font-mono text-slate-400 hover:text-white transition">2.5x</button>
+                    <button onclick="setSimSpeed(5.0)" id="spd-5x" class="px-2 py-0.5 rounded text-[11px] font-mono text-slate-400 hover:text-white transition">5x</button>
                 </div>
             </div>
         </div>
 
-        <!-- Simulation HUD Control Deck -->
-        <div class="bg-slate-900/95 backdrop-blur-md border border-slate-800 px-3.5 py-2 rounded-2xl shadow-2xl flex items-center gap-2 pointer-events-auto">
-            <div class="flex items-center gap-1.5 pr-2 border-r border-slate-800 text-xs font-mono text-slate-400">
-                <span class="w-2 h-2 rounded-full bg-teal-400 animate-ping"></span>
-                <span>SIM ENGINE</span>
+        <!-- Bottom Map Legend -->
+        <div class="absolute bottom-3 left-3 z-20 bg-[#0C121E]/90 backdrop-blur border border-slate-800/80 px-3 py-2 rounded-lg shadow-md text-[11px] space-y-1 pointer-events-auto hidden sm:block">
+            <div class="font-semibold text-slate-300 text-[10px] uppercase tracking-wider mb-1">Campus Legend</div>
+            <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 border border-white"></span>
+                <span class="text-slate-300">Vehicle in Transit</span>
             </div>
-            
-            <button id="sim-play-btn" onclick="toggleSimulation()" class="w-8 h-8 rounded-lg bg-teal-500 hover:bg-teal-600 text-white flex items-center justify-center text-xs transition shadow-md shadow-teal-500/30">
-                <i class="fa-solid fa-play" id="sim-icon"></i>
-            </button>
-            <button onclick="stepSimulation()" title="Step 1 Tick" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-xs transition border border-slate-700">
-                <i class="fa-solid fa-forward-step"></i>
-            </button>
-
-            <div class="flex items-center bg-slate-800 rounded-lg p-0.5 border border-slate-700">
-                <button onclick="setSimSpeed(1.0)" id="spd-1x" class="px-2 py-1 rounded text-xs font-mono font-bold bg-teal-500 text-white transition">1x</button>
-                <button onclick="setSimSpeed(2.5)" id="spd-2x" class="px-2 py-1 rounded text-xs font-mono font-medium text-slate-400 hover:text-white transition">2.5x</button>
-                <button onclick="setSimSpeed(5.0)" id="spd-5x" class="px-2 py-1 rounded text-xs font-mono font-medium text-slate-400 hover:text-white transition">5x</button>
+            <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-600 border border-white"></span>
+                <span class="text-slate-300">Delivery Point</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-md bg-[#002147] border border-amber-400"></span>
+                <span class="text-slate-300">Central Campus Hub</span>
             </div>
         </div>
     </div>
-
-    <!-- Map Legend -->
-    <div class="absolute bottom-6 right-6 z-20 bg-slate-900/90 backdrop-blur-md border border-slate-800 p-3 rounded-xl shadow-xl text-xs space-y-1.5 pointer-events-auto">
-        <div class="font-bold text-amber-300 uppercase tracking-wider text-[10px] mb-1">UI Campus Map Legend</div>
-        <div class="flex items-center gap-2">
-            <span class="w-3 h-3 rounded-full bg-teal-500 border border-white"></span>
-            <span class="text-slate-300">UI Fleet Vehicle (Live GPS)</span>
-        </div>
-        <div class="flex items-center gap-2">
-            <span class="w-3 h-3 rounded-full bg-amber-500 border border-white"></span>
-            <span class="text-slate-300">Faculty / Department Delivery Stop</span>
-        </div>
-        <div class="flex items-center gap-2">
-            <span class="w-3 h-3 rounded-md bg-blue-600 border border-white"></span>
-            <span class="text-slate-300">Central Campus Logistics Depot</span>
-        </div>
-
-        <div class="flex items-center gap-2">
-            <span class="w-4 h-0.5 bg-amber-400"></span>
-            <span class="text-slate-300">Optimized Campus Logistics Route</span>
-        </div>
-    </div>
-
 </div>
 {% endblock %}
 

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<html lang="en" class="h-full bg-[#080C14] text-slate-100">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{% block title %}{{ app_name }}{% endblock %}</title>
     <link rel="icon" type="image/svg+xml" href="/static/images/ui_crest.svg">
     
@@ -14,18 +14,17 @@
             theme: {
                 extend: {
                     colors: {
-                        ui: {
-                            navy: '#002147',
-                            darknavy: '#00142b',
-                            gold: '#D4AF37',
-                            amber: '#f59e0b',
-                            blue: '#1e3a8a',
+                        navy: {
+                            950: '#070B12',
+                            900: '#0C121E',
+                            850: '#101726',
+                            800: '#141E30',
+                            700: '#1D2A42',
                         },
-                        brand: {
-                            50: '#f0fdfa',
-                            500: '#14b8a6',
-                            600: '#0d9488',
-                            700: '#0f766e',
+                        gold: {
+                            400: '#E6C665',
+                            500: '#D4AF37',
+                            600: '#B59226',
                         }
                     }
                 }
@@ -46,87 +45,111 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
-<body class="h-full flex flex-col font-sans antialiased overflow-hidden">
-    <!-- Top Navigation Bar -->
-    <header class="bg-[#001733] border-b border-amber-500/20 px-6 py-3 flex items-center justify-between z-30 shrink-0 shadow-lg">
-        <div class="flex items-center space-x-4">
-            <div class="flex items-center space-x-3.5">
-                <!-- University of Ibadan Crest / Logo -->
-                <div class="flex items-center gap-3">
-                    <img src="/static/images/ui_crest.svg" alt="University of Ibadan Crest" class="w-10 h-10 drop-shadow-md">
-                    <div class="h-8 w-px bg-slate-700/60 hidden sm:block"></div>
-                    <img src="/static/images/ui_logo.png" alt="University of Ibadan" class="h-8 max-w-[130px] object-contain hidden md:block brightness-110">
-                </div>
+<body class="h-full flex flex-col font-sans antialiased overflow-hidden selection:bg-amber-500/20 selection:text-amber-200">
+    <!-- Top Header Bar -->
+    <header class="bg-[#0C121E] border-b border-slate-800/80 px-4 sm:px-6 py-2.5 flex items-center justify-between z-30 shrink-0">
+        <!-- Brand & Institutional Identity -->
+        <div class="flex items-center space-x-3 sm:space-x-4">
+            <a href="/" class="flex items-center gap-2.5 sm:gap-3 group">
+                <img src="/static/images/ui_crest.svg" alt="University of Ibadan Crest" class="w-8 h-8 sm:w-9 sm:h-9">
                 <div>
-                    <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
-                        UI-FleetFlow
-                        <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-300 border border-amber-400/30 font-semibold uppercase tracking-wider">Academic Project</span>
-                    </h1>
-                    <p class="text-[11px] text-slate-400 flex items-center gap-1.5 font-medium">
-                        <span>Case Study: University of Ibadan Campus</span>
-                    </p>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-semibold tracking-tight text-white group-hover:text-amber-400 transition">UI-FleetFlow</span>
+                        <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700/60 font-medium uppercase tracking-wider hidden sm:inline-block">Academic Case Study</span>
+                    </div>
+                    <div class="text-[10px] text-slate-400 hidden sm:block">Campus Logistics & Real-Time Tracking</div>
                 </div>
-
-            </div>
+            </a>
         </div>
 
-        <!-- Navigation Links -->
-        <nav class="flex items-center space-x-1.5">
-            <a href="/" class="px-3.5 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 {% if active_tab == 'dashboard' %}bg-amber-500/15 text-amber-300 border border-amber-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/60{% endif %}">
-                <i class="fa-solid fa-map-location-dot text-amber-400"></i>
-                <span>Campus Live Map</span>
+        <!-- Desktop Navigation Links -->
+        <nav class="hidden lg:flex items-center space-x-1">
+            <a href="/" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 {% if active_tab == 'dashboard' %}bg-slate-800/90 text-white font-semibold border border-slate-700/80{% else %}text-slate-400 hover:text-white hover:bg-slate-800/40{% endif %}">
+                <i class="fa-solid fa-map-location-dot text-[11px] {% if active_tab == 'dashboard' %}text-amber-400{% endif %}"></i>
+                <span>Live Map</span>
             </a>
-            <a href="/vehicles" class="px-3.5 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 {% if active_tab == 'vehicles' %}bg-amber-500/15 text-amber-300 border border-amber-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/60{% endif %}">
-                <i class="fa-solid fa-truck text-amber-400"></i>
-                <span>UI Fleet & Drivers</span>
+            <a href="/vehicles" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 {% if active_tab == 'vehicles' %}bg-slate-800/90 text-white font-semibold border border-slate-700/80{% else %}text-slate-400 hover:text-white hover:bg-slate-800/40{% endif %}">
+                <i class="fa-solid fa-truck text-[11px] {% if active_tab == 'vehicles' %}text-amber-400{% endif %}"></i>
+                <span>Fleet & Drivers</span>
             </a>
-            <a href="/orders" class="px-3.5 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 {% if active_tab == 'orders' %}bg-amber-500/15 text-amber-300 border border-amber-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/60{% endif %}">
-                <i class="fa-solid fa-box-open text-amber-400"></i>
-                <span>Dispatches & Logistics</span>
+            <a href="/orders" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 {% if active_tab == 'orders' %}bg-slate-800/90 text-white font-semibold border border-slate-700/80{% else %}text-slate-400 hover:text-white hover:bg-slate-800/40{% endif %}">
+                <i class="fa-solid fa-box-open text-[11px] {% if active_tab == 'orders' %}text-amber-400{% endif %}"></i>
+                <span>Dispatches</span>
             </a>
-            <a href="/analytics" class="px-3.5 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 {% if active_tab == 'analytics' %}bg-amber-500/15 text-amber-300 border border-amber-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/60{% endif %}">
-                <i class="fa-solid fa-chart-line text-amber-400"></i>
-                <span>Analytics & Fuel KPIs</span>
+            <a href="/analytics" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 {% if active_tab == 'analytics' %}bg-slate-800/90 text-white font-semibold border border-slate-700/80{% else %}text-slate-400 hover:text-white hover:bg-slate-800/40{% endif %}">
+                <i class="fa-solid fa-chart-line text-[11px] {% if active_tab == 'analytics' %}text-amber-400{% endif %}"></i>
+                <span>Analytics</span>
             </a>
         </nav>
 
-        <!-- Right System Status & Quick Actions -->
-        <div class="flex items-center space-x-3">
-            <div id="ws-status" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700/80 text-xs font-mono text-slate-300">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="ws-status-text">Live Telemetry</span>
+        <!-- Right Utilities & Mobile Menu Button -->
+        <div class="flex items-center space-x-2 sm:space-x-2.5">
+            <div id="ws-status" class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                <span id="ws-status-text" class="hidden sm:inline">Live</span>
             </div>
-            <a href="/docs" target="_blank" class="px-3 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-xs font-medium text-slate-200 border border-slate-700 transition flex items-center gap-1.5">
-                <i class="fa-solid fa-code text-amber-400"></i>
-                <span>API Docs</span>
+
+            <a href="/docs" target="_blank" class="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-medium border border-slate-800 transition flex items-center gap-1.5">
+                <i class="fa-solid fa-code text-[10px] text-amber-400"></i>
+                <span class="hidden sm:inline">API</span>
             </a>
-            <button onclick="resetDemoData()" title="Reset to initial clean University of Ibadan data" class="px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-medium transition flex items-center gap-1.5">
-                <i class="fa-solid fa-rotate-left"></i>
-                <span>Reset Demo</span>
+
+            <button onclick="resetDemoData()" title="Reset to initial clean campus case study state" class="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-rose-950/40 text-rose-400 border border-slate-800 hover:border-rose-900/60 text-xs font-medium transition flex items-center gap-1.5">
+                <i class="fa-solid fa-rotate-left text-[10px]"></i>
+                <span class="hidden sm:inline">Reset</span>
+            </button>
+
+            <!-- Mobile Menu Toggle Button -->
+            <button onclick="toggleMobileMenu()" class="lg:hidden p-1.5 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-800">
+                <i class="fa-solid fa-bars text-sm"></i>
             </button>
         </div>
     </header>
 
-    <!-- Main Content Body -->
+    <!-- Mobile Dropdown Navigation -->
+    <div id="mobile-menu" class="hidden lg:hidden bg-[#0C121E] border-b border-slate-800 px-4 py-2.5 flex flex-col space-y-1 z-30 shrink-0">
+        <a href="/" class="px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2 {% if active_tab == 'dashboard' %}bg-slate-800 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">
+            <i class="fa-solid fa-map-location-dot text-amber-400 w-4"></i>
+            <span>Live Campus Map</span>
+        </a>
+        <a href="/vehicles" class="px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2 {% if active_tab == 'vehicles' %}bg-slate-800 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">
+            <i class="fa-solid fa-truck text-amber-400 w-4"></i>
+            <span>Fleet & Drivers</span>
+        </a>
+        <a href="/orders" class="px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2 {% if active_tab == 'orders' %}bg-slate-800 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">
+            <i class="fa-solid fa-box-open text-amber-400 w-4"></i>
+            <span>Dispatches & Logistics</span>
+        </a>
+        <a href="/analytics" class="px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2 {% if active_tab == 'analytics' %}bg-slate-800 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">
+            <i class="fa-solid fa-chart-line text-amber-400 w-4"></i>
+            <span>Analytics & KPIs</span>
+        </a>
+    </div>
+
+    <!-- Main Content Area -->
     <main class="flex-1 flex overflow-hidden relative">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Shared Notification Toast -->
-    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col space-y-2 pointer-events-none max-w-sm w-full px-4"></div>
 
-    <!-- Base Scripts -->
     <script src="/static/js/websocket.js"></script>
     <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            if (menu) menu.classList.toggle('hidden');
+        }
+
         async function resetDemoData() {
-            if (!confirm("Reset database to clean University of Ibadan campus fleet, drivers, and dispatch records?")) return;
+            if (!confirm("Reset database to clean initial campus case study data?")) return;
             try {
                 const res = await fetch('/api/analytics/seed/reset', { method: 'POST' });
                 if (res.ok) {
-                    showToast("University of Ibadan fleet data reset!", "success");
+                    showToast("Campus case study data reset successfully.", "success");
                     setTimeout(() => window.location.reload(), 800);
                 } else {
-                    showToast("Failed to reset UI fleet data.", "error");
+                    showToast("Failed to reset data.", "error");
                 }
             } catch (err) {
                 showToast("Network error resetting data.", "error");
@@ -136,18 +159,18 @@
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            const colors = {
-                success: 'bg-emerald-950 border-emerald-500/40 text-emerald-300',
-                error: 'bg-rose-950 border-rose-500/40 text-rose-300',
-                info: 'bg-[#001733] border-amber-500/40 text-amber-200'
+            const borderColors = {
+                success: 'border-emerald-500/40 text-emerald-200 bg-[#0A1612]',
+                error: 'border-rose-500/40 text-rose-200 bg-[#160A0A]',
+                info: 'border-slate-700 text-slate-200 bg-[#0F172A]'
             };
             const icons = {
-                success: 'fa-circle-check',
-                error: 'fa-triangle-exclamation',
-                info: 'fa-circle-info'
+                success: 'fa-check text-emerald-400',
+                error: 'fa-exclamation text-rose-400',
+                info: 'fa-info text-amber-400'
             };
-            toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border shadow-2xl transition-all duration-300 transform translate-y-2 opacity-0 text-sm ${colors[type] || colors.info}`;
-            toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.info}"></i> <span>${message}</span>`;
+            toast.className = `pointer-events-auto flex items-center gap-3 px-3.5 py-2.5 rounded-lg border shadow-xl transition-all duration-200 transform translate-y-2 opacity-0 text-xs ${borderColors[type] || borderColors.info}`;
+            toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.info}"></i> <span class="font-medium">${message}</span>`;
             container.appendChild(toast);
             
             requestAnimationFrame(() => {
@@ -155,8 +178,8 @@
             });
             setTimeout(() => {
                 toast.classList.add('opacity-0', 'translate-y-2');
-                setTimeout(() => toast.remove(), 300);
-            }, 4000);
+                setTimeout(() => toast.remove(), 250);
+            }, 3500);
         }
     </script>
     {% block scripts %}{% endblock %}

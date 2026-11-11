@@ -1,5 +1,5 @@
 /**
- * FleetFlow Live Operations Dashboard Controller
+ * UI-FleetFlow Live Operations Controller
  */
 
 let isSimulationRunning = false;
@@ -23,7 +23,7 @@ window.addEventListener('telemetry:event', (e) => {
         showToast(`Delivered: ${event.customer_name} (${event.vehicle_plate})`, 'success');
         refreshTopKPIs();
     } else if (event.type === 'route_completed') {
-        showToast(`Route completed by ${event.vehicle_plate}! Vehicle returned to hub.`, 'info');
+        showToast(`Route completed by ${event.vehicle_plate}! Returned to depot.`, 'info');
         refreshTopKPIs();
         if (window.fleetMap) {
             window.fleetMap.loadRoutesAndStops();
@@ -50,38 +50,36 @@ function renderSidebarVehicles(vehicles) {
         const isActive = v.status === 'in_transit';
         const isMaint = v.status === 'maintenance';
 
-        const statusClass = isActive 
-            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 animate-pulse'
-            : (isMaint ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-slate-800 text-slate-400 border-slate-700');
+        const statusBadge = isActive
+            ? '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 uppercase">In Transit</span>'
+            : (isMaint 
+                ? '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/30 uppercase">Maintenance</span>'
+                : '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-800 text-slate-300 border border-slate-700 uppercase">Idle</span>');
 
         const fuelColor = v.battery_fuel_pct > 50 ? 'bg-emerald-400' : (v.battery_fuel_pct > 20 ? 'bg-amber-400' : 'bg-rose-500');
 
         return `
-            <div class="bg-slate-950/70 border border-slate-800/80 hover:border-teal-500/40 rounded-xl p-3 text-xs space-y-2 transition shadow-sm group">
+            <div class="bg-slate-900/90 border border-slate-800 hover:border-slate-700 rounded-xl p-3 text-xs space-y-2.5 transition">
                 <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg bg-teal-500/10 text-teal-400 flex items-center justify-center font-bold text-xs">
-                            <i class="fa-solid fa-truck"></i>
+                    <div>
+                        <div class="font-bold text-white font-mono text-xs flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}"></span>
+                            ${v.plate_number}
                         </div>
-                        <div>
-                            <div class="font-bold text-white text-xs">${v.plate_number}</div>
-                            <div class="text-[10px] text-slate-400">${v.vehicle_type}</div>
-                        </div>
+                        <div class="text-[11px] text-slate-400 truncate max-w-[150px]">${v.model || v.vehicle_type}</div>
                     </div>
-                    <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold border ${statusClass} uppercase">
-                        ${v.status}
-                    </span>
+                    ${statusBadge}
                 </div>
 
-                <!-- Telemetry Stats Row -->
-                <div class="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-slate-900">
-                    <div>
-                        <span class="text-slate-500">Speed:</span>
-                        <span class="font-mono text-teal-400 font-bold ml-1">${v.speed_kmh} km/h</span>
+                <!-- Driver & Telemetry Row -->
+                <div class="grid grid-cols-2 gap-2 text-[11px] pt-1.5 border-t border-slate-800/80">
+                    <div class="text-slate-400">
+                        <span>Speed:</span>
+                        <span class="font-mono text-white font-semibold ml-1">${v.speed_kmh} km/h</span>
                     </div>
                     <div class="flex items-center justify-end gap-1.5">
-                        <span class="text-slate-500">Power:</span>
-                        <div class="w-10 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                        <span class="text-slate-400">Fuel:</span>
+                        <div class="w-8 h-1.5 bg-slate-800 rounded-full overflow-hidden">
                             <div class="h-full ${fuelColor}" style="width: ${v.battery_fuel_pct}%"></div>
                         </div>
                         <span class="font-mono text-slate-300 text-[10px]">${v.battery_fuel_pct}%</span>
@@ -90,21 +88,21 @@ function renderSidebarVehicles(vehicles) {
 
                 <!-- Next Stop & ETA -->
                 ${isActive ? `
-                    <div class="bg-slate-900/90 rounded-lg p-2 space-y-1 text-[11px]">
+                    <div class="bg-slate-950/70 border border-slate-800/70 rounded-lg p-2 text-[11px] space-y-0.5">
                         <div class="flex items-center justify-between text-slate-400 text-[10px]">
-                            <span>Next Drop-off:</span>
-                            <span class="text-teal-400 font-bold">ETA: ${v.eta_minutes}m</span>
+                            <span>Next Stop:</span>
+                            <span class="text-amber-400 font-mono font-semibold">ETA: ${v.eta_minutes}m</span>
                         </div>
                         <div class="text-white truncate font-medium text-[11px]">${v.next_stop_address}</div>
                     </div>
                 ` : `
-                    <div class="text-slate-500 text-[10px] italic">Idle at central logistics facility</div>
+                    <div class="text-slate-500 text-[10px]">Stationed at Central Logistics Yard</div>
                 `}
 
                 <!-- Focus Map Button -->
-                <button onclick="focusVehicle(${v.latitude}, ${v.longitude})" class="w-full py-1 rounded bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white text-[10px] font-medium border border-slate-800 flex items-center justify-center gap-1.5 transition">
-                    <i class="fa-solid fa-crosshairs text-teal-400"></i>
-                    <span>Track on Map</span>
+                <button onclick="focusVehicle(${v.latitude}, ${v.longitude})" class="w-full py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white text-[11px] font-medium border border-slate-700/60 flex items-center justify-center gap-1.5 transition">
+                    <i class="fa-solid fa-crosshairs text-amber-400"></i>
+                    <span>Focus on Map</span>
                 </button>
             </div>
         `;
@@ -186,10 +184,10 @@ function updateSimControls(running, speed) {
     if (playBtn && icon) {
         if (running) {
             icon.className = 'fa-solid fa-pause';
-            playBtn.className = 'w-8 h-8 rounded-lg bg-amber-500 hover:bg-amber-600 text-white flex items-center justify-center text-xs transition shadow-md shadow-amber-500/30';
+            playBtn.className = 'w-7 h-7 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 flex items-center justify-center text-xs transition';
         } else {
             icon.className = 'fa-solid fa-play';
-            playBtn.className = 'w-8 h-8 rounded-lg bg-teal-500 hover:bg-teal-600 text-white flex items-center justify-center text-xs transition shadow-md shadow-teal-500/30';
+            playBtn.className = 'w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center justify-center text-xs transition';
         }
     }
 
@@ -199,9 +197,9 @@ function updateSimControls(running, speed) {
         if (!btn) return;
         const targetSpeed = parseFloat(s.replace('x', ''));
         if (Math.abs(currentSimSpeed - targetSpeed) < 0.6) {
-            btn.className = 'px-2 py-1 rounded text-xs font-mono font-bold bg-teal-500 text-white transition';
+            btn.className = 'px-2 py-0.5 rounded text-[11px] font-mono font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 transition';
         } else {
-            btn.className = 'px-2 py-1 rounded text-xs font-mono font-medium text-slate-400 hover:text-white transition';
+            btn.className = 'px-2 py-0.5 rounded text-[11px] font-mono text-slate-400 hover:text-white transition';
         }
     });
 }
@@ -211,7 +209,7 @@ async function triggerOptimization() {
     const btn = document.getElementById('btn-quick-optimize');
     try {
         btn.disabled = true;
-        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i><span>Solving VRP...</span>`;
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i><span>Optimizing...</span>`;
         
         // 1. Optimize
         const optRes = await fetch('/api/routes/optimize', { method: 'POST' });
@@ -224,7 +222,7 @@ async function triggerOptimization() {
         // 2. Dispatch
         const dispRes = await fetch('/api/routes/dispatch-all', { method: 'POST' });
         if (dispRes.ok) {
-            showToast("Fleet optimized and dispatched successfully!", "success");
+            showToast("Campus routes solved and dispatched!", "success");
             if (window.fleetMap) {
                 window.fleetMap.loadRoutesAndStops();
             }
@@ -242,7 +240,7 @@ async function addSampleOrders() {
     try {
         const res = await fetch('/api/orders/batch-sample?count=5', { method: 'POST' });
         if (res.ok) {
-            showToast("Added 5 new sample orders to SF metro area!", "success");
+            showToast("Added 5 new campus consignments!", "success");
             if (window.fleetMap) {
                 window.fleetMap.loadRoutesAndStops();
             }

@@ -1,126 +1,105 @@
 {% extends "base.html" %}
 
-{% block title %}Orders & Dispatch Logistics - {{ app_name }}{% endblock %}
+{% block title %}Logistics & Dispatches - {{ app_name }}{% endblock %}
 
 {% block content %}
-<div class="flex-1 overflow-y-auto p-8 max-w-7xl mx-auto w-full space-y-6">
+<div class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
     <!-- Header with Action Buttons -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-800/80">
         <div>
-            <h2 class="text-2xl font-bold text-white tracking-tight flex items-center gap-2.5">
-                <span>Campus Logistics Dispatch & Route Optimization</span>
-                <span class="text-xs px-2.5 py-0.5 rounded-full bg-amber-400/10 text-amber-300 border border-amber-400/30 font-semibold">VRP Dispatch Desk</span>
-            </h2>
-            <p class="text-sm text-slate-400">Campus parcel distribution, Capacitated Vehicle Routing Problem (CVRP) optimizer, and dispatch control</p>
+            <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Campus Consignments & Dispatch</h2>
+            <p class="text-xs sm:text-sm text-slate-400 mt-0.5">Order queues, Capacitated Vehicle Routing Problem (CVRP) solver, and route dispatching</p>
         </div>
-
-        <div class="flex items-center gap-3">
-            <button onclick="addSampleOrders(5)" class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs border border-slate-700 flex items-center gap-2 transition">
-                <i class="fa-solid fa-dice text-amber-400"></i>
-                <span>+5 UI Dispatches</span>
+        <div class="flex flex-wrap items-center gap-2">
+            <button onclick="addSampleOrders(5)" class="px-3 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 font-medium text-xs border border-slate-800 flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-plus text-[10px] text-amber-400"></i>
+                <span>+5 Dispatches</span>
             </button>
-            <button onclick="openCreateOrderModal()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-slate-700 flex items-center gap-2 transition">
-                <i class="fa-solid fa-plus text-amber-400"></i>
+            <button onclick="openCreateOrderModal()" class="px-3 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 font-medium text-xs border border-slate-800 flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-pen text-[10px] text-amber-400"></i>
                 <span>New Consignment</span>
             </button>
-            <button onclick="optimizeAndDispatch()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-600 hover:to-yellow-600 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 flex items-center gap-2 transition active:scale-[0.98]">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                <span>Run VRP Campus Optimization & Dispatch</span>
+            <button onclick="optimizeAndDispatch()" class="px-3.5 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold text-xs shadow-sm flex items-center gap-1.5 transition active:scale-[0.99]">
+                <i class="fa-solid fa-wand-magic-sparkles text-[11px]"></i>
+                <span>Solve VRP & Dispatch</span>
             </button>
         </div>
     </div>
 
-
     <!-- Metrics Row -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center gap-4">
-            <div class="w-12 h-12 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center text-xl">
-                <i class="fa-solid fa-box-archive"></i>
-            </div>
-            <div>
-                <div class="text-xs text-slate-400 font-medium">Total Orders</div>
-                <div id="stat-ord-total" class="text-2xl font-bold text-white">0</div>
-            </div>
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div class="bg-[#0C121E] border border-slate-800/80 p-4 rounded-xl">
+            <div class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Total Consignments</div>
+            <div id="stat-ord-total" class="text-2xl font-bold font-mono text-white mt-1">0</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">All campus orders</div>
         </div>
 
-        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center gap-4">
-            <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-xl">
-                <i class="fa-solid fa-hourglass-start"></i>
-            </div>
-            <div>
-                <div class="text-xs text-slate-400 font-medium">Pending Dispatch</div>
-                <div id="stat-ord-pending" class="text-2xl font-bold text-white">0</div>
-            </div>
+        <div class="bg-[#0C121E] border border-slate-800/80 p-4 rounded-xl">
+            <div class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Pending Dispatch</div>
+            <div id="stat-ord-pending" class="text-2xl font-bold font-mono text-amber-400 mt-1">0</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">Awaiting VRP assignment</div>
         </div>
 
-        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center gap-4">
-            <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xl">
-                <i class="fa-solid fa-truck-fast"></i>
-            </div>
-            <div>
-                <div class="text-xs text-slate-400 font-medium">Active In Transit</div>
-                <div id="stat-ord-intransit" class="text-2xl font-bold text-white">0</div>
-            </div>
+        <div class="bg-[#0C121E] border border-slate-800/80 p-4 rounded-xl">
+            <div class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">In Transit</div>
+            <div id="stat-ord-intransit" class="text-2xl font-bold font-mono text-blue-400 mt-1">0</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">En route to faculty / hall</div>
         </div>
 
-        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center gap-4">
-            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl">
-                <i class="fa-solid fa-circle-check"></i>
-            </div>
-            <div>
-                <div class="text-xs text-slate-400 font-medium">Successfully Delivered</div>
-                <div id="stat-ord-delivered" class="text-2xl font-bold text-white">0</div>
-            </div>
+        <div class="bg-[#0C121E] border border-slate-800/80 p-4 rounded-xl">
+            <div class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Delivered</div>
+            <div id="stat-ord-delivered" class="text-2xl font-bold font-mono text-emerald-400 mt-1">0</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">Handed over to department</div>
         </div>
     </div>
 
     <!-- Active Optimization Routes Banner (if any) -->
-    <div id="active-routes-summary" class="hidden bg-slate-900 border border-teal-500/30 p-5 rounded-2xl shadow-xl space-y-3">
+    <div id="active-routes-summary" class="hidden bg-[#0C121E] border border-amber-500/40 p-4 rounded-xl space-y-3">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-                <i class="fa-solid fa-route text-teal-400"></i>
-                <h3 class="text-sm font-bold text-white uppercase tracking-wider">Optimized Fleet Routes</h3>
+                <i class="fa-solid fa-route text-amber-400 text-sm"></i>
+                <h3 class="text-xs font-semibold text-white uppercase tracking-wider">Optimized Route Solution</h3>
             </div>
-            <button onclick="dispatchActivePlan()" class="px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-xs shadow-md transition">
+            <button onclick="dispatchActivePlan()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs transition">
                 Confirm & Launch Dispatch
             </button>
         </div>
-        <div id="routes-cards-container" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
+        <div id="routes-cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
     </div>
 
     <!-- Orders Table Card -->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-        <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+    <div class="bg-[#0C121E] border border-slate-800/80 rounded-xl overflow-hidden shadow-sm">
+        <div class="p-4 border-b border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="flex items-center gap-2">
-                <span class="text-sm font-bold text-white uppercase tracking-wider">Order Ledger</span>
-                <span id="order-count-tag" class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">0 orders</span>
+                <span class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Consignment Ledger</span>
+                <span id="order-count-tag" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">0 consignments</span>
             </div>
             <!-- Filter by Status -->
-            <div class="flex items-center gap-2">
-                <button onclick="filterOrders('')" class="order-tab-btn active px-3 py-1.5 rounded-lg text-xs font-semibold bg-teal-500/20 text-teal-300 border border-teal-500/30">All</button>
-                <button onclick="filterOrders('pending')" class="order-tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white bg-slate-800">Pending</button>
-                <button onclick="filterOrders('in_transit')" class="order-tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white bg-slate-800">In Transit</button>
-                <button onclick="filterOrders('delivered')" class="order-tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white bg-slate-800">Delivered</button>
+            <div class="flex items-center gap-1.5 overflow-x-auto">
+                <button onclick="filterOrders('')" class="order-tab-btn active px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 text-white border border-slate-700">All</button>
+                <button onclick="filterOrders('pending')" class="order-tab-btn px-2.5 py-1 rounded text-xs font-medium text-slate-400 hover:text-white bg-slate-900">Pending</button>
+                <button onclick="filterOrders('in_transit')" class="order-tab-btn px-2.5 py-1 rounded text-xs font-medium text-slate-400 hover:text-white bg-slate-900">In Transit</button>
+                <button onclick="filterOrders('delivered')" class="order-tab-btn px-2.5 py-1 rounded text-xs font-medium text-slate-400 hover:text-white bg-slate-900">Delivered</button>
             </div>
         </div>
 
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
                 <thead>
-                    <tr class="bg-slate-950/50 border-b border-slate-800 text-slate-400 uppercase font-semibold">
-                        <th class="py-3.5 px-6">Tracking #</th>
-                        <th class="py-3.5 px-4">Customer & Phone</th>
-                        <th class="py-3.5 px-4">Delivery Address</th>
-                        <th class="py-3.5 px-4">Weight</th>
-                        <th class="py-3.5 px-4">Priority</th>
-                        <th class="py-3.5 px-4">Status</th>
-                        <th class="py-3.5 px-4">Assigned Route</th>
-                        <th class="py-3.5 px-6 text-right">Actions</th>
+                    <tr class="bg-slate-950/60 border-b border-slate-800/80 text-slate-400 uppercase font-semibold text-[11px]">
+                        <th class="py-3 px-4 sm:px-6">Tracking #</th>
+                        <th class="py-3 px-3 sm:px-4">Department / Unit</th>
+                        <th class="py-3 px-3 sm:px-4">Delivery Location</th>
+                        <th class="py-3 px-3 sm:px-4">Weight</th>
+                        <th class="py-3 px-3 sm:px-4">Priority</th>
+                        <th class="py-3 px-3 sm:px-4">Status</th>
+                        <th class="py-3 px-3 sm:px-4">Assigned Route</th>
+                        <th class="py-3 px-4 sm:px-6 text-right">Action</th>
                     </tr>
                 </thead>
                 <tbody id="order-table-body" class="divide-y divide-slate-800/60 font-medium">
                     <tr>
-                        <td colspan="8" class="text-center py-10 text-slate-500">Loading orders...</td>
+                        <td colspan="8" class="text-center py-8 text-slate-500">Loading consignments...</td>
                     </tr>
                 </tbody>
             </table>
@@ -129,42 +108,44 @@
 </div>
 
 <!-- Modal: Create Order -->
-<div id="create-order-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
-        <h3 class="text-lg font-bold text-white mb-1">Create Delivery Order</h3>
-        <p class="text-xs text-slate-400 mb-4">Add a new package request to the dispatch queue</p>
+<div id="create-order-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 hidden">
+    <div class="bg-[#0C121E] border border-slate-800 rounded-xl w-full max-w-md p-5 sm:p-6 shadow-2xl relative">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <h3 class="text-sm font-bold text-white">Create Campus Consignment</h3>
+            <button onclick="closeCreateOrderModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        </div>
 
-        <form id="create-order-form" onsubmit="submitOrderForm(event)" class="space-y-4 text-xs">
+        <form id="create-order-form" onsubmit="submitOrderForm(event)" class="space-y-3.5 text-xs pt-4">
             <div>
-                <label class="block text-slate-300 font-semibold mb-1">Receiving Faculty / Department / Unit</label>
-                <input type="text" id="ord-name" required placeholder="e.g. Faculty of Technology Mechanical Labs" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+                <label class="block text-slate-300 font-medium mb-1">Receiving Faculty / Department</label>
+                <input type="text" id="ord-name" required placeholder="e.g. Faculty of Technology Mechanical Labs" class="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
             </div>
             <div>
-                <label class="block text-slate-300 font-semibold mb-1">Department Desk / Contact Phone</label>
-                <input type="text" id="ord-phone" required placeholder="+234 803 555 0199" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+                <label class="block text-slate-300 font-medium mb-1">Contact Phone</label>
+                <input type="text" id="ord-phone" required placeholder="+234 803 555 0199" class="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-3 py-2 text-white font-mono focus:outline-none focus:border-amber-500">
             </div>
             <div>
-                <label class="block text-slate-300 font-semibold mb-1">Campus Delivery Address / Building</label>
-                <input type="text" id="ord-address" required placeholder="e.g. Civil Engineering Complex, UI Campus" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+                <label class="block text-slate-300 font-medium mb-1">Delivery Address / Building</label>
+                <input type="text" id="ord-address" required placeholder="e.g. Civil Engineering Complex, UI Campus" class="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
             </div>
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-slate-300 font-semibold mb-1">Latitude</label>
-                    <input type="number" step="0.00001" id="ord-lat" required value="7.4520" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+                    <label class="block text-slate-300 font-medium mb-1">Latitude</label>
+                    <input type="number" step="0.00001" id="ord-lat" required value="7.4520" class="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-3 py-2 text-white font-mono focus:outline-none focus:border-amber-500">
                 </div>
                 <div>
-                    <label class="block text-slate-300 font-semibold mb-1">Longitude</label>
-                    <input type="number" step="0.00001" id="ord-lng" required value="3.8985" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+                    <label class="block text-slate-300 font-medium mb-1">Longitude</label>
+                    <input type="number" step="0.00001" id="ord-lng" required value="3.8985" class="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-3 py-2 text-white font-mono focus:outline-none focus:border-amber-500">
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-slate-300 font-semibold mb-1">Consignment Weight (kg)</label>
-                    <input type="number" step="0.1" id="ord-weight" required min="0.5" max="2500" value="25.0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+                    <label class="block text-slate-300 font-medium mb-1">Weight (kg)</label>
+                    <input type="number" step="0.1" id="ord-weight" required min="0.5" max="2500" value="25.0" class="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-3 py-2 text-white font-mono focus:outline-none focus:border-amber-500">
                 </div>
                 <div>
-                    <label class="block text-slate-300 font-semibold mb-1">Logistics Priority</label>
-                    <select id="ord-prio" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+                    <label class="block text-slate-300 font-medium mb-1">Priority</label>
+                    <select id="ord-prio" class="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
                         <option value="low">Low</option>
                         <option value="medium" selected>Medium</option>
                         <option value="high">High</option>
@@ -172,12 +153,11 @@
                     </select>
                 </div>
             </div>
-            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
-                <button type="button" onclick="closeCreateOrderModal()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium">Cancel</button>
-                <button type="submit" class="px-5 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold">Queue Consignment</button>
+            <div class="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-800">
+                <button type="button" onclick="closeCreateOrderModal()" class="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium">Cancel</button>
+                <button type="submit" class="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold text-xs">Queue Consignment</button>
             </div>
         </form>
-
     </div>
 </div>
 {% endblock %}
@@ -214,49 +194,49 @@
 
     function renderOrders(orders) {
         const tbody = document.getElementById('order-table-body');
-        document.getElementById('order-count-tag').textContent = `${orders.length} orders`;
+        document.getElementById('order-count-tag').textContent = `${orders.length} consignments`;
 
         if (!orders.length) {
-            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-slate-500">No orders found.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-slate-500">No consignments found.</td></tr>`;
             return;
         }
 
         tbody.innerHTML = orders.map(o => {
             const statusBadges = {
-                'pending': '<span class="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">Pending</span>',
-                'assigned': '<span class="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">Assigned</span>',
-                'in_transit': '<span class="px-2.5 py-1 rounded-full bg-teal-500/10 text-teal-400 border border-teal-500/20 animate-pulse">In Transit</span>',
-                'delivered': '<span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Delivered</span>',
-                'cancelled': '<span class="px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20">Cancelled</span>'
+                'pending': '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30 uppercase">Pending</span>',
+                'assigned': '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/30 uppercase">Assigned</span>',
+                'in_transit': '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 uppercase">In Transit</span>',
+                'delivered': '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-800 text-slate-300 border border-slate-700 uppercase">Delivered</span>',
+                'cancelled': '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/30 uppercase">Cancelled</span>'
             };
 
             const prioBadges = {
                 'low': '<span class="text-slate-400">Low</span>',
-                'medium': '<span class="text-blue-400 font-semibold">Medium</span>',
+                'medium': '<span class="text-blue-400 font-medium">Medium</span>',
                 'high': '<span class="text-amber-400 font-semibold">High</span>',
-                'urgent': '<span class="text-rose-400 font-bold flex items-center gap-1"><i class="fa-solid fa-bolt"></i> Urgent</span>'
+                'urgent': '<span class="text-rose-400 font-bold">Urgent</span>'
             };
 
             return `
-                <tr class="hover:bg-slate-800/40 transition">
-                    <td class="py-4 px-6 font-mono font-bold text-white text-xs">${o.tracking_number}</td>
-                    <td class="py-4 px-4 text-slate-300">
-                        <div class="font-semibold text-white">${o.customer_name}</div>
+                <tr class="table-row-hover transition">
+                    <td class="py-3 px-4 sm:px-6 font-mono font-bold text-white text-xs">${o.tracking_number}</td>
+                    <td class="py-3 px-3 sm:px-4 text-slate-300">
+                        <div class="font-medium text-white">${o.customer_name}</div>
                         <div class="text-slate-500 text-[11px] font-mono">${o.customer_phone}</div>
                     </td>
-                    <td class="py-4 px-4 text-slate-300 max-w-xs truncate" title="${o.delivery_address}">
+                    <td class="py-3 px-3 sm:px-4 text-slate-300 max-w-xs truncate" title="${o.delivery_address}">
                         <div class="truncate">${o.delivery_address}</div>
                         <div class="text-slate-500 text-[10px] font-mono">${o.destination_lat.toFixed(4)}, ${o.destination_lng.toFixed(4)}</div>
                     </td>
-                    <td class="py-4 px-4 font-mono text-slate-300">${o.weight_kg} kg</td>
-                    <td class="py-4 px-4">${prioBadges[o.priority] || o.priority}</td>
-                    <td class="py-4 px-4">${statusBadges[o.status] || o.status}</td>
-                    <td class="py-4 px-4 text-slate-300 font-mono text-[11px]">
+                    <td class="py-3 px-3 sm:px-4 font-mono text-slate-300">${o.weight_kg} kg</td>
+                    <td class="py-3 px-3 sm:px-4">${prioBadges[o.priority] || o.priority}</td>
+                    <td class="py-3 px-3 sm:px-4">${statusBadges[o.status] || o.status}</td>
+                    <td class="py-3 px-3 sm:px-4 text-slate-300 font-mono text-[11px]">
                         ${o.assigned_route_id ? `Route #${o.assigned_route_id} (Stop ${o.stop_order})` : '<span class="text-slate-600">Unassigned</span>'}
                     </td>
-                    <td class="py-4 px-6 text-right">
+                    <td class="py-3 px-4 sm:px-6 text-right">
                         ${o.status === 'pending' ? `
-                            <button onclick="cancelOrder(${o.id})" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 transition">
+                            <button onclick="cancelOrder(${o.id})" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-800 text-rose-400 border border-slate-700 hover:bg-rose-950/40 transition">
                                 Cancel
                             </button>
                         ` : '-'}
@@ -269,11 +249,11 @@
     function filterOrders(status) {
         currentFilter = status;
         document.querySelectorAll('.order-tab-btn').forEach(btn => {
-            btn.classList.remove('active', 'bg-teal-500/20', 'text-teal-300', 'border-teal-500/30');
-            btn.classList.add('bg-slate-800', 'text-slate-400');
+            btn.classList.remove('active', 'bg-slate-800', 'text-white', 'border-slate-700');
+            btn.classList.add('bg-slate-900', 'text-slate-400');
         });
-        event.target.classList.add('active', 'bg-teal-500/20', 'text-teal-300', 'border-teal-500/30');
-        event.target.classList.remove('bg-slate-800', 'text-slate-400');
+        event.target.classList.add('active', 'bg-slate-800', 'text-white', 'border', 'border-slate-700');
+        event.target.classList.remove('bg-slate-900', 'text-slate-400');
         loadOrders();
     }
 
@@ -281,17 +261,17 @@
         try {
             const res = await fetch(`/api/orders/batch-sample?count=${count}`, { method: 'POST' });
             if (res.ok) {
-                showToast(`Added ${count} sample orders!`, "success");
+                showToast(`Added ${count} sample campus dispatches`, "success");
                 loadOrders();
             }
         } catch (err) {
-            showToast("Failed to spawn sample orders", "error");
+            showToast("Failed to spawn sample dispatches", "error");
         }
     }
 
     async function optimizeAndDispatch() {
         try {
-            showToast("Running Clarke-Wright VRP solver...", "info");
+            showToast("Running Clarke-Wright CVRP algorithm...", "info");
             const res = await fetch('/api/routes/optimize', { method: 'POST' });
             if (!res.ok) {
                 const err = await res.json();
@@ -299,7 +279,7 @@
                 return;
             }
             const routes = await res.json();
-            showToast(`Optimization complete! ${routes.length} vehicle routes planned.`, "success");
+            showToast(`Optimization complete: ${routes.length} vehicle routes calculated.`, "success");
 
             // Display routes summary banner
             const summaryDiv = document.getElementById('active-routes-summary');
@@ -307,14 +287,14 @@
             summaryDiv.classList.remove('hidden');
 
             container.innerHTML = routes.map(r => `
-                <div class="bg-slate-950/80 border border-slate-800 p-3.5 rounded-xl text-xs space-y-1.5">
-                    <div class="flex items-center justify-between font-bold">
-                        <span class="text-teal-400">Route #${r.id}</span>
-                        <span class="text-white">${r.vehicle_plate || 'Assigned'}</span>
+                <div class="bg-slate-950 border border-slate-800 p-3 rounded-lg text-xs space-y-1">
+                    <div class="flex items-center justify-between font-semibold">
+                        <span class="text-amber-400">Route #${r.id}</span>
+                        <span class="text-white font-mono">${r.vehicle_plate || 'Assigned'}</span>
                     </div>
-                    <div class="text-slate-400">Stops: <span class="text-white font-semibold">${r.stops_count}</span></div>
-                    <div class="text-slate-400">Total Distance: <span class="text-white font-semibold">${r.total_distance_km} km</span></div>
-                    <div class="text-slate-400">Est. Duration: <span class="text-white font-semibold">${r.estimated_duration_mins} mins</span></div>
+                    <div class="text-slate-400">Stops: <span class="text-white font-mono">${r.stops_count}</span></div>
+                    <div class="text-slate-400">Distance: <span class="text-white font-mono">${r.total_distance_km} km</span></div>
+                    <div class="text-slate-400">Est. Duration: <span class="text-white font-mono">${r.estimated_duration_mins} mins</span></div>
                 </div>
             `).join('');
 
@@ -328,8 +308,8 @@
         try {
             const res = await fetch('/api/routes/dispatch-all', { method: 'POST' });
             if (res.ok) {
-                showToast("Fleet successfully dispatched! Simulation active.", "success");
-                setTimeout(() => window.location.href = '/', 1200);
+                showToast("Fleet dispatched! Campus simulation active.", "success");
+                setTimeout(() => window.location.href = '/', 1000);
             } else {
                 const err = await res.json();
                 showToast(err.detail || "Dispatch failed", "error");
@@ -340,15 +320,15 @@
     }
 
     async function cancelOrder(id) {
-        if (!confirm("Are you sure you want to cancel this order?")) return;
+        if (!confirm("Cancel this consignment request?")) return;
         try {
             const res = await fetch(`/api/orders/${id}`, { method: 'DELETE' });
             if (res.ok) {
-                showToast("Order cancelled", "info");
+                showToast("Consignment cancelled", "info");
                 loadOrders();
             }
         } catch (err) {
-            showToast("Failed to cancel order", "error");
+            showToast("Failed to cancel consignment", "error");
         }
     }
 
@@ -379,15 +359,15 @@
                 body: JSON.stringify(payload)
             });
             if (res.ok) {
-                showToast("New order placed in queue!", "success");
+                showToast("Consignment queued successfully", "success");
                 closeCreateOrderModal();
                 loadOrders();
             } else {
                 const err = await res.json();
-                showToast(err.detail || "Error creating order", "error");
+                showToast(err.detail || "Error creating consignment", "error");
             }
         } catch (err) {
-            showToast("Network error creating order", "error");
+            showToast("Network error creating consignment", "error");
         }
     }
 
