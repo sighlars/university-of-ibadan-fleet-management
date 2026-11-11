@@ -266,6 +266,14 @@ All 12 unit and integration tests will execute.
 
 ---
 
-## 📄 Open-Source License
+## 📄 Open-Source License & Copyright
 
 This project is licensed under the [MIT License](LICENSE) — free and open for educational, academic, and research use.
+
+<br/>
+
+<div align="center">
+  <p><b>Fleet Management System for a Delivery Company</b></p>
+  <p><i>Sub-topic: Optimizing Logistics and Real-Time Tracking — Case Study of the University of Ibadan Campus Delivery Network</i></p>
+  <p><sub>© 2026 University of Ibadan Delivery Logistics Research Project. Built with FastAPI, Three.js & shadcn/ui. Independent Academic School Project.</sub></p>
+</div>
