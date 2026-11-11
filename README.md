@@ -1,37 +1,43 @@
-# 🚚 UI-FleetFlow — Campus Fleet & Logistics Management System
-
 <div align="center">
-  <img src="app/static/images/ui_logo.png" alt="University of Ibadan Logo" width="340"/>
-  <br/>
-  <h2><b>Intelligent Campus Fleet & Logistics Management System</b></h2>
-  <p><b>Academic Case Study: University of Ibadan (UI), Ibadan, Nigeria</b></p>
-  <p><i>Real-Time 3D Digital Twin • Autonomous CVRP Dispatch Solver • Live Telematics</i></p>
+  <img src="app/static/images/ui_logo.png" alt="University of Ibadan Crest" width="220"/>
+  <br/><br/>
+  <h1>UI-FleetFlow</h1>
+  <p><b>Intelligent Campus Fleet & Logistics Management System</b><br/>
+  <i>Academic Case Study: University of Ibadan (UI), Ibadan, Nigeria</i><br/>
+  Real-Time 3D Digital Twin • Autonomous CVRP Dispatch Solver • High-Frequency Telematics</p>
 
-  <br/>
+  <p>
+    <a href="https://university-of-ibadan-fleet-management.onrender.com/" target="_blank">
+      <img src="https://img.shields.io/badge/🎮%20LAUNCH%20LIVE%203D%20SIMULATION-EXPLORE%20CAMPUS%20TWIN-002147?style=for-the-badge&logo=threedotjs&logoColor=F59E0B&labelColor=001633" alt="Launch Live 3D Simulation" height="42"/>
+    </a>
+  </p>
 
-  <a href="https://university-of-ibadan-fleet-management.onrender.com/" target="_blank">
-    <img src="https://img.shields.io/badge/🎮%20LAUNCH%20LIVE%203D%20SIMULATION-EXPLORE%20CAMPUS%20TWIN-002147?style=for-the-badge&logo=threedotjs&logoColor=F59E0B&labelColor=001633" alt="Launch Live 3D Simulation" height="42"/>
-  </a>
-  <br/>
-  <sub>⚡ <b>Direct Live Demo:</b> <a href="https://university-of-ibadan-fleet-management.onrender.com/" target="_blank">https://university-of-ibadan-fleet-management.onrender.com/</a> — Free instant access in any browser, zero install or login required.</sub>
+  <p>
+    <a href="https://university-of-ibadan-fleet-management.onrender.com/"><img src="https://img.shields.io/badge/Live%20Simulation-Online%20Now-10B981.svg?style=flat-square&logo=googlechrome&logoColor=white" alt="Live Simulation"/></a>
+    <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.10+-3776AB.svg?style=flat-square&logo=python&logoColor=white" alt="Python 3.10+"/></a>
+    <a href="https://fastapi.tiangolo.com"><img src="https://img.shields.io/badge/FastAPI-0.115+-009688.svg?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI"/></a>
+    <a href="https://threejs.org/"><img src="https://img.shields.io/badge/Three.js-WebGL%203D-049EF4.svg?style=flat-square&logo=threedotjs&logoColor=white" alt="Three.js"/></a>
+    <a href="https://ui.shadcn.com/"><img src="https://img.shields.io/badge/shadcn%2Fui-Components-000000.svg?style=flat-square&logo=shadcnui&logoColor=white" alt="shadcn/ui"/></a>
+    <a href="https://www.sqlite.org/"><img src="https://img.shields.io/badge/Database-SQLite-003B57.svg?style=flat-square&logo=sqlite&logoColor=white" alt="SQLite"/></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" alt="License"/></a>
+    <img src="https://img.shields.io/badge/Tests-12%20Passing-brightgreen.svg?style=flat-square" alt="Tests"/>
+  </p>
+
+  <p>
+    <a href="#-user-interface-showcase">Showcase</a> •
+    <a href="#-project-overview">Project Overview</a> •
+    <a href="#-case-study-campus-landmarks">Campus Landmarks</a> •
+    <a href="#-logistics--optimization-engine-vrp">VRP Heuristics</a> •
+    <a href="#-system-architecture">Architecture</a> •
+    <a href="#-quick-start-guide">Quickstart</a> •
+    <a href="#-live-interactive-platform">Live Links</a>
+  </p>
 </div>
 
 ---
 
-> [!IMPORTANT]
-> **Academic Project Disclaimer**: This software is an independent student academic school project and open-source demonstration built for educational and research purposes. It is **not** an officially commissioned, endorsed, or affiliated platform of the University of Ibadan administration or any university directorate. All campus landmarks and facilities are referenced solely as an academic case study for urban/campus logistics modeling.
-
----
-
-[![Live Demo](https://img.shields.io/badge/Live%20Simulation-Online%20Now-10B981.svg?logo=googlechrome&logoColor=white)](https://university-of-ibadan-fleet-management.onrender.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![Three.js](https://img.shields.io/badge/Three.js-WebGL%203D-049EF4.svg?logo=threedotjs&logoColor=white)](https://threejs.org/)
-[![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-Components-000000.svg?logo=shadcnui&logoColor=white)](https://ui.shadcn.com/)
-[![SQLite](https://img.shields.io/badge/Database-SQLite-003B57.svg?logo=sqlite&logoColor=white)](https://www.sqlite.org/)
-[![Leaflet.js](https://img.shields.io/badge/GIS%20Maps-Leaflet.js-199900.svg?logo=leaflet&logoColor=white)](https://leafletjs.com/)
-[![Tests](https://img.shields.io/badge/Tests-12%20Passing-brightgreen.svg)]()
+> [!NOTE]
+> **Academic Project Note**: UI-FleetFlow is an independent student academic school project modeling campus-scale urban logistics and telematics. It is not an officially affiliated platform of the University of Ibadan administration; all campus facilities and landmarks are studied as an empirical case study for logistics optimization.
 
 ---
 
@@ -109,11 +115,12 @@ Given a central logistics depot $D$ and delivery points $i, j$:
 
 ```mermaid
 flowchart TD
-    subgraph Frontend["Frontend Client (Browser)"]
-        UI["Operations Dashboard (Tailwind CSS)"]
-        Map["Leaflet.js Interactive Map"]
+    subgraph Frontend["Modern Web Client (Browser)"]
+        UI["shadcn/ui + Tailwind CSS Interfaces"]
+        Twin["Three.js 3D Digital Twin & Procedural Fleets"]
+        Map["Leaflet.js GIS 2D Operations View"]
         WS["WebSocket Telemetry Client (websocket.js)"]
-        Charts["Performance Charts (Chart.js)"]
+        Charts["Analytics & SLA KPIs (Chart.js)"]
     end
 
     subgraph Backend["FastAPI Backend Server"]
@@ -128,7 +135,7 @@ flowchart TD
         end
     end
 
-    subgraph Database["Persistence"]
+    subgraph Database["Persistence Layer"]
         DB[(SQLite - fleet.db)]
         ORM["SQLAlchemy Models"]
     end
@@ -140,8 +147,9 @@ flowchart TD
     Sim -->|Telemetry Ticks| ORM
     Sim -->|Broadcasts Data| WSMgr
     WSMgr -->|Live JSON Packets| WS
+    WS -->|Real-Time Coordinates| Twin
     WS -->|Live Vehicle Markers| Map
-    WS -->|Metrics Feed| Charts
+    WS -->|Metrics Stream| Charts
 ```
 
 ---
@@ -196,20 +204,6 @@ When running locally, open your browser to:
 - **Analytics & SLA KPIs**: [http://localhost:8000/analytics](http://localhost:8000/analytics)
 - **Interactive API Documentation (Docs)**: [http://localhost:8000/docs](http://localhost:8000/docs)
 - **ReDoc Specification**: [http://localhost:8000/redoc](http://localhost:8000/redoc)
-
-### 4. Remote Tunneling with ngrok
-
-To expose the application over the internet to mobile or external devices:
-
-```bash
-# Point ngrok directly to the local port:
-ngrok http 127.0.0.1:8000
-```
-
-> [!TIP]
-> - Always point ngrok to the same port as FastAPI (`8000` by default).
-> - If you want FastAPI to run on port `8080` instead, set `PORT=8080 python run.py` and run `ngrok http 127.0.0.1:8080`.
-> - CORS and proxy headers are pre-configured so WebSockets and tile streams work through ngrok without restrictions.
 
 ---
 

@@ -77,7 +77,7 @@ class Campus3DEngine {
 
         // 2. Camera: Wide-angle perspective overlooking campus (isometric 3D Google Maps style)
         this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 4500);
-        this.camera.position.set(0, 240, 340);
+        this.camera.position.set(0, 150, 210);
 
         // 3. WebGL Renderer with PBR tone mapping & soft shadows
         this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
@@ -1341,7 +1341,7 @@ class Campus3DEngine {
     setCameraPreset(preset) {
         this.unlockFollow(false);
         if (preset === 'bird') {
-            this.camera.position.set(0, 240, 340);
+            this.camera.position.set(0, 150, 210);
             this.controls.target.set(0, 0, 0);
         } else if (preset === 'street') {
             this.camera.position.set(0, 24, 70);
