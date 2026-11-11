@@ -48,9 +48,8 @@ function renderSidebarVehicles(vehicles) {
     if (floatBadge) {
         floatBadge.textContent = `${activeCount} in Transit`;
     }
-    const sidebar = document.getElementById('fleet-sidebar');
-    if (mobileText && sidebar && sidebar.classList.contains('max-h-[52px]')) {
-        mobileText.textContent = `View All (${vehicles.length})`;
+    if (typeof window.renderDrawerVehicles === 'function') {
+        window.renderDrawerVehicles(vehicles);
     }
 
     if (vehicles.length === 0) {
@@ -130,8 +129,8 @@ function renderSidebarVehicles(vehicles) {
 let lastVehiclesCache = [];
 
 function openVehicleInspectorFromCard(plateNumber) {
-    if (window.innerWidth < 1024 && typeof toggleMobileTelematics === 'function') {
-        toggleMobileTelematics(false);
+    if (typeof closeShadcnDrawer === 'function') {
+        closeShadcnDrawer();
     }
     const veh = lastVehiclesCache.find(v => v.plate_number === plateNumber);
     if (veh && typeof open3DVehicleInspector === 'function') {
@@ -141,8 +140,8 @@ function openVehicleInspectorFromCard(plateNumber) {
 
 
 function focusVehicle(lat, lng) {
-    if (window.innerWidth < 1024 && typeof toggleMobileTelematics === 'function') {
-        toggleMobileTelematics(false);
+    if (typeof closeShadcnDrawer === 'function') {
+        closeShadcnDrawer();
     }
     if (window.campus3D && typeof window.campus3D.gpsToWorld === 'function') {
         const wPos = window.campus3D.gpsToWorld(lat, lng);

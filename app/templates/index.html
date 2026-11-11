@@ -4,21 +4,16 @@
 
 {% block content %}
 <div class="relative w-full h-full flex flex-col lg:flex-row overflow-hidden bg-slate-100">
-    <!-- Desktop Left Sidebar / Mobile Sliding Telematics Bottom Drawer -->
-    <aside id="fleet-sidebar" class="fixed lg:static inset-x-0 bottom-0 z-30 w-full lg:w-80 xl:w-96 bg-white border-t lg:border-t-0 lg:border-r border-slate-200/90 shadow-2xl lg:shadow-none flex flex-col shrink-0 max-h-[52px] lg:max-h-full transition-all duration-300 ease-in-out">
-        <!-- Sidebar Header & Mobile Telematics Dock Bar -->
-        <div onclick="toggleMobileTelematics()" class="p-3.5 border-b border-slate-200/90 flex items-center justify-between shrink-0 bg-slate-50/95 cursor-pointer lg:cursor-default select-none">
+    <!-- Desktop Left Sidebar (hidden on mobile, mobile uses classic shadcn bottom sheet) -->
+    <aside id="fleet-sidebar" class="hidden lg:flex w-80 xl:w-96 bg-white border-r border-slate-200/90 z-20 flex-col shrink-0 h-full transition-all duration-300 shadow-sm">
+        <!-- Sidebar Header -->
+        <div class="p-3.5 border-b border-slate-200/90 flex items-center justify-between shrink-0 bg-slate-50/80">
             <div class="flex items-center gap-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 <h2 class="text-xs font-bold uppercase tracking-wider text-uinavy">Campus Telematics</h2>
-                <span id="vehicle-count-badge" class="px-2 py-0.5 rounded text-[11px] font-mono bg-white text-slate-700 border border-slate-200 shadow-2xs">0 Active</span>
             </div>
-            <!-- Mobile Toggle Indicator & Expand Pill -->
-            <div class="lg:hidden flex items-center gap-1.5">
-                <span class="text-[11px] font-semibold text-uinavy bg-uinavy-50 border border-uinavy-200 px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-2xs">
-                    <span id="mobile-telematics-text">View All Telematics</span>
-                    <i id="mobile-telematics-chevron" class="fa-solid fa-chevron-up text-[10px] transition-transform duration-300"></i>
-                </span>
+            <div class="flex items-center gap-2">
+                <span id="vehicle-count-badge" class="px-2 py-0.5 rounded text-[11px] font-mono bg-white text-slate-700 border border-slate-200 shadow-xs">0 Active</span>
             </div>
         </div>
 
@@ -73,10 +68,10 @@
         </div>
 
         <!-- Mobile Floating Telematics Trigger Button -->
-        <button id="mobile-floating-telematics-btn" onclick="toggleMobileTelematics(true)" class="lg:hidden absolute bottom-16 right-3 z-20 px-3.5 py-2 rounded-full bg-uinavy text-white text-xs font-bold shadow-lg flex items-center gap-2 border border-amber-400/80 active:scale-95 transition pointer-events-auto">
+        <button id="mobile-floating-telematics-btn" onclick="openShadcnDrawer('transit')" class="lg:hidden absolute bottom-5 right-3 z-20 px-3.5 py-2.5 rounded-full bg-uinavy text-white text-xs font-bold shadow-xl flex items-center gap-2 border border-amber-400/80 active:scale-95 transition pointer-events-auto">
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
             <i class="fa-solid fa-truck-fast text-uigold-light"></i>
-            <span id="floating-veh-count">Fleet Telematics</span>
+            <span id="floating-veh-count">Fleet in Transit</span>
         </button>
 
         <!-- Top Floating HUD: View Switcher, Camera Presets, Telemetry & Simulation Deck -->
@@ -104,12 +99,13 @@
                     <button onclick="setCameraAngle('top')" class="px-1.5 py-0.5 rounded text-[11px] hover:text-uinavy hover:bg-slate-100 transition font-medium">Top Down</button>
                 </div>
 
-                <!-- Live Transit Stats -->
-                <div class="bg-white/95 backdrop-blur border border-slate-200 px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-2 text-xs">
+                <!-- Live Transit Stats - Opens Shadcn Bottom Sheet Drawer -->
+                <button onclick="openShadcnDrawer('transit')" title="Open Fleet in Transit (Bottom Drawer)" class="bg-white/95 backdrop-blur border border-slate-200 hover:border-uinavy/40 hover:bg-white px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-1.5 text-xs transition cursor-pointer pointer-events-auto">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span class="text-[11px] text-slate-500">Transit:</span>
+                    <span class="text-[11px] text-slate-500 font-medium">In Transit:</span>
                     <span id="stat-in-transit" class="font-mono text-xs font-bold text-slate-900">0</span>
-                </div>
+                    <i class="fa-solid fa-chevron-up text-[9px] text-slate-400 ml-0.5"></i>
+                </button>
 
                 <!-- Active 3D Chase Camera Lock Badge (Visible only when tracking a vehicle) -->
                 <div id="camera-lock-pill" class="hidden bg-uinavy text-white px-2.5 py-1 rounded-lg border border-amber-400/80 shadow-md items-center gap-2 text-xs">
@@ -219,7 +215,72 @@
 </div>
 
 <!-- ======================================================== -->
-<!-- 3D VEHICLE INSPECTION & SKETCHFAB GAME-READY CARS MODAL -->
+<!-- CLASSIC SHADCN/UI BOTTOM SHEET / DRAWER (FLEET IN TRANSIT) -->
+<!-- ======================================================== -->
+<div id="shadcn-drawer-root" class="fixed inset-0 z-50 pointer-events-none transition-all duration-300">
+    <!-- Drawer Overlay (Backdrop) -->
+    <div id="shadcn-drawer-overlay" onclick="closeShadcnDrawer()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs opacity-0 transition-opacity duration-300 pointer-events-none"></div>
+
+    <!-- Drawer Content (Bottom Sheet) -->
+    <div id="shadcn-drawer-content" class="fixed inset-x-0 bottom-0 z-50 flex flex-col max-h-[86vh] sm:max-h-[80vh] max-w-2xl mx-auto rounded-t-[20px] border-t border-x border-slate-200/90 bg-white shadow-2xl translate-y-full transition-transform duration-300 ease-out pointer-events-auto overflow-hidden">
+        <!-- Shadcn Drawer Drag Handle Indicator -->
+        <div class="mx-auto mt-3 h-1.5 w-12 rounded-full bg-slate-300 shrink-0"></div>
+
+        <!-- Drawer Header -->
+        <div class="px-5 pt-3 pb-3 border-b border-slate-100 flex items-start justify-between shrink-0">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <h3 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">Campus Fleet in Transit</h3>
+                    <!-- Shadcn Badge -->
+                    <span id="drawer-active-badge" class="inline-flex items-center rounded-md border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-mono font-semibold text-emerald-700">6 in Transit</span>
+                </div>
+                <p class="text-xs text-slate-500 mt-0.5">Real-time GPS telematics, speed, fuel meters, and CVRP routes across University of Ibadan.</p>
+            </div>
+            <button onclick="closeShadcnDrawer()" class="p-1.5 -mr-1 text-slate-400 hover:text-slate-800 rounded-lg hover:bg-slate-100 transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <!-- Drawer Filter Tabs Toolbar -->
+        <div class="px-5 py-2 border-b border-slate-100 bg-slate-50/60 flex items-center justify-between shrink-0">
+            <div class="flex items-center gap-1.5">
+                <button onclick="setDrawerFilter('transit')" id="drawer-tab-transit" class="px-3 py-1 rounded-md text-xs font-semibold bg-uinavy text-white shadow-xs transition">In Transit</button>
+                <button onclick="setDrawerFilter('all')" id="drawer-tab-all" class="px-3 py-1 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">All Fleet (<span id="drawer-total-count">6</span>)</button>
+                <button onclick="setDrawerFilter('idle')" id="drawer-tab-idle" class="px-3 py-1 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">Stationed / Bay</button>
+            </div>
+            <div class="text-[11px] font-mono text-slate-400 hidden sm:block">Live Sync</div>
+        </div>
+
+        <!-- Drawer Body: Vehicle Cards List -->
+        <div id="drawer-vehicle-list" class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3">
+            <div class="text-center py-8 text-slate-400 text-xs">
+                <i class="fa-solid fa-circle-notch fa-spin text-base mb-1.5 text-uinavy"></i>
+                <p>Loading telematics stream...</p>
+            </div>
+        </div>
+
+        <!-- Drawer Footer: Action Controls -->
+        <div class="p-4 border-t border-slate-100 bg-slate-50/80 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <button onclick="triggerOptimization(); closeShadcnDrawer();" class="flex-1 sm:flex-none py-2 px-3.5 rounded-lg bg-uinavy hover:bg-uinavy-light text-white font-semibold text-xs transition flex items-center justify-center gap-2 shadow-xs active:scale-[0.99]">
+                    <i class="fa-solid fa-wand-magic-sparkles text-[10px] text-uigold-light"></i>
+                    <span>Optimize & Dispatch (CVRP)</span>
+                </button>
+                <button onclick="addSampleOrders(5)" class="py-2 px-3 rounded-lg bg-white hover:bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200 flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-plus text-[10px] text-slate-400"></i>
+                    <span>+5 Orders</span>
+                </button>
+            </div>
+            <button onclick="closeShadcnDrawer()" class="w-full sm:w-auto py-2 px-4 rounded-lg bg-white hover:bg-slate-100 text-slate-700 font-medium text-xs border border-slate-200 transition">
+                Close Drawer
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- 3D VEHICLE INSPECTION & PROCEDURAL ASSETS TURNTABLE MODAL -->
 <!-- ======================================================== -->
 <div id="inspector-3d-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-3 sm:p-5 hidden">
     <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl relative">
@@ -402,36 +463,199 @@
         }
     });
 
-    // Mobile Telematics Bottom Sheet Drawer Toggle
-    function toggleMobileTelematics(forceOpen = null) {
-        if (window.innerWidth >= 1024) return;
-        const sidebar = document.getElementById('fleet-sidebar');
-        const textEl = document.getElementById('mobile-telematics-text');
-        const chevron = document.getElementById('mobile-telematics-chevron');
-        const floatBtn = document.getElementById('mobile-floating-telematics-btn');
-        if (!sidebar) return;
+    // ==========================================
+    // CLASSIC SHADCN/UI BOTTOM SHEET CONTROLLER
+    // ==========================================
+    let currentDrawerFilter = 'transit';
 
-        const isCollapsed = sidebar.classList.contains('max-h-[52px]');
-        const shouldOpen = forceOpen !== null ? forceOpen : isCollapsed;
+    function openShadcnDrawer(filter = 'transit') {
+        setDrawerFilter(filter);
+        const root = document.getElementById('shadcn-drawer-root');
+        const overlay = document.getElementById('shadcn-drawer-overlay');
+        const content = document.getElementById('shadcn-drawer-content');
+        if (!root || !overlay || !content) return;
 
-        if (shouldOpen) {
-            sidebar.classList.remove('max-h-[52px]');
-            sidebar.classList.add('max-h-[78vh]');
-            if (textEl) textEl.textContent = 'Minimize Simulation View';
-            if (chevron) chevron.classList.add('rotate-180');
-            if (floatBtn) floatBtn.classList.add('hidden');
-        } else {
-            sidebar.classList.remove('max-h-[78vh]');
-            sidebar.classList.add('max-h-[52px]');
-            const count = (window.lastVehiclesCache && window.lastVehiclesCache.length) || 6;
-            if (textEl) textEl.textContent = `View All (${count})`;
-            if (chevron) chevron.classList.remove('rotate-180');
-            if (floatBtn) floatBtn.classList.remove('hidden');
+        root.classList.remove('pointer-events-none');
+        overlay.classList.remove('pointer-events-none', 'opacity-0');
+        overlay.classList.add('opacity-100');
+        content.classList.remove('translate-y-full');
+        content.classList.add('translate-y-0');
+    }
+
+    function closeShadcnDrawer() {
+        const root = document.getElementById('shadcn-drawer-root');
+        const overlay = document.getElementById('shadcn-drawer-overlay');
+        const content = document.getElementById('shadcn-drawer-content');
+        if (!root || !overlay || !content) return;
+
+        overlay.classList.remove('opacity-100');
+        overlay.classList.add('opacity-0');
+        content.classList.remove('translate-y-0');
+        content.classList.add('translate-y-full');
+        setTimeout(() => {
+            root.classList.add('pointer-events-none');
+            overlay.classList.add('pointer-events-none');
+        }, 300);
+    }
+
+    function setDrawerFilter(filter) {
+        currentDrawerFilter = filter;
+        ['transit', 'all', 'idle'].forEach(f => {
+            const btn = document.getElementById(`drawer-tab-${f}`);
+            if (!btn) return;
+            if (f === filter) {
+                btn.className = 'px-3 py-1 rounded-md text-xs font-semibold bg-uinavy text-white shadow-xs transition';
+            } else {
+                btn.className = 'px-3 py-1 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition';
+            }
+        });
+        if (window.lastVehiclesCache) {
+            renderDrawerVehicles(window.lastVehiclesCache);
         }
     }
 
+    function renderDrawerVehicles(vehicles) {
+        const drawerList = document.getElementById('drawer-vehicle-list');
+        const activeBadge = document.getElementById('drawer-active-badge');
+        const totalCount = document.getElementById('drawer-total-count');
+        if (!drawerList) return;
+
+        const inTransitVehicles = vehicles.filter(v => v.status === 'in_transit');
+        if (activeBadge) {
+            activeBadge.textContent = `${inTransitVehicles.length} in Transit`;
+        }
+        if (totalCount) {
+            totalCount.textContent = vehicles.length;
+        }
+
+        let filtered = vehicles;
+        if (currentDrawerFilter === 'transit') {
+            filtered = inTransitVehicles;
+        } else if (currentDrawerFilter === 'idle') {
+            filtered = vehicles.filter(v => v.status !== 'in_transit');
+        }
+
+        if (filtered.length === 0) {
+            drawerList.innerHTML = `
+                <div class="text-center py-10 text-slate-400 text-xs">
+                    <i class="fa-solid fa-truck-moving text-2xl text-slate-300 mb-2"></i>
+                    <p class="font-medium">No vehicles in "${currentDrawerFilter}" category.</p>
+                    ${currentDrawerFilter === 'transit' ? `
+                        <button onclick="triggerOptimization(); closeShadcnDrawer();" class="mt-3 px-3.5 py-1.5 rounded-lg bg-uinavy text-white text-xs font-semibold shadow-xs">
+                            Run CVRP Dispatch Now
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+            return;
+        }
+
+        drawerList.innerHTML = filtered.map(v => {
+            const isActive = v.status === 'in_transit';
+            const isMaint = v.status === 'maintenance';
+            const fuelColor = v.battery_fuel_pct > 50 ? 'bg-emerald-500' : (v.battery_fuel_pct > 20 ? 'bg-amber-500' : 'bg-rose-500');
+
+            return `
+                <div class="bg-white border border-slate-200/90 hover:border-uinavy/40 hover:shadow-sm rounded-xl p-3.5 text-xs space-y-2.5 transition">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full ${isActive ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}"></span>
+                            <div>
+                                <div class="font-bold text-slate-900 font-mono text-xs">${v.plate_number}</div>
+                                <div class="text-[11px] text-slate-500 truncate max-w-[200px]">${v.model || v.vehicle_type}</div>
+                            </div>
+                        </div>
+                        <div>
+                            ${isActive 
+                                ? '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 font-mono"><i class="fa-solid fa-truck-fast text-[9px]"></i> IN TRANSIT</span>'
+                                : (isMaint 
+                                    ? '<span class="px-2.5 py-0.5 rounded-md text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200 font-mono">MAINTENANCE</span>'
+                                    : '<span class="px-2.5 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200 font-mono">STATIONED / BAY</span>')}
+                        </div>
+                    </div>
+
+                    <!-- Diagnostics: Speed, Fuel Meter, Driver -->
+                    <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100 text-[11px]">
+                        <div>
+                            <span class="text-slate-400 block text-[10px] uppercase font-mono">Speed</span>
+                            <span class="font-mono text-slate-900 font-semibold text-xs">${Math.round(v.speed_kmh || 0)} km/h</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block text-[10px] uppercase font-mono">Fuel / Battery</span>
+                            <div class="flex items-center gap-1.5 mt-0.5">
+                                <div class="w-12 h-1.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                                    <div class="h-full ${fuelColor}" style="width: ${v.battery_fuel_pct}%"></div>
+                                </div>
+                                <span class="font-mono text-slate-700 font-medium text-[10px]">${v.battery_fuel_pct}%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block text-[10px] uppercase font-mono">Driver</span>
+                            <span class="text-slate-800 font-medium truncate block text-[11px]">${v.driver_name || 'Assigned Driver'}</span>
+                        </div>
+                    </div>
+
+                    <!-- Next Destination & ETA -->
+                    ${isActive ? `
+                        <div class="bg-slate-50 border border-slate-200/80 rounded-lg p-2.5 flex items-center justify-between text-[11px]">
+                            <div class="truncate mr-2">
+                                <span class="text-slate-400 text-[10px] block">Next Destination Stop</span>
+                                <span class="text-slate-900 font-medium truncate block">${v.next_stop_address}</span>
+                            </div>
+                            <span class="shrink-0 px-2 py-1 rounded bg-amber-50 text-amber-800 border border-amber-200 font-mono font-bold text-[10px]">
+                                ETA ${v.eta_minutes}m
+                            </span>
+                        </div>
+                    ` : `
+                        <div class="text-slate-400 text-[10px] italic">Stationed at Central Logistics Yard (Bay Slot)</div>
+                    `}
+
+                    <!-- Interactive 3D Action Buttons -->
+                    <div class="grid grid-cols-3 gap-1.5 pt-1">
+                        <button onclick="chaseVehicleFromCard('${v.plate_number}')" class="py-1.5 rounded-lg bg-uinavy hover:bg-uinavy-light text-white text-[11px] font-semibold flex items-center justify-center gap-1 shadow-2xs transition">
+                            <i class="fa-solid fa-video text-[9px] text-uigold-light"></i>
+                            <span>Chase Cam</span>
+                        </button>
+                        <button onclick="focusVehicleFromCard(${v.latitude}, ${v.longitude})" class="py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-medium border border-slate-200 flex items-center justify-center gap-1 transition">
+                            <i class="fa-solid fa-crosshairs text-uinavy text-[10px]"></i>
+                            <span>Focus 3D</span>
+                        </button>
+                        <button onclick="inspectVehicleFromCard('${v.plate_number}')" class="py-1.5 rounded-lg bg-uinavy-50 hover:bg-uinavy-100 text-uinavy text-[11px] font-semibold border border-uinavy-200 flex items-center justify-center gap-1 transition">
+                            <i class="fa-solid fa-cube text-uigold-dark text-[10px]"></i>
+                            <span>Turntable</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function chaseVehicleFromCard(plateNumber) {
+        closeShadcnDrawer();
+        const veh = (window.lastVehiclesCache || []).find(v => v.plate_number === plateNumber);
+        if (veh && window.campus3D) {
+            window.campus3D.followVehicle(veh.vehicle_id);
+        }
+    }
+
+    function focusVehicleFromCard(lat, lng) {
+        closeShadcnDrawer();
+        focusVehicle(lat, lng);
+    }
+
+    function inspectVehicleFromCard(plateNumber) {
+        closeShadcnDrawer();
+        openVehicleInspectorFromCard(plateNumber);
+    }
+
     // Global bindings
-    window.toggleMobileTelematics = toggleMobileTelematics;
+    window.openShadcnDrawer = openShadcnDrawer;
+    window.closeShadcnDrawer = closeShadcnDrawer;
+    window.setDrawerFilter = setDrawerFilter;
+    window.renderDrawerVehicles = renderDrawerVehicles;
+    window.chaseVehicleFromCard = chaseVehicleFromCard;
+    window.focusVehicleFromCard = focusVehicleFromCard;
+    window.inspectVehicleFromCard = inspectVehicleFromCard;
     window.switchViewMode = switchViewMode;
     window.chaseSelectedVehicle = chaseSelectedVehicle;
     window.inspectSelectedVehicle = inspectSelectedVehicle;
