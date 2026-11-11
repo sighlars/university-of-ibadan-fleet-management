@@ -46,10 +46,10 @@ class Campus3DEngine {
         const width = this.container.clientWidth || window.innerWidth;
         const height = this.container.clientHeight || window.innerHeight;
 
-        // Scene & Atmospheric Fog
+        // Scene & Atmospheric Fog (Daylight Campus Environment)
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0x0c1322); // Deep twilight navy
-        this.scene.fog = new THREE.FogExp2(0x0c1322, 0.0018);
+        this.scene.background = new THREE.Color(0xdbeafe); // Crisp daylight sky
+        this.scene.fog = new THREE.FogExp2(0xdbeafe, 0.0011);
 
         // Camera
         this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 3000);
@@ -90,47 +90,47 @@ class Campus3DEngine {
     }
 
     setupLighting() {
-        // Ambient Sky & Bounce Light
-        const hemiLight = new THREE.HemisphereLight(0xddeeff, 0x1a243b, 0.7);
+        // Ambient Sky & Daylight Bounce Light
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x94a3b8, 0.85);
         this.scene.add(hemiLight);
 
         // Directional Sunlight with Soft Shadows
-        const sun = new THREE.DirectionalLight(0xfffaed, 1.4);
-        sun.position.set(220, 320, 150);
+        const sun = new THREE.DirectionalLight(0xfffbeb, 1.5);
+        sun.position.set(240, 360, 160);
         sun.castShadow = true;
         sun.shadow.mapSize.width = 2048;
         sun.shadow.mapSize.height = 2048;
         sun.shadow.camera.near = 10;
-        sun.shadow.camera.far = 800;
+        sun.shadow.camera.far = 850;
         const d = 260;
         sun.shadow.camera.left = -d;
         sun.shadow.camera.right = d;
         sun.shadow.camera.top = d;
         sun.shadow.camera.bottom = -d;
-        sun.shadow.bias = -0.0005;
+        sun.shadow.bias = -0.0004;
         this.scene.add(sun);
 
-        // Warm secondary rim fill
-        const rim = new THREE.DirectionalLight(0x38bdf8, 0.35);
-        rim.position.set(-200, 100, -200);
+        // Soft sky rim light
+        const rim = new THREE.DirectionalLight(0x93c5fd, 0.4);
+        rim.position.set(-200, 120, -200);
         this.scene.add(rim);
     }
 
     buildCampusTerrain() {
-        // Ground Lawns (Terrain base)
+        // Ground Lawns (Lush University of Ibadan campus green)
         const groundGeo = new THREE.PlaneGeometry(1600, 1600, 32, 32);
         const groundMat = new THREE.MeshStandardMaterial({
-            color: 0x142018, // Rich campus lawn green-slate
-            roughness: 0.9,
-            metalness: 0.1
+            color: 0x3d7042, // Vibrant natural campus turf
+            roughness: 0.95,
+            metalness: 0.05
         });
         const ground = new THREE.Mesh(groundGeo, groundMat);
         ground.rotation.x = -Math.PI / 2;
         ground.receiveShadow = true;
         this.scene.add(ground);
 
-        // Grid lines overlay to give scale & depth
-        const grid = new THREE.GridHelper(1600, 80, 0x1e293b, 0x0f172a);
+        // Subtle architectural ground grid overlay
+        const grid = new THREE.GridHelper(1600, 80, 0x94a3b8, 0xcbd5e1);
         grid.position.y = 0.05;
         this.scene.add(grid);
 
@@ -160,7 +160,7 @@ class Campus3DEngine {
         ];
 
         const roadMat = new THREE.MeshStandardMaterial({
-            color: 0x1e2533, // Asphalt dark grey
+            color: 0x334155, // Clean asphalt slate
             roughness: 0.75,
             metalness: 0.15
         });
@@ -183,7 +183,7 @@ class Campus3DEngine {
             this.scene.add(roadMesh);
 
             // Add subtle road center dash markings
-            const dashMat = new THREE.MeshBasicMaterial({ color: 0xd4af37, opacity: 0.5, transparent: true });
+            const dashMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b, opacity: 0.8, transparent: true });
             const dashGeo = new THREE.PlaneGeometry(0.8, length * 0.9);
             const dashMesh = new THREE.Mesh(dashGeo, dashMat);
             dashMesh.rotation.x = -Math.PI / 2;
@@ -253,9 +253,9 @@ class Campus3DEngine {
             canvas.width = 256;
             canvas.height = 64;
             const ctx = canvas.getContext('2d');
-            ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+            ctx.fillStyle = '#002147'; // Institutional UI Navy
             ctx.fillRect(0, 0, 256, 64);
-            ctx.strokeStyle = '#D4AF37';
+            ctx.strokeStyle = '#C59B27'; // UI Gold trim
             ctx.lineWidth = 4;
             ctx.strokeRect(2, 2, 252, 60);
             ctx.fillStyle = '#FFFFFF';
@@ -390,12 +390,12 @@ class Campus3DEngine {
         canvas.width = 192;
         canvas.height = 48;
         const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#0f172a';
+        ctx.fillStyle = '#002147';
         ctx.fillRect(0, 0, 192, 48);
-        ctx.strokeStyle = '#38bdf8';
+        ctx.strokeStyle = '#C59B27';
         ctx.lineWidth = 3;
         ctx.strokeRect(1, 1, 190, 46);
-        ctx.fillStyle = '#ffffff';
+        ctx.fillStyle = '#FFFFFF';
         ctx.font = 'bold 22px JetBrains Mono, monospace';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';

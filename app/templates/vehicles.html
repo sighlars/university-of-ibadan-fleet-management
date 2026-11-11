@@ -5,54 +5,54 @@
 {% block content %}
 <div class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
     <!-- Header with Action -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-800/80">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
         <div>
-            <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Campus Fleet & Driver Roster</h2>
-            <p class="text-xs sm:text-sm text-slate-400 mt-0.5">Vehicle telemetry profiles, payload capacity limits, fuel efficiency, and driver allocations</p>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Campus Fleet & Driver Roster</h2>
+            <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Vehicle telemetry profiles, payload capacity limits, fuel efficiency, and driver allocations</p>
         </div>
-        <button onclick="openAddVehicleModal()" class="self-start sm:self-auto px-3.5 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold text-xs shadow-sm flex items-center gap-1.5 transition">
-            <i class="fa-solid fa-plus text-[11px]"></i>
+        <button onclick="openAddVehicleModal()" class="self-start sm:self-auto px-4 py-2 rounded-lg bg-uinavy hover:bg-uinavy-light text-white font-semibold text-xs shadow-sm flex items-center gap-2 transition">
+            <i class="fa-solid fa-plus text-[11px] text-uigold-light"></i>
             <span>Register Vehicle</span>
         </button>
     </div>
 
     <!-- Quick Stats Cards -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div class="bg-[#0C121E] border border-slate-800/80 p-4 rounded-xl">
-            <div class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Total Fleet</div>
-            <div id="stat-veh-total" class="text-2xl font-bold font-mono text-white mt-1">0</div>
-            <div class="text-[10px] text-slate-500 mt-0.5">Registered campus vehicles</div>
+        <div class="bg-white border border-slate-200/90 p-4 rounded-xl shadow-xs">
+            <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Total Fleet</div>
+            <div id="stat-veh-total" class="text-2xl font-bold font-mono text-slate-900 mt-1">0</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">Registered campus vehicles</div>
         </div>
 
-        <div class="bg-[#0C121E] border border-slate-800/80 p-4 rounded-xl">
-            <div class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">In Transit</div>
-            <div id="stat-veh-active" class="text-2xl font-bold font-mono text-emerald-400 mt-1">0</div>
-            <div class="text-[10px] text-slate-500 mt-0.5">Active on campus roads</div>
+        <div class="bg-white border border-slate-200/90 p-4 rounded-xl shadow-xs">
+            <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">In Transit</div>
+            <div id="stat-veh-active" class="text-2xl font-bold font-mono text-emerald-600 mt-1">0</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">Active on campus roads</div>
         </div>
 
-        <div class="bg-[#0C121E] border border-slate-800/80 p-4 rounded-xl">
-            <div class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Idle at Hub</div>
-            <div id="stat-veh-idle" class="text-2xl font-bold font-mono text-slate-300 mt-1">0</div>
-            <div class="text-[10px] text-slate-500 mt-0.5">Available for dispatch</div>
+        <div class="bg-white border border-slate-200/90 p-4 rounded-xl shadow-xs">
+            <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Idle at Hub</div>
+            <div id="stat-veh-idle" class="text-2xl font-bold font-mono text-slate-700 mt-1">0</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">Available for dispatch</div>
         </div>
 
-        <div class="bg-[#0C121E] border border-slate-800/80 p-4 rounded-xl">
-            <div class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Maintenance</div>
-            <div id="stat-veh-maint" class="text-2xl font-bold font-mono text-rose-400 mt-1">0</div>
-            <div class="text-[10px] text-slate-500 mt-0.5">In workshop servicing</div>
+        <div class="bg-white border border-slate-200/90 p-4 rounded-xl shadow-xs">
+            <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Maintenance</div>
+            <div id="stat-veh-maint" class="text-2xl font-bold font-mono text-rose-600 mt-1">0</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">In workshop servicing</div>
         </div>
     </div>
 
     <!-- Vehicles Table Card -->
-    <div class="bg-[#0C121E] border border-slate-800/80 rounded-xl overflow-hidden shadow-sm">
-        <div class="p-4 border-b border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <div class="bg-white border border-slate-200/90 rounded-xl overflow-hidden shadow-xs">
+        <div class="p-4 border-b border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
             <div class="flex items-center gap-2">
-                <span class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Vehicle Inventory</span>
-                <span id="vehicle-count-tag" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">0 vehicles</span>
+                <span class="text-xs font-bold text-uinavy uppercase tracking-wider">Vehicle Inventory</span>
+                <span id="vehicle-count-tag" class="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-mono border border-slate-200">0 vehicles</span>
             </div>
             <!-- Search & Filter -->
             <div class="flex items-center gap-2">
-                <select id="vehicle-type-filter" onchange="filterVehicles()" class="bg-slate-900 text-xs text-slate-300 rounded-lg px-2.5 py-1.5 border border-slate-700/80 focus:outline-none focus:border-amber-500">
+                <select id="vehicle-type-filter" onchange="filterVehicles()" class="bg-white text-xs text-slate-700 rounded-lg px-3 py-1.5 border border-slate-300 focus:outline-none focus:border-uinavy shadow-xs">
                     <option value="">All Categories</option>
                     <option value="Campus Shuttle Bus">Campus Shuttle Bus</option>
                     <option value="Works Utility Pickup">Works Utility Pickup</option>
@@ -67,7 +67,7 @@
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
                 <thead>
-                    <tr class="bg-slate-950/60 border-b border-slate-800/80 text-slate-400 uppercase font-semibold text-[11px]">
+                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-semibold text-[11px]">
                         <th class="py-3 px-4 sm:px-6">Plate & Model</th>
                         <th class="py-3 px-3 sm:px-4">Category</th>
                         <th class="py-3 px-3 sm:px-4">Status</th>
@@ -78,9 +78,9 @@
                         <th class="py-3 px-4 sm:px-6 text-right">Action</th>
                     </tr>
                 </thead>
-                <tbody id="vehicle-table-body" class="divide-y divide-slate-800/60 font-medium">
+                <tbody id="vehicle-table-body" class="divide-y divide-slate-100 font-medium">
                     <tr>
-                        <td colspan="8" class="text-center py-8 text-slate-500">Loading vehicles...</td>
+                        <td colspan="8" class="text-center py-8 text-slate-400">Loading vehicles...</td>
                     </tr>
                 </tbody>
             </table>
@@ -89,26 +89,26 @@
 </div>
 
 <!-- Modal: Add Vehicle -->
-<div id="add-vehicle-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 hidden">
-    <div class="bg-[#0C121E] border border-slate-800 rounded-xl w-full max-w-md p-5 sm:p-6 shadow-2xl relative">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-            <h3 class="text-sm font-bold text-white">Register Vehicle Asset</h3>
-            <button onclick="closeAddVehicleModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+<div id="add-vehicle-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 hidden">
+    <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-md p-5 sm:p-6 shadow-2xl relative">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+            <h3 class="text-sm font-bold text-uinavy">Register Vehicle Asset</h3>
+            <button onclick="closeAddVehicleModal()" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
         <form id="add-vehicle-form" onsubmit="submitVehicleForm(event)" class="space-y-3.5 text-xs pt-4">
             <div>
-                <label class="block text-slate-300 font-medium mb-1">Plate Number</label>
-                <input type="text" id="veh-plate" required placeholder="e.g. UI-09-BUS or UI-25-WKS" class="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-3 py-2 text-white font-mono focus:outline-none focus:border-amber-500">
+                <label class="block text-slate-700 font-semibold mb-1">Plate Number</label>
+                <input type="text" id="veh-plate" required placeholder="e.g. UI-09-BUS or UI-25-WKS" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono focus:outline-none focus:border-uinavy">
             </div>
             <div>
-                <label class="block text-slate-300 font-medium mb-1">Make & Model</label>
-                <input type="text" id="veh-model" required placeholder="e.g. Toyota HiAce 2.7L Commuter" class="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+                <label class="block text-slate-700 font-semibold mb-1">Make & Model</label>
+                <input type="text" id="veh-model" required placeholder="e.g. Toyota HiAce 2.7L Commuter" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-uinavy">
             </div>
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-slate-300 font-medium mb-1">Category</label>
-                    <select id="veh-type" class="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+                    <label class="block text-slate-700 font-semibold mb-1">Category</label>
+                    <select id="veh-type" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-uinavy">
                         <option value="Campus Shuttle Bus">Campus Shuttle Bus</option>
                         <option value="Works Utility Pickup">Works Utility Pickup</option>
                         <option value="Campus Dispatch Bike">Campus Dispatch Bike</option>
@@ -118,13 +118,13 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-slate-300 font-medium mb-1">Capacity (kg)</label>
-                    <input type="number" id="veh-cap" required min="50" max="10000" value="1000" class="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-3 py-2 text-white font-mono focus:outline-none focus:border-amber-500">
+                    <label class="block text-slate-700 font-semibold mb-1">Capacity (kg)</label>
+                    <input type="number" id="veh-cap" required min="50" max="10000" value="1000" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono focus:outline-none focus:border-uinavy">
                 </div>
             </div>
-            <div class="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-800">
-                <button type="button" onclick="closeAddVehicleModal()" class="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium">Cancel</button>
-                <button type="submit" class="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold text-xs">Save Asset</button>
+            <div class="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-200">
+                <button type="button" onclick="closeAddVehicleModal()" class="px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium border border-slate-200">Cancel</button>
+                <button type="submit" class="px-4 py-2 rounded-lg bg-uinavy hover:bg-uinavy-light text-white font-semibold text-xs shadow-sm">Save Asset</button>
             </div>
         </form>
     </div>
@@ -151,53 +151,52 @@
         document.getElementById('vehicle-count-tag').textContent = `${vehicles.length} vehicles`;
         
         if (!vehicles.length) {
-            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-slate-500">No vehicles found.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-slate-400">No vehicles found.</td></tr>`;
             return;
         }
 
         tbody.innerHTML = vehicles.map(v => {
             const statusBadges = {
-                'idle': '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-800 text-slate-300 border border-slate-700 uppercase">Idle</span>',
-                'in_transit': '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 uppercase">In Transit</span>',
-                'delivering': '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/30 uppercase">Delivering</span>',
-                'maintenance': '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/30 uppercase">Maintenance</span>'
+                'idle': '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200 uppercase font-mono">Idle</span>',
+                'in_transit': '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase font-mono">In Transit</span>',
+                'delivering': '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200 uppercase font-mono">Delivering</span>',
+                'maintenance': '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200 uppercase font-mono">Maintenance</span>'
             };
 
-            const fuelColor = v.battery_fuel_pct > 50 ? 'bg-emerald-400' : (v.battery_fuel_pct > 20 ? 'bg-amber-400' : 'bg-rose-500');
+            const fuelColor = v.battery_fuel_pct > 50 ? 'bg-emerald-500' : (v.battery_fuel_pct > 20 ? 'bg-amber-500' : 'bg-rose-500');
 
             return `
-                <tr class="table-row-hover transition">
+                <tr class="table-row-hover transition border-b border-slate-100">
                     <td class="py-3 px-4 sm:px-6">
-                        <div class="font-bold text-white font-mono text-xs">${v.plate_number}</div>
-                        <div class="text-slate-400 text-[11px]">${v.model}</div>
+                        <div class="font-bold text-slate-900 font-mono text-xs">${v.plate_number}</div>
+                        <div class="text-slate-500 text-[11px]">${v.model}</div>
                     </td>
-                    <td class="py-3 px-3 sm:px-4 text-slate-300">${v.vehicle_type}</td>
+                    <td class="py-3 px-3 sm:px-4 text-slate-700">${v.vehicle_type}</td>
                     <td class="py-3 px-3 sm:px-4">${statusBadges[v.status] || v.status}</td>
-                    <td class="py-3 px-3 sm:px-4 text-slate-300">
+                    <td class="py-3 px-3 sm:px-4 text-slate-700">
                         ${v.driver ? `
-                            <div class="font-medium text-slate-200">${v.driver.name}</div>
-                            <div class="text-slate-500 text-[10px]">⭐ ${v.driver.rating.toFixed(2)}</div>
-                        ` : '<span class="text-slate-500 italic">Unassigned</span>'}
+                            <div class="font-medium text-slate-900">${v.driver.name}</div>
+                            <div class="text-slate-400 text-[10px]">⭐ ${v.driver.rating.toFixed(2)}</div>
+                        ` : '<span class="text-slate-400 italic">Unassigned</span>'}
                     </td>
-                    <td class="py-3 px-3 sm:px-4 font-mono text-slate-300">${v.capacity_kg} kg</td>
+                    <td class="py-3 px-3 sm:px-4 font-mono text-slate-700">${v.capacity_kg} kg</td>
                     <td class="py-3 px-3 sm:px-4">
                         <div class="flex items-center gap-2">
-                            <div class="w-12 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                            <div class="w-12 h-1.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
                                 <div class="h-full ${fuelColor}" style="width: ${v.battery_fuel_pct}%"></div>
                             </div>
-                            <span class="text-[11px] font-mono text-slate-300">${v.battery_fuel_pct}%</span>
+                            <span class="text-[11px] font-mono text-slate-600">${v.battery_fuel_pct}%</span>
                         </div>
                     </td>
-                    <td class="py-3 px-3 sm:px-4 font-mono text-slate-300">${v.mileage_km} km</td>
+                    <td class="py-3 px-3 sm:px-4 font-mono text-slate-700">${v.mileage_km} km</td>
                     <td class="py-3 px-4 sm:px-6 text-right">
-                        <button onclick="inspectVehicleById(${v.id})" class="px-2 py-1 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 transition mr-1">
-                            <i class="fa-solid fa-cube text-[9px] mr-0.5"></i> 3D
+                        <button onclick="inspectVehicleById(${v.id})" class="px-2 py-1 rounded text-[10px] font-semibold bg-uinavy-50 text-uinavy border border-uinavy-200 hover:bg-uinavy-100 transition mr-1">
+                            <i class="fa-solid fa-cube text-[9px] text-uigold-dark mr-0.5"></i> 3D
                         </button>
-                        <button onclick="toggleMaintenance(${v.id})" class="px-2 py-1 rounded text-[10px] font-semibold border ${v.status === 'maintenance' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20' : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'} transition">
+                        <button onclick="toggleMaintenance(${v.id})" class="px-2 py-1 rounded text-[10px] font-semibold border ${v.status === 'maintenance' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'} transition">
                             ${v.status === 'maintenance' ? 'Activate' : 'Service'}
                         </button>
                     </td>
-
                 </tr>
             `;
         }).join('');
@@ -219,13 +218,11 @@
     function inspectVehicleById(id) {
         const veh = allVehicles.find(v => v.id === id);
         if (veh) {
-            // Forward to dashboard 3D map focusing on this vehicle
             window.location.href = `/?focus=${id}`;
         }
     }
 
     async function toggleMaintenance(id) {
-
         try {
             const res = await fetch(`/api/vehicles/${id}/maintenance`, { method: 'POST' });
             if (res.ok) {

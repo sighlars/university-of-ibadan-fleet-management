@@ -55,19 +55,19 @@ function switchInspectorTab(tab) {
         if (sketchfabContainer) sketchfabContainer.classList.remove('hidden');
         if (turntableContainer) turntableContainer.classList.add('hidden');
         if (btnSketchfab) {
-            btnSketchfab.className = 'px-3 py-1 rounded text-xs font-semibold bg-slate-800 text-amber-400 border border-slate-700';
+            btnSketchfab.className = 'px-3 py-1 rounded text-xs font-semibold bg-uinavy text-white shadow-sm';
         }
         if (btnTurntable) {
-            btnTurntable.className = 'px-3 py-1 rounded text-xs font-medium text-slate-400 hover:text-white bg-slate-900';
+            btnTurntable.className = 'px-3 py-1 rounded text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100';
         }
     } else {
         if (sketchfabContainer) sketchfabContainer.classList.add('hidden');
         if (turntableContainer) turntableContainer.classList.remove('hidden');
         if (btnTurntable) {
-            btnTurntable.className = 'px-3 py-1 rounded text-xs font-semibold bg-slate-800 text-amber-400 border border-slate-700';
+            btnTurntable.className = 'px-3 py-1 rounded text-xs font-semibold bg-uinavy text-white shadow-sm';
         }
         if (btnSketchfab) {
-            btnSketchfab.className = 'px-3 py-1 rounded text-xs font-medium text-slate-400 hover:text-white bg-slate-900';
+            btnSketchfab.className = 'px-3 py-1 rounded text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100';
         }
         initTurntable();
     }
@@ -82,7 +82,7 @@ function initTurntable() {
         const height = container.clientHeight || 340;
 
         inspectorScene = new THREE.Scene();
-        inspectorScene.background = new THREE.Color(0x0a0f1d);
+        inspectorScene.background = new THREE.Color(0xf1f5f9);
 
         inspectorCamera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
         inspectorCamera.position.set(12, 8, 14);
@@ -99,28 +99,28 @@ function initTurntable() {
         inspectorControls.autoRotateSpeed = 1.8;
 
         // Lights
-        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x1e293b, 0.8);
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0xcbd5e1, 0.9);
         inspectorScene.add(hemiLight);
 
-        const dirLight = new THREE.DirectionalLight(0xfff8eb, 1.5);
+        const dirLight = new THREE.DirectionalLight(0xfff8eb, 1.4);
         dirLight.position.set(10, 15, 10);
         dirLight.castShadow = true;
         inspectorScene.add(dirLight);
 
-        const pointLight = new THREE.PointLight(0xd4af37, 1.2, 20);
-        pointLight.position.set(-8, 5, -8);
-        inspectorScene.add(pointLight);
+        const fillLight = new THREE.DirectionalLight(0x93c5fd, 0.4);
+        fillLight.position.set(-10, 8, -10);
+        inspectorScene.add(fillLight);
 
         // Circular Pedestal / Turntable Platform
         const platGeo = new THREE.CylinderGeometry(8, 8.5, 0.6, 32);
-        const platMat = new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.3, metalness: 0.8 });
+        const platMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.25, metalness: 0.6 });
         const plat = new THREE.Mesh(platGeo, platMat);
         plat.position.y = -0.3;
         plat.receiveShadow = true;
         inspectorScene.add(plat);
 
         const ringGeo = new THREE.RingGeometry(7.2, 7.5, 32);
-        const ringMat = new THREE.MeshBasicMaterial({ color: 0xd4af37, side: THREE.DoubleSide });
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0x002147, side: THREE.DoubleSide });
         const ring = new THREE.Mesh(ringGeo, ringMat);
         ring.rotation.x = -Math.PI / 2;
         ring.position.y = 0.02;

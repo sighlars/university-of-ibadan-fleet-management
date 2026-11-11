@@ -44,7 +44,7 @@ function renderSidebarVehicles(vehicles) {
     }
 
     if (vehicles.length === 0) {
-        container.innerHTML = `<div class="text-center py-6 text-slate-500 text-xs">No vehicles registered.</div>`;
+        container.innerHTML = `<div class="text-center py-6 text-slate-400 text-xs">No vehicles registered.</div>`;
         return;
     }
 
@@ -53,62 +53,62 @@ function renderSidebarVehicles(vehicles) {
         const isMaint = v.status === 'maintenance';
 
         const statusBadge = isActive
-            ? '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 uppercase">In Transit</span>'
+            ? '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase font-mono">In Transit</span>'
             : (isMaint 
-                ? '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/30 uppercase">Maintenance</span>'
-                : '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-800 text-slate-300 border border-slate-700 uppercase">Idle</span>');
+                ? '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200 uppercase font-mono">Maintenance</span>'
+                : '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200 uppercase font-mono">Idle</span>');
 
-        const fuelColor = v.battery_fuel_pct > 50 ? 'bg-emerald-400' : (v.battery_fuel_pct > 20 ? 'bg-amber-400' : 'bg-rose-500');
+        const fuelColor = v.battery_fuel_pct > 50 ? 'bg-emerald-500' : (v.battery_fuel_pct > 20 ? 'bg-amber-500' : 'bg-rose-500');
 
         return `
-            <div class="bg-slate-900/90 border border-slate-800 hover:border-slate-700 rounded-xl p-3 text-xs space-y-2.5 transition">
+            <div class="bg-white border border-slate-200 hover:border-uinavy/40 hover:shadow-sm rounded-xl p-3 text-xs space-y-2.5 transition">
                 <div class="flex items-center justify-between">
                     <div>
-                        <div class="font-bold text-white font-mono text-xs flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}"></span>
+                        <div class="font-bold text-slate-900 font-mono text-xs flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full ${isActive ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}"></span>
                             ${v.plate_number}
                         </div>
-                        <div class="text-[11px] text-slate-400 truncate max-w-[150px]">${v.model || v.vehicle_type}</div>
+                        <div class="text-[11px] text-slate-500 truncate max-w-[150px]">${v.model || v.vehicle_type}</div>
                     </div>
                     ${statusBadge}
                 </div>
 
                 <!-- Driver & Telemetry Row -->
-                <div class="grid grid-cols-2 gap-2 text-[11px] pt-1.5 border-t border-slate-800/80">
-                    <div class="text-slate-400">
+                <div class="grid grid-cols-2 gap-2 text-[11px] pt-1.5 border-t border-slate-100">
+                    <div class="text-slate-500">
                         <span>Speed:</span>
-                        <span class="font-mono text-white font-semibold ml-1">${v.speed_kmh} km/h</span>
+                        <span class="font-mono text-slate-900 font-semibold ml-1">${v.speed_kmh} km/h</span>
                     </div>
                     <div class="flex items-center justify-end gap-1.5">
-                        <span class="text-slate-400">Fuel:</span>
-                        <div class="w-8 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                        <span class="text-slate-500">Fuel:</span>
+                        <div class="w-8 h-1.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
                             <div class="h-full ${fuelColor}" style="width: ${v.battery_fuel_pct}%"></div>
                         </div>
-                        <span class="font-mono text-slate-300 text-[10px]">${v.battery_fuel_pct}%</span>
+                        <span class="font-mono text-slate-700 text-[10px] font-medium">${v.battery_fuel_pct}%</span>
                     </div>
                 </div>
 
                 <!-- Next Stop & ETA -->
                 ${isActive ? `
-                    <div class="bg-slate-950/70 border border-slate-800/70 rounded-lg p-2 text-[11px] space-y-0.5">
-                        <div class="flex items-center justify-between text-slate-400 text-[10px]">
+                    <div class="bg-slate-50 border border-slate-200/90 rounded-lg p-2 text-[11px] space-y-0.5">
+                        <div class="flex items-center justify-between text-slate-500 text-[10px]">
                             <span>Next Stop:</span>
-                            <span class="text-amber-400 font-mono font-semibold">ETA: ${v.eta_minutes}m</span>
+                            <span class="text-amber-700 font-mono font-semibold">ETA: ${v.eta_minutes}m</span>
                         </div>
-                        <div class="text-white truncate font-medium text-[11px]">${v.next_stop_address}</div>
+                        <div class="text-slate-900 truncate font-medium text-[11px]">${v.next_stop_address}</div>
                     </div>
                 ` : `
-                    <div class="text-slate-500 text-[10px]">Stationed at Central Logistics Yard</div>
+                    <div class="text-slate-400 text-[10px]">Stationed at Central Logistics Yard</div>
                 `}
 
                 <!-- Focus Map & 3D Inspect Buttons -->
                 <div class="grid grid-cols-2 gap-1.5 pt-1">
-                    <button onclick="focusVehicle(${v.latitude}, ${v.longitude})" class="py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white text-[11px] font-medium border border-slate-700/60 flex items-center justify-center gap-1 transition">
-                        <i class="fa-solid fa-crosshairs text-amber-400"></i>
+                    <button onclick="focusVehicle(${v.latitude}, ${v.longitude})" class="py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 text-[11px] font-medium border border-slate-200 flex items-center justify-center gap-1 transition">
+                        <i class="fa-solid fa-crosshairs text-uinavy"></i>
                         <span>Focus Map</span>
                     </button>
-                    <button onclick="openVehicleInspectorFromCard('${v.plate_number}')" class="py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 hover:text-amber-200 text-[11px] font-medium border border-amber-500/30 flex items-center justify-center gap-1 transition">
-                        <i class="fa-solid fa-cube text-[10px]"></i>
+                    <button onclick="openVehicleInspectorFromCard('${v.plate_number}')" class="py-1.5 rounded-lg bg-uinavy-50 hover:bg-uinavy-100 text-uinavy hover:text-uinavy-dark text-[11px] font-semibold border border-uinavy-200 flex items-center justify-center gap-1 transition">
+                        <i class="fa-solid fa-cube text-[10px] text-uigold-dark"></i>
                         <span>Inspect 3D</span>
                     </button>
                 </div>
@@ -209,10 +209,10 @@ function updateSimControls(running, speed) {
     if (playBtn && icon) {
         if (running) {
             icon.className = 'fa-solid fa-pause';
-            playBtn.className = 'w-7 h-7 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 flex items-center justify-center text-xs transition';
+            playBtn.className = 'w-7 h-7 rounded-lg bg-uinavy text-white flex items-center justify-center text-xs transition shadow-sm';
         } else {
             icon.className = 'fa-solid fa-play';
-            playBtn.className = 'w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center justify-center text-xs transition';
+            playBtn.className = 'w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 flex items-center justify-center text-xs transition';
         }
     }
 
@@ -222,9 +222,9 @@ function updateSimControls(running, speed) {
         if (!btn) return;
         const targetSpeed = parseFloat(s.replace('x', ''));
         if (Math.abs(currentSimSpeed - targetSpeed) < 0.6) {
-            btn.className = 'px-2 py-0.5 rounded text-[11px] font-mono font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 transition';
+            btn.className = 'px-2 py-0.5 rounded text-[11px] font-mono font-semibold bg-uinavy text-white shadow-xs transition';
         } else {
-            btn.className = 'px-2 py-0.5 rounded text-[11px] font-mono text-slate-400 hover:text-white transition';
+            btn.className = 'px-2 py-0.5 rounded text-[11px] font-mono text-slate-600 hover:text-slate-900 transition';
         }
     });
 }

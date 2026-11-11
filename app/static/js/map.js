@@ -67,12 +67,12 @@ class FleetMapController {
         this.depotMarker = L.marker(this.depotCoords, { icon: depotIcon }).addTo(this.map);
         this.depotMarker.bindPopup(`
             <div class="space-y-1 font-sans">
-                <div class="font-semibold text-amber-400 text-xs uppercase tracking-wider flex items-center gap-1.5">
-                    <i class="fa-solid fa-warehouse"></i>
+                <div class="font-bold text-uinavy text-xs uppercase tracking-wider flex items-center gap-1.5">
+                    <i class="fa-solid fa-warehouse text-uigold-dark"></i>
                     Central Campus Logistics Hub
                 </div>
-                <div class="text-white text-xs font-medium">University of Ibadan, Ibadan</div>
-                <div class="text-slate-400 text-[11px]">Primary Dispatch, Fueling & Maintenance Depot</div>
+                <div class="text-slate-800 text-xs font-semibold">University of Ibadan, Ibadan</div>
+                <div class="text-slate-500 text-[11px]">Primary Dispatch, Fueling & Maintenance Depot</div>
             </div>
         `);
     }
@@ -102,9 +102,9 @@ class FleetMapController {
 
                     poly.bindPopup(`
                         <div class="space-y-1 font-sans">
-                            <div class="font-semibold text-white text-xs">Route #${route.id} (${route.status.toUpperCase()})</div>
-                            <div class="text-slate-300 text-xs">Vehicle: <span class="font-bold text-amber-400 font-mono">${route.vehicle_plate || 'Unassigned'}</span></div>
-                            <div class="text-slate-400 text-[11px]">Distance: ${route.total_distance_km} km | Stops: ${route.stops_count}</div>
+                            <div class="font-bold text-uinavy text-xs">Route #${route.id} (${route.status.toUpperCase()})</div>
+                            <div class="text-slate-600 text-xs">Vehicle: <span class="font-bold text-uinavy font-mono">${route.vehicle_plate || 'Unassigned'}</span></div>
+                            <div class="text-slate-500 text-[11px]">Distance: ${route.total_distance_km} km | Stops: ${route.stops_count}</div>
                         </div>
                     `);
 
@@ -138,15 +138,15 @@ class FleetMapController {
                 const marker = L.marker([o.destination_lat, o.destination_lng], { icon: stopIcon }).addTo(this.map);
                 marker.bindPopup(`
                     <div class="space-y-1.5 font-sans min-w-[190px]">
-                        <div class="flex items-center justify-between border-b border-slate-700/60 pb-1">
-                            <span class="font-mono text-amber-400 font-bold text-xs">#${o.tracking_number}</span>
-                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 uppercase font-semibold">${o.priority}</span>
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-1">
+                            <span class="font-mono text-uinavy font-bold text-xs">#${o.tracking_number}</span>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 uppercase font-semibold border border-slate-200">${o.priority}</span>
                         </div>
-                        <div class="font-semibold text-white text-xs leading-snug">${o.customer_name}</div>
-                        <div class="text-slate-300 text-[11px]">${o.delivery_address}</div>
-                        <div class="text-slate-400 text-[10px] pt-1 border-t border-slate-800 flex justify-between">
-                            <span>Weight: ${o.weight_kg} kg</span>
-                            <span class="font-semibold uppercase text-slate-200">${o.status}</span>
+                        <div class="font-bold text-slate-900 text-xs leading-snug">${o.customer_name}</div>
+                        <div class="text-slate-600 text-[11px]">${o.delivery_address}</div>
+                        <div class="text-slate-500 text-[10px] pt-1 border-t border-slate-100 flex justify-between font-mono">
+                            <span>${o.weight_kg} kg</span>
+                            <span class="font-semibold uppercase text-uinavy">${o.status}</span>
                         </div>
                     </div>
                 `);
@@ -209,18 +209,18 @@ class FleetMapController {
     updateVehiclePopup(marker, veh) {
         marker.setPopupContent(`
             <div class="space-y-1.5 font-sans min-w-[200px]">
-                <div class="flex items-center justify-between border-b border-slate-700/70 pb-1">
-                    <span class="font-bold text-white font-mono text-xs">${veh.plate_number}</span>
-                    <span class="text-[9px] px-2 py-0.5 rounded-full font-semibold ${veh.status === 'in_transit' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-800 text-slate-300'} uppercase">${veh.status}</span>
+                <div class="flex items-center justify-between border-b border-slate-100 pb-1">
+                    <span class="font-bold text-slate-900 font-mono text-xs">${veh.plate_number}</span>
+                    <span class="text-[9px] px-2 py-0.5 rounded-full font-semibold ${veh.status === 'in_transit' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-600 border border-slate-200'} uppercase font-mono">${veh.status}</span>
                 </div>
-                <div class="text-slate-300 text-[11px]">Category: <span class="font-medium text-white">${veh.vehicle_type}</span></div>
-                <div class="text-slate-300 text-[11px]">Driver: <span class="font-medium text-white">${veh.driver_name || 'Unassigned'}</span></div>
-                <div class="text-slate-300 text-[11px] grid grid-cols-2 gap-1 pt-1 font-mono">
-                    <div>Speed: <span class="text-amber-400 font-bold">${veh.speed_kmh} km/h</span></div>
-                    <div>Fuel: <span class="text-emerald-400 font-bold">${veh.battery_fuel_pct}%</span></div>
+                <div class="text-slate-600 text-[11px]">Category: <span class="font-medium text-slate-900">${veh.vehicle_type}</span></div>
+                <div class="text-slate-600 text-[11px]">Driver: <span class="font-medium text-slate-900">${veh.driver_name || 'Unassigned'}</span></div>
+                <div class="text-slate-600 text-[11px] grid grid-cols-2 gap-1 pt-1 font-mono">
+                    <div>Speed: <span class="text-uinavy font-bold">${veh.speed_kmh} km/h</span></div>
+                    <div>Fuel: <span class="text-emerald-600 font-bold">${veh.battery_fuel_pct}%</span></div>
                 </div>
-                <div class="text-slate-400 text-[10px] pt-1 border-t border-slate-800">
-                    Next: <span class="text-slate-200 font-medium">${veh.next_stop_address || 'At Central Depot'}</span>
+                <div class="text-slate-500 text-[10px] pt-1 border-t border-slate-100">
+                    Next: <span class="text-slate-800 font-medium">${veh.next_stop_address || 'At Central Depot'}</span>
                 </div>
             </div>
         `);

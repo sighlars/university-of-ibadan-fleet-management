@@ -3,41 +3,54 @@
 {% block title %}3D Live Campus Operations - {{ app_name }}{% endblock %}
 
 {% block content %}
-<div class="relative w-full h-full flex flex-col lg:flex-row overflow-hidden bg-slate-950">
+<div class="relative w-full h-full flex flex-col lg:flex-row overflow-hidden bg-slate-100">
     <!-- Desktop Left Sidebar / Mobile Collapsible Drawer -->
-    <aside id="fleet-sidebar" class="w-full lg:w-80 xl:w-96 bg-[#0B0F17] border-b lg:border-b-0 lg:border-r border-slate-800/80 z-20 flex flex-col shrink-0 max-h-[38vh] lg:max-h-full transition-all duration-300">
+    <aside id="fleet-sidebar" class="w-full lg:w-80 xl:w-96 bg-white border-b lg:border-b-0 lg:border-r border-slate-200/90 z-20 flex flex-col shrink-0 max-h-[40vh] lg:max-h-full transition-all duration-300 shadow-sm">
         <!-- Sidebar Header -->
-        <div class="p-3.5 border-b border-slate-800/80 flex items-center justify-between shrink-0 bg-[#0E1522]">
+        <div class="p-3.5 border-b border-slate-200/90 flex items-center justify-between shrink-0 bg-slate-50/80">
             <div class="flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-                <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-200">Campus Telematics</h2>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <h2 class="text-xs font-bold uppercase tracking-wider text-uinavy">Campus Telematics</h2>
             </div>
             <div class="flex items-center gap-2">
-                <span id="vehicle-count-badge" class="px-2 py-0.5 rounded text-[11px] font-mono bg-slate-800 text-slate-300 border border-slate-700">0 Active</span>
+                <span id="vehicle-count-badge" class="px-2 py-0.5 rounded text-[11px] font-mono bg-white text-slate-700 border border-slate-200 shadow-xs">0 Active</span>
+            </div>
+        </div>
+
+        <!-- First-Visit Quick-Guide Helper Banner (Dismissible) -->
+        <div id="first-visit-banner" class="mx-3 mt-3 p-3 rounded-xl bg-uinavy-50 border border-uinavy-200/80 text-xs text-uinavy shrink-0 shadow-xs space-y-1.5">
+            <div class="flex items-center justify-between font-bold text-[11px]">
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-compass text-uigold-dark"></i> Quick Navigation Guide</span>
+                <button onclick="document.getElementById('first-visit-banner').remove()" class="text-slate-400 hover:text-uinavy p-0.5"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="text-[11px] text-slate-600 leading-snug space-y-1">
+                <div><b class="text-uinavy">1. Explore 3D:</b> Left-drag to orbit campus, scroll to zoom.</div>
+                <div><b class="text-uinavy">2. Inspect:</b> Click any car or hit <b>Inspect 3D</b> on a card.</div>
+                <div><b class="text-uinavy">3. Dispatch:</b> Click <b>Optimize & Dispatch All</b> to run CVRP.</div>
             </div>
         </div>
 
         <!-- Vehicle List Container -->
         <div id="vehicle-card-list" class="flex-1 overflow-y-auto p-3 space-y-2">
-            <div class="text-center py-8 text-slate-500 text-xs">
-                <i class="fa-solid fa-circle-notch fa-spin text-sm mb-1 text-slate-400"></i>
+            <div class="text-center py-8 text-slate-400 text-xs">
+                <i class="fa-solid fa-circle-notch fa-spin text-base mb-1.5 text-uinavy"></i>
                 <p>Loading telematics stream...</p>
             </div>
         </div>
 
         <!-- Sidebar Dispatch & Quick Actions -->
-        <div class="p-3 border-t border-slate-800/80 bg-[#0B0F17] shrink-0 space-y-2">
-            <button id="btn-quick-optimize" onclick="triggerOptimization()" class="w-full py-2 px-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold text-xs transition flex items-center justify-center gap-1.5 active:scale-[0.99] shadow-sm">
-                <i class="fa-solid fa-wand-magic-sparkles text-[11px]"></i>
+        <div class="p-3 border-t border-slate-200/90 bg-white shrink-0 space-y-2">
+            <button id="btn-quick-optimize" onclick="triggerOptimization()" class="w-full py-2.5 px-3 rounded-lg bg-uinavy hover:bg-uinavy-light text-white font-semibold text-xs transition flex items-center justify-center gap-2 active:scale-[0.99] shadow-sm">
+                <i class="fa-solid fa-wand-magic-sparkles text-[11px] text-uigold-light"></i>
                 <span>Optimize & Dispatch All</span>
             </button>
             <div class="grid grid-cols-2 gap-2">
-                <button onclick="addSampleOrders()" class="py-1.5 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700/80 flex items-center justify-center gap-1.5 transition">
-                    <i class="fa-solid fa-plus text-[10px] text-amber-400"></i>
+                <button onclick="addSampleOrders()" class="py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium border border-slate-200 flex items-center justify-center gap-1.5 transition">
+                    <i class="fa-solid fa-plus text-[10px] text-uinavy"></i>
                     <span>+5 Dispatches</span>
                 </button>
-                <a href="/orders" class="py-1.5 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700/80 flex items-center justify-center gap-1.5 transition text-center">
-                    <i class="fa-solid fa-list-check text-[10px] text-amber-400"></i>
+                <a href="/orders" class="py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium border border-slate-200 flex items-center justify-center gap-1.5 transition text-center">
+                    <i class="fa-solid fa-list-check text-[10px] text-uinavy"></i>
                     <span>Manage</span>
                 </a>
             </div>
@@ -59,59 +72,59 @@
             <!-- Left Controls: 3D/2D View Toggle & Camera Angles -->
             <div class="flex items-center gap-2 pointer-events-auto flex-wrap">
                 <!-- 3D vs 2D Switcher -->
-                <div class="bg-[#0C121E]/95 backdrop-blur border border-slate-800/80 p-0.5 rounded-lg shadow-md flex items-center">
-                    <button id="btn-view-3d" onclick="switchViewMode('3d')" class="px-2.5 py-1 rounded text-xs font-semibold bg-amber-500 text-slate-950 transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-cube text-[10px]"></i>
+                <div class="bg-white/95 backdrop-blur border border-slate-200 p-0.5 rounded-lg shadow-sm flex items-center">
+                    <button id="btn-view-3d" onclick="switchViewMode('3d')" class="px-2.5 py-1 rounded text-xs font-semibold bg-uinavy text-white shadow-xs transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-cube text-[10px] text-uigold-light"></i>
                         <span>3D Digital Twin</span>
                     </button>
-                    <button id="btn-view-2d" onclick="switchViewMode('2d')" class="px-2.5 py-1 rounded text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-map text-[10px]"></i>
+                    <button id="btn-view-2d" onclick="switchViewMode('2d')" class="px-2.5 py-1 rounded text-xs font-medium text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-map text-[10px] text-slate-400"></i>
                         <span>2D Map</span>
                     </button>
                 </div>
 
                 <!-- 3D Camera Presets (visible when in 3D mode) -->
-                <div id="camera-presets-pill" class="bg-[#0C121E]/95 backdrop-blur border border-slate-800/80 px-2 py-1 rounded-lg shadow-md hidden sm:flex items-center gap-1.5 text-xs text-slate-400">
-                    <span class="text-[10px] font-mono text-slate-500 uppercase mr-0.5">Cam:</span>
-                    <button onclick="setCameraAngle('bird')" class="px-1.5 py-0.5 rounded text-[11px] hover:text-white hover:bg-slate-800 transition">Bird's Eye</button>
-                    <button onclick="setCameraAngle('street')" class="px-1.5 py-0.5 rounded text-[11px] hover:text-white hover:bg-slate-800 transition">Street Level</button>
-                    <button onclick="setCameraAngle('top')" class="px-1.5 py-0.5 rounded text-[11px] hover:text-white hover:bg-slate-800 transition">Top Down</button>
+                <div id="camera-presets-pill" class="bg-white/95 backdrop-blur border border-slate-200 px-2 py-1 rounded-lg shadow-sm hidden sm:flex items-center gap-1.5 text-xs text-slate-600">
+                    <span class="text-[10px] font-mono text-slate-400 uppercase mr-0.5">Cam:</span>
+                    <button onclick="setCameraAngle('bird')" class="px-1.5 py-0.5 rounded text-[11px] hover:text-uinavy hover:bg-slate-100 transition font-medium">Bird's Eye</button>
+                    <button onclick="setCameraAngle('street')" class="px-1.5 py-0.5 rounded text-[11px] hover:text-uinavy hover:bg-slate-100 transition font-medium">Street Level</button>
+                    <button onclick="setCameraAngle('top')" class="px-1.5 py-0.5 rounded text-[11px] hover:text-uinavy hover:bg-slate-100 transition font-medium">Top Down</button>
                 </div>
 
                 <!-- Live Transit Stats -->
-                <div class="bg-[#0C121E]/90 backdrop-blur border border-slate-800/80 px-2.5 py-1 rounded-lg shadow-md flex items-center gap-2 text-xs">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                    <span class="text-[11px] text-slate-400">Transit:</span>
-                    <span id="stat-in-transit" class="font-mono text-xs font-bold text-white">0</span>
+                <div class="bg-white/95 backdrop-blur border border-slate-200 px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-2 text-xs">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-[11px] text-slate-500">Transit:</span>
+                    <span id="stat-in-transit" class="font-mono text-xs font-bold text-slate-900">0</span>
                 </div>
             </div>
 
             <!-- Right Simulation Control Deck -->
-            <div class="bg-[#0C121E]/95 backdrop-blur border border-slate-800/80 px-2.5 py-1.5 rounded-lg shadow-md flex items-center gap-1.5 pointer-events-auto">
-                <span class="text-[10px] font-mono font-semibold text-slate-400 uppercase mr-1 hidden sm:inline">Sim</span>
+            <div class="bg-white/95 backdrop-blur border border-slate-200 px-2.5 py-1.5 rounded-lg shadow-sm flex items-center gap-1.5 pointer-events-auto">
+                <span class="text-[10px] font-mono font-semibold text-slate-500 uppercase mr-1 hidden sm:inline">Sim</span>
                 
-                <button id="sim-play-btn" onclick="toggleSimulation()" title="Play / Pause Simulation" class="w-7 h-7 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center justify-center text-xs transition">
+                <button id="sim-play-btn" onclick="toggleSimulation()" title="Play / Pause Simulation" class="w-7 h-7 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 flex items-center justify-center text-xs transition">
                     <i class="fa-solid fa-play text-[10px]" id="sim-icon"></i>
                 </button>
-                <button onclick="stepSimulation()" title="Step 1 Tick" class="w-7 h-7 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center justify-center text-xs transition">
+                <button onclick="stepSimulation()" title="Step 1 Tick" class="w-7 h-7 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 flex items-center justify-center text-xs transition">
                     <i class="fa-solid fa-forward-step text-[10px]"></i>
                 </button>
 
-                <div class="flex items-center bg-slate-900 rounded p-0.5 border border-slate-800 ml-1">
-                    <button onclick="setSimSpeed(1.0)" id="spd-1x" class="px-2 py-0.5 rounded text-[11px] font-mono font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 transition">1x</button>
-                    <button onclick="setSimSpeed(2.5)" id="spd-2x" class="px-2 py-0.5 rounded text-[11px] font-mono text-slate-400 hover:text-white transition">2.5x</button>
-                    <button onclick="setSimSpeed(5.0)" id="spd-5x" class="px-2 py-0.5 rounded text-[11px] font-mono text-slate-400 hover:text-white transition">5x</button>
+                <div class="flex items-center bg-slate-50 rounded p-0.5 border border-slate-200 ml-1">
+                    <button onclick="setSimSpeed(1.0)" id="spd-1x" class="px-2 py-0.5 rounded text-[11px] font-mono font-semibold bg-uinavy text-white shadow-xs transition">1x</button>
+                    <button onclick="setSimSpeed(2.5)" id="spd-2x" class="px-2 py-0.5 rounded text-[11px] font-mono text-slate-600 hover:text-slate-900 transition">2.5x</button>
+                    <button onclick="setSimSpeed(5.0)" id="spd-5x" class="px-2 py-0.5 rounded text-[11px] font-mono text-slate-600 hover:text-slate-900 transition">5x</button>
                 </div>
             </div>
         </div>
 
         <!-- Bottom Controls & 3D Hints -->
-        <div class="absolute bottom-3 left-3 z-20 bg-[#0C121E]/90 backdrop-blur border border-slate-800/80 px-3 py-2 rounded-lg shadow-md text-[11px] space-y-1 pointer-events-auto hidden sm:block">
-            <div class="font-semibold text-slate-300 text-[10px] uppercase tracking-wider mb-0.5">3D Navigation Controls</div>
-            <div class="text-slate-400 text-[10px] flex items-center gap-3">
-                <span><i class="fa-regular fa-hand-pointer text-amber-400 mr-1"></i><b>Left Drag:</b> Orbit/Rotate</span>
-                <span><i class="fa-regular fa-hand text-amber-400 mr-1"></i><b>Right Drag:</b> Pan</span>
-                <span><i class="fa-solid fa-arrows-up-down text-amber-400 mr-1"></i><b>Scroll:</b> Zoom</span>
+        <div class="absolute bottom-3 left-3 z-20 bg-white/95 backdrop-blur border border-slate-200 px-3 py-2 rounded-lg shadow-sm text-[11px] space-y-1 pointer-events-auto hidden sm:block">
+            <div class="font-bold text-slate-800 text-[10px] uppercase tracking-wider mb-0.5">3D Navigation Controls</div>
+            <div class="text-slate-600 text-[10px] flex items-center gap-3">
+                <span><i class="fa-regular fa-hand-pointer text-uinavy mr-1"></i><b>Left Drag:</b> Orbit/Rotate</span>
+                <span><i class="fa-regular fa-hand text-uinavy mr-1"></i><b>Right Drag:</b> Pan</span>
+                <span><i class="fa-solid fa-arrows-up-down text-uinavy mr-1"></i><b>Scroll:</b> Zoom</span>
             </div>
         </div>
     </div>
@@ -120,34 +133,34 @@
 <!-- ======================================================== -->
 <!-- 3D VEHICLE INSPECTION & SKETCHFAB GAME-READY CARS MODAL -->
 <!-- ======================================================== -->
-<div id="inspector-3d-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-3 sm:p-5 hidden">
-    <div class="bg-[#0C121E] border border-slate-800 rounded-2xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl relative">
+<div id="inspector-3d-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-3 sm:p-5 hidden">
+    <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl relative">
         <!-- Modal Top Bar -->
-        <div class="px-5 py-3.5 border-b border-slate-800 flex items-center justify-between bg-[#0E1522]">
+        <div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
             <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center">
-                    <i class="fa-solid fa-cube text-sm"></i>
+                <div class="w-8 h-8 rounded-lg bg-uinavy-50 text-uinavy border border-uinavy-200 flex items-center justify-center">
+                    <i class="fa-solid fa-cube text-sm text-uigold-dark"></i>
                 </div>
                 <div>
                     <div class="flex items-center gap-2">
-                        <h3 class="text-sm font-bold text-white font-mono" id="ins-plate">UI-08-BUS</h3>
-                        <span id="ins-status" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-mono">IN_TRANSIT</span>
+                        <h3 class="text-sm font-bold text-slate-900 font-mono" id="ins-plate">UI-08-BUS</h3>
+                        <span id="ins-status" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 font-mono">IN_TRANSIT</span>
                     </div>
-                    <p class="text-[11px] text-slate-400" id="ins-model">Toyota Coaster Executive Campus Shuttle</p>
+                    <p class="text-[11px] text-slate-500" id="ins-model">Toyota Coaster Executive Campus Shuttle</p>
                 </div>
             </div>
 
             <!-- View Tabs & Close Button -->
             <div class="flex items-center gap-2">
-                <div class="flex items-center bg-slate-900 rounded-lg p-0.5 border border-slate-800">
-                    <button id="btn-tab-sketchfab" onclick="switchInspectorTab('sketchfab')" class="px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 text-amber-400 border border-slate-700 transition">
+                <div class="flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200">
+                    <button id="btn-tab-sketchfab" onclick="switchInspectorTab('sketchfab')" class="px-2.5 py-1 rounded text-xs font-semibold bg-uinavy text-white shadow-xs transition">
                         Sketchfab 3D Models
                     </button>
-                    <button id="btn-tab-turntable" onclick="switchInspectorTab('turntable')" class="px-2.5 py-1 rounded text-xs font-medium text-slate-400 hover:text-white bg-slate-900 transition">
+                    <button id="btn-tab-turntable" onclick="switchInspectorTab('turntable')" class="px-2.5 py-1 rounded text-xs font-medium text-slate-600 hover:text-slate-900 transition">
                         Digital Twin Turntable
                     </button>
                 </div>
-                <button onclick="close3DVehicleInspector()" class="p-1.5 text-slate-400 hover:text-white transition">
+                <button onclick="close3DVehicleInspector()" class="p-1.5 text-slate-400 hover:text-slate-700 transition">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
@@ -156,7 +169,7 @@
         <!-- Modal Body (3D Viewport on Left, Telematics Diagnostics on Right) -->
         <div class="flex-1 flex flex-col md:flex-row overflow-y-auto">
             <!-- 3D Canvas / Embed Viewport -->
-            <div class="w-full md:w-3/5 bg-slate-950 min-h-[340px] md:min-h-[460px] relative border-b md:border-b-0 md:border-r border-slate-800">
+            <div class="w-full md:w-3/5 bg-slate-900 min-h-[340px] md:min-h-[460px] relative border-b md:border-b-0 md:border-r border-slate-200">
                 <!-- Tab 1: Sketchfab Collection Player -->
                 <div id="ins-tab-sketchfab" class="w-full h-full flex flex-col">
                     <iframe width="100%" height="420" src="https://sketchfab.com/playlists/embed?collection=9e2582d94d0341b09c0c4269f6dd172b&autostart=0"
@@ -172,70 +185,70 @@
                         web-share
                         class="w-full flex-1 border-0">
                     </iframe>
-                    <div class="p-2 bg-slate-950 border-t border-slate-800/80 text-[10px] text-slate-400 flex items-center justify-between">
+                    <div class="p-2 bg-white border-t border-slate-200 text-[10px] text-slate-600 flex items-center justify-between">
                         <span>Game-Ready Vehicles Collection via Sketchfab</span>
-                        <span class="text-amber-400">Interactive 3D Inspector</span>
+                        <span class="text-uinavy font-medium">Interactive 3D Inspector</span>
                     </div>
                 </div>
 
                 <!-- Tab 2: Three.js Real-Time Turntable Canvas -->
-                <div id="ins-tab-turntable" class="w-full h-full min-h-[420px] hidden relative">
+                <div id="ins-tab-turntable" class="w-full h-full min-h-[420px] hidden relative bg-slate-100">
                     <div id="turntable-canvas-container" class="w-full h-full"></div>
-                    <div class="absolute bottom-2 left-2 right-2 text-center text-[10px] text-slate-400 pointer-events-none">
+                    <div class="absolute bottom-2 left-2 right-2 text-center text-[10px] text-slate-500 pointer-events-none">
                         Drag to rotate 360° | Scroll to zoom
                     </div>
                 </div>
             </div>
 
             <!-- Right Telematics Inspection Metrics -->
-            <div class="w-full md:w-2/5 p-4 sm:p-5 flex flex-col justify-between bg-[#0B0F17] space-y-4">
+            <div class="w-full md:w-2/5 p-4 sm:p-5 flex flex-col justify-between bg-white space-y-4">
                 <div class="space-y-4 text-xs">
-                    <div class="border-b border-slate-800/80 pb-3">
-                        <h4 class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Live Powertrain Diagnostics</h4>
+                    <div class="border-b border-slate-200 pb-3">
+                        <h4 class="text-[11px] font-bold uppercase tracking-wider text-uinavy mb-2">Live Powertrain Diagnostics</h4>
                         <div class="grid grid-cols-2 gap-3 font-mono">
-                            <div class="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
-                                <div class="text-[10px] text-slate-400 font-sans">Current Speed</div>
-                                <div class="text-base font-bold text-white mt-0.5" id="ins-speed">0 km/h</div>
+                            <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                                <div class="text-[10px] text-slate-500 font-sans">Current Speed</div>
+                                <div class="text-base font-bold text-slate-900 mt-0.5" id="ins-speed">0 km/h</div>
                             </div>
-                            <div class="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
-                                <div class="text-[10px] text-slate-400 font-sans">Fuel / Battery</div>
-                                <div class="text-base font-bold text-emerald-400 mt-0.5" id="ins-fuel">95%</div>
+                            <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                                <div class="text-[10px] text-slate-500 font-sans">Fuel / Battery</div>
+                                <div class="text-base font-bold text-emerald-600 mt-0.5" id="ins-fuel">95%</div>
                             </div>
                         </div>
 
                         <!-- Fuel Gauge Bar -->
                         <div class="mt-2.5">
-                            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
-                                <div id="ins-fuel-bar" class="h-full bg-emerald-400 transition-all duration-300" style="width: 95%"></div>
+                            <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                                <div id="ins-fuel-bar" class="h-full bg-emerald-500 transition-all duration-300" style="width: 95%"></div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Operational Specs -->
-                    <div class="space-y-2 border-b border-slate-800/80 pb-3">
-                        <h4 class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Asset Specifications</h4>
-                        <div class="flex justify-between py-1 border-b border-slate-900">
-                            <span class="text-slate-400">Category:</span>
-                            <span class="text-white font-medium" id="ins-type">Campus Shuttle Bus</span>
+                    <div class="space-y-2 border-b border-slate-200 pb-3">
+                        <h4 class="text-[11px] font-bold uppercase tracking-wider text-uinavy mb-1.5">Asset Specifications</h4>
+                        <div class="flex justify-between py-1 border-b border-slate-100">
+                            <span class="text-slate-500">Category:</span>
+                            <span class="text-slate-900 font-medium" id="ins-type">Campus Shuttle Bus</span>
                         </div>
-                        <div class="flex justify-between py-1 border-b border-slate-900">
-                            <span class="text-slate-400">Allocated Driver:</span>
-                            <span class="text-amber-400 font-medium" id="ins-driver">Mr. Babatunde Adeyemi</span>
+                        <div class="flex justify-between py-1 border-b border-slate-100">
+                            <span class="text-slate-500">Allocated Driver:</span>
+                            <span class="text-uinavy font-semibold" id="ins-driver">Mr. Babatunde Adeyemi</span>
                         </div>
-                        <div class="flex justify-between py-1 border-b border-slate-900">
-                            <span class="text-slate-400">GPS Position:</span>
-                            <span class="text-slate-200 font-mono text-[11px]" id="ins-latlng">7.4452, 3.8990</span>
+                        <div class="flex justify-between py-1 border-b border-slate-100">
+                            <span class="text-slate-500">GPS Position:</span>
+                            <span class="text-slate-700 font-mono text-[11px]" id="ins-latlng">7.4452, 3.8990</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Action Deck -->
-                <div class="pt-3 border-t border-slate-800/80 space-y-2">
-                    <button onclick="chaseInspectedVehicle()" class="w-full py-2.5 px-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition">
-                        <i class="fa-solid fa-video text-xs"></i>
+                <div class="pt-3 border-t border-slate-200 space-y-2">
+                    <button onclick="chaseInspectedVehicle()" class="w-full py-2.5 px-3 rounded-lg bg-uinavy hover:bg-uinavy-light text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition">
+                        <i class="fa-solid fa-video text-xs text-uigold-light"></i>
                         <span>Lock 3D Chase Camera</span>
                     </button>
-                    <button onclick="close3DVehicleInspector()" class="w-full py-2 px-3 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 font-medium text-xs border border-slate-800 transition">
+                    <button onclick="close3DVehicleInspector()" class="w-full py-2 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs border border-slate-200 transition">
                         Close Inspector
                     </button>
                 </div>
@@ -272,7 +285,6 @@
         }
     });
 
-
     function switchViewMode(mode) {
         currentViewMode = mode;
         const container3D = document.getElementById('map-3d-container');
@@ -284,15 +296,15 @@
         if (mode === '3d') {
             container3D.classList.remove('hidden');
             container2D.classList.add('hidden');
-            btn3D.className = 'px-2.5 py-1 rounded text-xs font-semibold bg-amber-500 text-slate-950 transition flex items-center gap-1.5';
-            btn2D.className = 'px-2.5 py-1 rounded text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5';
+            btn3D.className = 'px-2.5 py-1 rounded text-xs font-semibold bg-uinavy text-white shadow-xs transition flex items-center gap-1.5';
+            btn2D.className = 'px-2.5 py-1 rounded text-xs font-medium text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5';
             if (cameraPill) cameraPill.classList.remove('hidden');
             if (window.campus3D) window.campus3D.onWindowResize();
         } else {
             container3D.classList.add('hidden');
             container2D.classList.remove('hidden');
-            btn2D.className = 'px-2.5 py-1 rounded text-xs font-semibold bg-amber-500 text-slate-950 transition flex items-center gap-1.5';
-            btn3D.className = 'px-2.5 py-1 rounded text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5';
+            btn2D.className = 'px-2.5 py-1 rounded text-xs font-semibold bg-uinavy text-white shadow-xs transition flex items-center gap-1.5';
+            btn3D.className = 'px-2.5 py-1 rounded text-xs font-medium text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5';
             if (cameraPill) cameraPill.classList.add('hidden');
             if (window.fleetMap && window.fleetMap.map) {
                 setTimeout(() => window.fleetMap.map.invalidateSize(), 150);
