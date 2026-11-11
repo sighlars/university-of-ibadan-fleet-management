@@ -19,17 +19,22 @@ function open3DVehicleInspector(veh) {
     modal.classList.remove('hidden');
 
     // Populate Vehicle Data in UI
+    const lat = veh.latitude !== undefined ? veh.latitude : (veh.current_lat || 7.4452);
+    const lng = veh.longitude !== undefined ? veh.longitude : (veh.current_lng || 3.8990);
+    const speed = Math.round(veh.speed_kmh || 0);
+    const fuel = Math.round(veh.battery_fuel_pct !== undefined ? veh.battery_fuel_pct : 95);
+
     document.getElementById('ins-plate').textContent = veh.plate_number;
     document.getElementById('ins-model').textContent = veh.model || veh.vehicle_type;
     document.getElementById('ins-type').textContent = veh.vehicle_type;
     document.getElementById('ins-driver').textContent = veh.driver_name || (veh.driver ? veh.driver.name : 'Unassigned');
-    document.getElementById('ins-status').textContent = veh.status.toUpperCase();
-    document.getElementById('ins-speed').textContent = `${veh.speed_kmh} km/h`;
-    document.getElementById('ins-fuel').textContent = `${veh.battery_fuel_pct}%`;
-    document.getElementById('ins-latlng').textContent = `${veh.latitude.toFixed(5)}, ${veh.longitude.toFixed(5)}`;
+    document.getElementById('ins-status').textContent = (veh.status || 'IDLE').toUpperCase();
+    document.getElementById('ins-speed').textContent = `${speed} km/h`;
+    document.getElementById('ins-fuel').textContent = `${fuel}%`;
+    document.getElementById('ins-latlng').textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
 
     const fuelBar = document.getElementById('ins-fuel-bar');
-    if (fuelBar) fuelBar.style.width = `${veh.battery_fuel_pct}%`;
+    if (fuelBar) fuelBar.style.width = `${fuel}%`;
 
     // Start with Sketchfab tab active by default
     switchInspectorTab('sketchfab');

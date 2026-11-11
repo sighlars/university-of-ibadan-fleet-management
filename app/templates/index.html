@@ -88,6 +88,7 @@
                     <span class="text-[10px] font-mono text-slate-400 uppercase mr-0.5">Cam:</span>
                     <button onclick="setCameraAngle('bird')" class="px-1.5 py-0.5 rounded text-[11px] hover:text-uinavy hover:bg-slate-100 transition font-medium">Bird's Eye</button>
                     <button onclick="setCameraAngle('street')" class="px-1.5 py-0.5 rounded text-[11px] hover:text-uinavy hover:bg-slate-100 transition font-medium">Street Level</button>
+                    <button onclick="setCameraAngle('depot')" class="px-1.5 py-0.5 rounded text-[11px] hover:text-uinavy hover:bg-slate-100 transition font-medium">Depot Bays</button>
                     <button onclick="setCameraAngle('top')" class="px-1.5 py-0.5 rounded text-[11px] hover:text-uinavy hover:bg-slate-100 transition font-medium">Top Down</button>
                 </div>
 
@@ -118,6 +119,70 @@
             </div>
         </div>
 
+        <!-- Interactive 3D Vehicle Quick-Card (Shown on vehicle click in 3D) -->
+        <div id="veh-quick-card" class="absolute bottom-14 right-4 z-30 bg-white/95 backdrop-blur-md border border-slate-200 rounded-xl p-4 shadow-xl max-w-xs w-full hidden text-xs space-y-3 transition-all pointer-events-auto">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="font-bold font-mono text-sm text-slate-900" id="vqc-plate">UI-08-BUS</span>
+                    <span id="vqc-status" class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase font-mono">IN TRANSIT</span>
+                </div>
+                <button onclick="document.getElementById('veh-quick-card').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 p-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="space-y-1.5 text-[11px]">
+                <div class="text-slate-500 font-medium truncate" id="vqc-model">Toyota Coaster Shuttle</div>
+                <div class="flex justify-between py-1 border-b border-slate-100">
+                    <span class="text-slate-500">Allocated Driver:</span>
+                    <span class="text-uinavy font-semibold" id="vqc-driver">Mr. Babatunde Adeyemi</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 pt-1 font-mono">
+                    <div class="bg-slate-50 p-2 rounded border border-slate-200 text-center">
+                        <div class="text-[10px] text-slate-400 font-sans">Speed</div>
+                        <div class="text-sm font-bold text-slate-900" id="vqc-speed">35 km/h</div>
+                    </div>
+                    <div class="bg-slate-50 p-2 rounded border border-slate-200 text-center">
+                        <div class="text-[10px] text-slate-400 font-sans">Fuel / Battery</div>
+                        <div class="text-sm font-bold text-emerald-600" id="vqc-fuel">95%</div>
+                    </div>
+                </div>
+                <!-- Fuel Progress Bar -->
+                <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                    <div id="vqc-fuel-bar" class="h-full bg-emerald-500 transition-all duration-300" style="width: 95%"></div>
+                </div>
+                <div class="text-slate-600 pt-1">
+                    <span class="text-slate-400">Next Stop:</span>
+                    <span class="text-slate-800 font-medium" id="vqc-next">Kenneth Dike Library</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
+                <button onclick="chaseSelectedVehicle()" class="py-2 px-2.5 rounded-lg bg-uinavy hover:bg-uinavy-light text-white font-semibold text-[11px] shadow-xs flex items-center justify-center gap-1.5 transition">
+                    <i class="fa-solid fa-video text-[10px] text-uigold-light"></i>
+                    <span>Chase Cam</span>
+                </button>
+                <button onclick="inspectSelectedVehicle()" class="py-2 px-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[11px] border border-slate-200 flex items-center justify-center gap-1.5 transition">
+                    <i class="fa-solid fa-cube text-[10px] text-uinavy"></i>
+                    <span>3D Turntable</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Interactive Landmark Quick-Card (Shown on building click in 3D) -->
+        <div id="landmark-quick-card" class="absolute bottom-14 left-4 z-30 bg-white/95 backdrop-blur-md border border-slate-200 rounded-xl p-3.5 shadow-xl max-w-xs w-full hidden text-xs space-y-2 transition-all pointer-events-auto">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-building-columns text-uinavy"></i>
+                    <h4 class="font-bold text-slate-900" id="lqc-name">Kenneth Dike Library</h4>
+                </div>
+                <button onclick="document.getElementById('landmark-quick-card').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 p-0.5"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-1 text-[11px] text-slate-600">
+                <div><span class="text-slate-400">Campus Zone:</span> <span class="font-semibold text-uinavy" id="lqc-zone">Academic Core</span></div>
+                <div><span class="text-slate-400">GPS Coordinates:</span> <span class="font-mono text-slate-700" id="lqc-coords">7.4478, 3.9008</span></div>
+            </div>
+        </div>
+
         <!-- Bottom Controls & 3D Hints -->
         <div class="absolute bottom-3 left-3 z-20 bg-white/95 backdrop-blur border border-slate-200 px-3 py-2 rounded-lg shadow-sm text-[11px] space-y-1 pointer-events-auto hidden sm:block">
             <div class="font-bold text-slate-800 text-[10px] uppercase tracking-wider mb-0.5">3D Navigation Controls</div>
@@ -125,6 +190,7 @@
                 <span><i class="fa-regular fa-hand-pointer text-uinavy mr-1"></i><b>Left Drag:</b> Orbit/Rotate</span>
                 <span><i class="fa-regular fa-hand text-uinavy mr-1"></i><b>Right Drag:</b> Pan</span>
                 <span><i class="fa-solid fa-arrows-up-down text-uinavy mr-1"></i><b>Scroll:</b> Zoom</span>
+                <span><i class="fa-solid fa-crosshairs text-uinavy mr-1"></i><b>Click Vehicle/Building:</b> Inspect</span>
             </div>
         </div>
     </div>
@@ -318,7 +384,24 @@
         }
     }
 
-    // Make switchViewMode global
+    function chaseSelectedVehicle() {
+        if (window.campus3D && window.campus3D.selectedVehicleId) {
+            window.campus3D.followVehicle(window.campus3D.selectedVehicleId);
+        }
+    }
+
+    function inspectSelectedVehicle() {
+        if (window.campus3D && window.campus3D.selectedVehicleId) {
+            const vMesh = window.campus3D.vehicles3D.get(window.campus3D.selectedVehicleId);
+            if (vMesh && vMesh.userData && vMesh.userData.vehicleData) {
+                open3DVehicleInspector(vMesh.userData.vehicleData);
+            }
+        }
+    }
+
+    // Global bindings
     window.switchViewMode = switchViewMode;
+    window.chaseSelectedVehicle = chaseSelectedVehicle;
+    window.inspectSelectedVehicle = inspectSelectedVehicle;
 </script>
 {% endblock %}

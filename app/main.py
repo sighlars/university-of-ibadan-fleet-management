@@ -17,6 +17,7 @@ async def lifespan(app: FastAPI):
     # Startup: ensure tables exist and seed demo data if empty
     Base.metadata.create_all(bind=engine)
     seed_database()
+    simulator.start()
     yield
     # Shutdown: pause simulator
     simulator.pause()

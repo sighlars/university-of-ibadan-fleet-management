@@ -163,8 +163,12 @@ class FleetSimulator:
                     t_packet = {
                         "vehicle_id": vehicle.id,
                         "plate_number": vehicle.plate_number,
+                        "model": vehicle.model,
                         "vehicle_type": vehicle.vehicle_type.value,
+                        "capacity_kg": vehicle.capacity_kg,
                         "driver_name": vehicle.driver.name if vehicle.driver else "Unassigned",
+                        "driver_phone": vehicle.driver.phone if vehicle.driver else "",
+                        "driver_rating": vehicle.driver.rating if vehicle.driver else 4.9,
                         "latitude": vehicle.current_lat,
                         "longitude": vehicle.current_lng,
                         "speed_kmh": sim_speed,
@@ -196,8 +200,12 @@ class FleetSimulator:
                 telemetry_list.append({
                     "vehicle_id": iv.id,
                     "plate_number": iv.plate_number,
+                    "model": iv.model,
                     "vehicle_type": iv.vehicle_type.value,
+                    "capacity_kg": iv.capacity_kg,
                     "driver_name": iv.driver.name if iv.driver else "Unassigned",
+                    "driver_phone": iv.driver.phone if iv.driver else "",
+                    "driver_rating": iv.driver.rating if iv.driver else 4.9,
                     "latitude": iv.current_lat,
                     "longitude": iv.current_lng,
                     "speed_kmh": 0.0,
@@ -207,7 +215,7 @@ class FleetSimulator:
                     "current_route_id": None,
                     "active_deliveries": 0,
                     "completed_deliveries": 0,
-                    "next_stop_address": "Idle at base",
+                    "next_stop_address": "Stationed at Central Depot Bay",
                     "eta_minutes": 0.0
                 })
 

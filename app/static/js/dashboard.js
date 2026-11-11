@@ -277,6 +277,19 @@ async function addSampleOrders() {
 }
 
 // Initial fetch on page load
-document.addEventListener('DOMContentLoaded', () => {
+async function loadInitialDashboardData() {
     refreshTopKPIs();
+    try {
+        const res = await fetch('/api/vehicles');
+        const vehicles = await res.json();
+        if (vehicles && vehicles.length) {
+            renderSidebarVehicles(vehicles);
+        }
+    } catch (e) {
+        console.error('Error loading initial vehicles in dashboard', e);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadInitialDashboardData();
 });
