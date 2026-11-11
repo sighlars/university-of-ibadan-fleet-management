@@ -55,14 +55,49 @@
 ## 📸 User Interface Showcase
 
 > [!TIP]
-> Click any screenshot below to open that exact live view in your browser.
+> Tap or click any screenshot below to open that exact live interactive view directly in your browser.
 
-| View | Live UI Preview (Click to Launch) |
-|---|---|
-| **Live 3D Digital Twin Viewport**<br>• Real OpenStreetMap Satellite & Street Layouts<br>• Flat Dynamic Highway Navigation Ribbons<br>• Authentic Campus Fleet (Bajaj, TVS, Piaggio, Carry, HiAce)<br>• Live Telematics Sidebar Drawer<br><br>[**▶ Launch Interactive 3D Twin**](https://university-of-ibadan-fleet-management.onrender.com/) | [![Live 3D Digital Twin](docs/screenshots/ui_campus_3d_viewport.png)](https://university-of-ibadan-fleet-management.onrender.com/) |
-| **Analytics & SLA KPIs Dashboard**<br>• Authentic shadcn/ui Dashboard block<br>• 4-card metric block (Deliveries, Fleet Utilization, Odometer, CO₂ Conserved)<br>• Campus Delivery Velocity & Throughput Area Chart<br>• Real-time dispatches stream<br><br>[**▶ Open Live Analytics**](https://university-of-ibadan-fleet-management.onrender.com/analytics) | [![shadcn Analytics Dashboard](docs/screenshots/analytics_dashboard_shadcn.png)](https://university-of-ibadan-fleet-management.onrender.com/analytics) |
-| **Fleet & Drivers Management Roster**<br>• Authentic shadcn/ui Data Table block<br>• Monospace plate tags, battery/fuel progress bars, driver ratings<br>• Real-time asset filtering & modal registration<br><br>[**▶ Open Live Fleet Roster**](https://university-of-ibadan-fleet-management.onrender.com/vehicles) | [![shadcn Fleet & Drivers Table](docs/screenshots/fleet_drivers_shadcn.png)](https://university-of-ibadan-fleet-management.onrender.com/vehicles) |
-| **Campus Consignments & Orders Ledger**<br>• Capacitated Vehicle Routing Problem (CVRP) queue<br>• Priority badges (Urgent, High, Medium, Low)<br>• Consignment ledger with 1-click batch solver<br><br>[**▶ Open Live Orders Desk**](https://university-of-ibadan-fleet-management.onrender.com/orders) | [![shadcn Orders & Logistics Table](docs/screenshots/orders_logistics_shadcn.png)](https://university-of-ibadan-fleet-management.onrender.com/orders) |
+### 1. 🌐 Live 3D Digital Twin Viewport
+*Real OpenStreetMap georeferenced campus terrain, flat highway navigation ribbons, real-time telematics drawer, and 60fps snappy chase camera tracking for campus vehicles (Bajaj, TVS, Piaggio Ape, Suzuki Carry, Toyota HiAce, Hilux).*
+
+[![Live 3D Digital Twin Viewport](docs/screenshots/ui_campus_3d_viewport.png)](https://university-of-ibadan-fleet-management.onrender.com/)
+
+<p align="right">
+  <a href="https://university-of-ibadan-fleet-management.onrender.com/"><b>▶ Launch Interactive 3D Twin & Chase Camera &rarr;</b></a>
+</p>
+
+---
+
+### 2. 📊 Logistics Analytics & SLA KPIs Dashboard
+*Authentic shadcn/ui metric cards (Deliveries, Fleet Utilization, Odometer, CO₂ Conserved), live campus delivery velocity and throughput area charts, and real-time dispatches activity stream.*
+
+[![Analytics & SLA KPIs Dashboard](docs/screenshots/analytics_dashboard_shadcn.png)](https://university-of-ibadan-fleet-management.onrender.com/analytics)
+
+<p align="right">
+  <a href="https://university-of-ibadan-fleet-management.onrender.com/analytics"><b>▶ Open Live Analytics Dashboard &rarr;</b></a>
+</p>
+
+---
+
+### 3. 🚚 Campus Fleet & Drivers Roster
+*Authentic shadcn/ui Data Table with vehicle registration, driver ratings, live fuel/battery progress meters, and dynamic asset status filtering.*
+
+[![Campus Fleet & Drivers Roster](docs/screenshots/fleet_drivers_shadcn.png)](https://university-of-ibadan-fleet-management.onrender.com/vehicles)
+
+<p align="right">
+  <a href="https://university-of-ibadan-fleet-management.onrender.com/vehicles"><b>▶ Open Live Fleet Roster &rarr;</b></a>
+</p>
+
+---
+
+### 4. 📦 Campus Consignments & Orders Ledger
+*Capacitated Vehicle Routing Problem (CVRP) dispatch queue, priority classification badges (Urgent, High, Medium, Low), consignment weight meters, and 1-click batch route optimization.*
+
+[![Campus Consignments & Orders Ledger](docs/screenshots/orders_logistics_shadcn.png)](https://university-of-ibadan-fleet-management.onrender.com/orders)
+
+<p align="right">
+  <a href="https://university-of-ibadan-fleet-management.onrender.com/orders"><b>▶ Open Live Orders & Consignments Desk &rarr;</b></a>
+</p>
 
 ---
 
