@@ -2,11 +2,18 @@
  * UI-FleetFlow 3D Digital Twin Engine (Three.js)
  * Real-time 3D University of Ibadan Campus Simulation with:
  * - High-fidelity daylight campus environment
- * - Real OpenStreetMap-style procedural campus ground master plan
+ * - Real OpenStreetMap 16-tile georeferenced ground draped onto 3D terrain
  * - 38 authentic University of Ibadan architectural landmarks
  * - 16 real campus road networks with asphalt ribbons and markings
- * - 3D vehicles with spinning wheels, real-time driving simulation,
- *   live floating fuel gauge HUD above each vehicle, and interactive inspection on click.
+ * - Authentic Nigerian campus utility/dispatch vehicles:
+ *   1. UI-01-DSP: Bajaj Boxer BM 100 Courier Delivery Bike (85 kg)
+ *   2. UI-02-MED: TVS HLX 125 Laboratory Dispatch Bike (90 kg)
+ *   3. UI-03-KEKE: Piaggio Ape Cargo Delivery Tricycle (350 kg)
+ *   4. UI-04-VAN: Suzuki Super Carry 1.0L Mini Delivery Van (750 kg)
+ *   5. UI-05-BUS: Toyota HiAce 2.7L Commuter Logistics Van (1200 kg)
+ *   6. UI-06-WKS: Toyota Hilux 2.5 D-4D Workhorse Pickup (1100 kg)
+ * - Forward-facing velocity vector driving dynamics (never drives backwards!)
+ * - Floating live fuel gauge HUD above each vehicle with on-click telematics inspection.
  */
 
 class Campus3DEngine {
@@ -66,11 +73,11 @@ class Campus3DEngine {
         // 1. Scene & Atmospheric Daylight Fog
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(0xdbeafe); // Clean daylight sky
-        this.scene.fog = new THREE.FogExp2(0xdbeafe, 0.0011);
+        this.scene.fog = new THREE.FogExp2(0xdbeafe, 0.0009);
 
         // 2. Camera: Wide-angle perspective overlooking campus
-        this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 3500);
-        this.camera.position.set(0, 210, 290);
+        this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 4000);
+        this.camera.position.set(0, 220, 310);
 
         // 3. WebGL Renderer with PBR tone mapping & soft shadows
         this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
@@ -88,7 +95,7 @@ class Campus3DEngine {
         this.controls.dampingFactor = 0.06;
         this.controls.maxPolarAngle = Math.PI / 2 - 0.04;
         this.controls.minDistance = 10;
-        this.controls.maxDistance = 900;
+        this.controls.maxDistance = 1100;
         this.controls.target.set(0, 0, 0);
 
         // 5. Environment & Campus Architecture
@@ -110,18 +117,18 @@ class Campus3DEngine {
 
     setupLighting() {
         // Natural Daylight Hemisphere
-        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x94a3b8, 0.9);
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x94a3b8, 0.95);
         this.scene.add(hemiLight);
 
         // Main Directional Sunlight with Soft PCF Shadows
-        const sun = new THREE.DirectionalLight(0xfffbeb, 1.55);
-        sun.position.set(280, 400, 200);
+        const sun = new THREE.DirectionalLight(0xfffbeb, 1.6);
+        sun.position.set(280, 420, 220);
         sun.castShadow = true;
         sun.shadow.mapSize.width = 2048;
         sun.shadow.mapSize.height = 2048;
         sun.shadow.camera.near = 10;
-        sun.shadow.camera.far = 1000;
-        const d = 350;
+        sun.shadow.camera.far = 1200;
+        const d = 450;
         sun.shadow.camera.left = -d;
         sun.shadow.camera.right = d;
         sun.shadow.camera.top = d;
@@ -130,152 +137,106 @@ class Campus3DEngine {
         this.scene.add(sun);
 
         // Soft sky rim light
-        const rim = new THREE.DirectionalLight(0x93c5fd, 0.4);
-        rim.position.set(-220, 150, -220);
+        const rim = new THREE.DirectionalLight(0x93c5fd, 0.45);
+        rim.position.set(-240, 160, -240);
         this.scene.add(rim);
     }
 
     buildCampusTerrain() {
-        // High-Resolution Procedural OpenStreetMap-style Ground Canvas Texture (2048x2048)
-        const groundTex = this.createCampusGroundMapTexture();
-
-        const groundGeo = new THREE.PlaneGeometry(1800, 1800, 32, 32);
-        const groundMat = new THREE.MeshStandardMaterial({
-            map: groundTex,
-            roughness: 0.95,
+        // 1. Broad Base Ground Plane for Infinite Horizon in Light Mode
+        const baseGeo = new THREE.PlaneGeometry(3500, 3500);
+        const baseMat = new THREE.MeshStandardMaterial({
+            color: 0xe2e8f0, // Soft light institutional ground
+            roughness: 0.9,
             metalness: 0.05
         });
-        const ground = new THREE.Mesh(groundGeo, groundMat);
-        ground.rotation.x = -Math.PI / 2;
-        ground.receiveShadow = true;
-        this.scene.add(ground);
+        const baseGround = new THREE.Mesh(baseGeo, baseMat);
+        baseGround.rotation.x = -Math.PI / 2;
+        baseGround.position.y = 0.0;
+        baseGround.receiveShadow = true;
+        this.scene.add(baseGround);
+
+        // 2. Real OpenStreetMap 16-Tile Grid (Zoom Level 15)
+        // Directly covers University of Ibadan campus bounds (lat 7.4278 to 7.4714, lon 3.8781 to 3.9221)
+        const textureLoader = new THREE.TextureLoader();
+        const n = 32768.0; // 2^15
+
+        for (let x = 16737; x <= 16740; x++) {
+            for (let y = 15702; y <= 15705; y++) {
+                // Compute exact geographic bounding box for this OSM tile
+                const lon_w = (x / n) * 360.0 - 180.0;
+                const lon_e = ((x + 1) / n) * 360.0 - 180.0;
+                const lat_n = Math.atan(Math.sinh(Math.PI * (1 - 2 * y / n))) * 180.0 / Math.PI;
+                const lat_s = Math.atan(Math.sinh(Math.PI * (1 - 2 * (y + 1) / n))) * 180.0 / Math.PI;
+
+                const center_lon = (lon_w + lon_e) / 2.0;
+                const center_lat = (lat_n + lat_s) / 2.0;
+
+                const pos = this.gpsToWorld(center_lat, center_lon);
+                const p_nw = this.gpsToWorld(lat_n, lon_w);
+                const p_se = this.gpsToWorld(lat_s, lon_e);
+                const tileW = Math.abs(p_se.x - p_nw.x);
+                const tileH = Math.abs(p_se.z - p_nw.z);
+
+                const tileTex = textureLoader.load(`/api/tiles/15/${x}/${y}.png`, () => {
+                    if (this.renderer && this.scene && this.camera) {
+                        this.renderer.render(this.scene, this.camera);
+                    }
+                });
+                tileTex.minFilter = THREE.LinearFilter;
+                tileTex.magFilter = THREE.LinearFilter;
+
+                const tileMat = new THREE.MeshStandardMaterial({
+                    map: tileTex,
+                    roughness: 0.85,
+                    metalness: 0.05
+                });
+                const tileGeo = new THREE.PlaneGeometry(tileW, tileH);
+                const tileMesh = new THREE.Mesh(tileGeo, tileMat);
+                tileMesh.rotation.x = -Math.PI / 2;
+                tileMesh.position.set(pos.x, 0.06, pos.z);
+                tileMesh.receiveShadow = true;
+                this.scene.add(tileMesh);
+            }
+        }
 
         // Subtle CAD Digital Twin Coordinate Grid Overlay
-        const grid = new THREE.GridHelper(1800, 90, 0x94a3b8, 0xcbd5e1);
-        grid.position.y = 0.04;
+        const grid = new THREE.GridHelper(1600, 80, 0x0284c7, 0x94a3b8);
+        grid.position.y = 0.08;
+        grid.material.opacity = 0.15;
+        grid.material.transparent = true;
         this.scene.add(grid);
-    }
-
-    createCampusGroundMapTexture() {
-        const canvas = document.createElement('canvas');
-        canvas.width = 2048;
-        canvas.height = 2048;
-        const ctx = canvas.getContext('2d');
-
-        // 1. Campus Base Turf Green
-        ctx.fillStyle = '#3b7045';
-        ctx.fillRect(0, 0, 2048, 2048);
-
-        // 2. Organic Lawn and Forest Variations
-        ctx.fillStyle = '#34663e';
-        ctx.beginPath();
-        ctx.ellipse(1400, 1400, 500, 400, Math.PI / 6, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = '#42784d';
-        ctx.beginPath();
-        ctx.ellipse(600, 700, 450, 350, -Math.PI / 8, 0, Math.PI * 2);
-        ctx.fill();
-
-        // 3. Awba Dam Reservoir (Southeast UI Campus Water Body)
-        const waterGrad = ctx.createLinearGradient(1350, 1500, 1900, 1900);
-        waterGrad.addColorStop(0, '#0284c7');
-        waterGrad.addColorStop(1, '#0369a1');
-        ctx.fillStyle = waterGrad;
-        ctx.beginPath();
-        ctx.ellipse(1650, 1650, 320, 220, Math.PI / 4, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 6;
-        ctx.stroke();
-
-        // 4. UI Olympic Sports Complex Stadium (Running track & Soccer pitch)
-        // Red running track oval
-        ctx.fillStyle = '#dc2626';
-        ctx.beginPath();
-        ctx.roundRect(850, 750, 260, 160, [80]);
-        ctx.fill();
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 3;
-        ctx.stroke();
-
-        // Green soccer pitch
-        ctx.fillStyle = '#15803d';
-        ctx.fillRect(890, 780, 180, 100);
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(890, 780, 180, 100);
-        ctx.beginPath();
-        ctx.arc(980, 830, 22, 0, Math.PI * 2);
-        ctx.moveTo(980, 780);
-        ctx.lineTo(980, 880);
-        ctx.stroke();
-
-        // 5. Major Pedestrian Walkways (OpenStreetMap pedestrian footways in light stone)
-        ctx.strokeStyle = '#e2dfd9';
-        ctx.lineWidth = 5;
-        ctx.beginPath();
-        // Central academic walkway spine
-        ctx.moveTo(1024, 1300); ctx.lineTo(1024, 700);
-        ctx.moveTo(900, 1024); ctx.lineTo(1200, 1024);
-        ctx.moveTo(850, 1150); ctx.lineTo(1150, 850);
-        ctx.stroke();
-
-        // 6. Paved Asphalt Parking Aprons (Senate, KDL, Trenchard, Central Depot)
-        ctx.fillStyle = '#334155';
-        ctx.fillRect(980, 960, 90, 50);   // Depot Apron
-        ctx.fillRect(1000, 830, 70, 45);  // Trenchard Hall Forecourt
-        ctx.fillRect(1010, 780, 80, 40);  // Senate Parking
-        ctx.fillRect(1050, 840, 75, 45);  // KDL Forecourt
-
-        const texture = new THREE.CanvasTexture(canvas);
-        texture.wrapS = THREE.ClampToEdgeWrapping;
-        texture.wrapT = THREE.ClampToEdgeWrapping;
-        return texture;
     }
 
     buildRoadNetwork() {
         // 16 Real University of Ibadan Campus Road Arteries
+        // Providing sleek 3D navigation road guides that sit cleanly on top of the real OSM ground map
         const roads = [
-            // 1. University Crescent / Main Gate Boulevard (Main Gate -> SUB -> Trenchard Hall)
             { from: [7.4429, 3.8996], to: [7.4485, 3.8998], width: 14, name: "University Crescent" },
-            // 2. Oduduwa Road (Central Depot -> Faculty of Arts -> Trenchard Hall -> KDL Library)
             { from: [7.4452, 3.8990], to: [7.4480, 3.9010], width: 12, name: "Oduduwa Road" },
-            // 3. Tech Road (Senate Building -> Faculty of Technology -> Awo Hall)
             { from: [7.4485, 3.8998], to: [7.4520, 3.8985], width: 12, name: "Technology Way" },
             { from: [7.4520, 3.8985], to: [7.4530, 3.9010], width: 11, name: "Awo Hall Road" },
-            // 4. Science Road (KDL Library -> Faculty of Science -> Pharmacy)
             { from: [7.4478, 3.9008], to: [7.4495, 3.9035], width: 11, name: "Science Road" },
-            // 5. Amina Way (Trenchard Hall -> Bello Hall -> Mellanby -> Sports Complex)
             { from: [7.4482, 3.9001], to: [7.4490, 3.8965], width: 11, name: "Amina Way" },
-            // 6. Benue Road (Faculty of Technology -> Zik Hall -> UI ICC & 2nd Gate)
             { from: [7.4520, 3.8985], to: [7.4560, 3.8920], width: 14, name: "Benue Road" },
-            // 7. Niger Road (Benue Road -> Queen Idia Hall -> PG College)
             { from: [7.4545, 3.8955], to: [7.4505, 3.8960], width: 11, name: "Niger Road" },
-            // 8. Sankore Avenue (Faculty of Education -> College of Medicine)
             { from: [7.4460, 3.9010], to: [7.4470, 3.9015], width: 10, name: "Sankore Avenue" },
-            // 9. Barth Road (UI Commercial Ventures -> Parry Road Farm)
             { from: [7.4435, 3.9025], to: [7.4445, 3.9055], width: 11, name: "Barth Road" },
-            // 10. Parry Road (Farm -> Botanical Gardens & Awba Pavilion)
             { from: [7.4445, 3.9055], to: [7.4410, 3.9040], width: 10, name: "Parry Road" },
-            // 11. Health Sciences Link (Central Depot -> Jaja Clinic)
             { from: [7.4452, 3.8990], to: [7.4462, 3.8970], width: 11, name: "Health Sciences Link" },
-            // 12. Appleton Road (Sports Complex -> Postgraduate College)
             { from: [7.4490, 3.8965], to: [7.4505, 3.8960], width: 10, name: "Appleton Road" },
-            // 13. El-Kanemi Road (Faculty of Tech -> Indy Hall)
             { from: [7.4520, 3.8985], to: [7.4550, 3.8965], width: 10, name: "El-Kanemi Road" },
-            // 14. Danfodio Road (Kuti Hall -> Science Quad)
             { from: [7.4492, 3.8995], to: [7.4495, 3.9020], width: 10, name: "Danfodio Road" },
-            // 15. Awba Dam Access Road (Barth Rd to Awba Lake)
             { from: [7.4435, 3.9025], to: [7.4415, 3.9030], width: 9, name: "Awba Dam Road" },
-            // 16. Depot Service Loop (Fleet maintenance yard connector)
             { from: [7.4448, 3.8985], to: [7.4455, 3.8995], width: 12, name: "Central Depot Yard Loop" }
         ];
 
         const roadMat = new THREE.MeshStandardMaterial({
             color: 0x334155, // Clean asphalt slate
             roughness: 0.75,
-            metalness: 0.15
+            metalness: 0.15,
+            transparent: true,
+            opacity: 0.55 // Semi-transparent so OSM road labels and curves show through clearly!
         });
 
         roads.forEach(r => {
@@ -292,7 +253,7 @@ class Campus3DEngine {
             const roadMesh = new THREE.Mesh(roadGeo, roadMat);
             roadMesh.rotation.x = -Math.PI / 2;
             roadMesh.rotation.z = -angle;
-            roadMesh.position.set((p1.x + p2.x) / 2, 0.12, (p1.z + p2.z) / 2);
+            roadMesh.position.set((p1.x + p2.x) / 2, 0.10, (p1.z + p2.z) / 2);
             roadMesh.receiveShadow = true;
             this.scene.add(roadMesh);
 
@@ -302,7 +263,7 @@ class Campus3DEngine {
             const dashMesh = new THREE.Mesh(dashGeo, dashMat);
             dashMesh.rotation.x = -Math.PI / 2;
             dashMesh.rotation.z = -angle;
-            dashMesh.position.set((p1.x + p2.x) / 2, 0.14, (p1.z + p2.z) / 2);
+            dashMesh.position.set((p1.x + p2.x) / 2, 0.12, (p1.z + p2.z) / 2);
             this.scene.add(dashMesh);
         });
 
@@ -318,7 +279,7 @@ class Campus3DEngine {
         const yardMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.65 });
         const yard = new THREE.Mesh(yardGeo, yardMat);
         yard.rotation.x = -Math.PI / 2;
-        yard.position.set(depotPos.x, 0.13, depotPos.z + 18);
+        yard.position.set(depotPos.x, 0.11, depotPos.z + 18);
         yard.receiveShadow = true;
         this.scene.add(yard);
 
@@ -328,7 +289,7 @@ class Campus3DEngine {
             const slotMat = new THREE.MeshBasicMaterial({ color: 0xd97706, wireframe: true });
             const slot = new THREE.Mesh(slotGeo, slotMat);
             slot.rotation.x = -Math.PI / 2;
-            slot.position.set(depotPos.x + b.x, 0.15, depotPos.z + b.z);
+            slot.position.set(depotPos.x + b.x, 0.13, depotPos.z + b.z);
             this.scene.add(slot);
         });
     }
@@ -423,57 +384,56 @@ class Campus3DEngine {
                 tower.castShadow = true;
                 group.add(tower);
 
-                const spireGeo = new THREE.ConeGeometry(5, 10, 8);
+                const spireGeo = new THREE.ConeGeometry(5, 10, 4);
                 const spireMat = new THREE.MeshStandardMaterial({ color: 0x002147 });
                 const spire = new THREE.Mesh(spireGeo, spireMat);
                 spire.position.set(0, b.h + 23, 0);
                 group.add(spire);
             }
 
-            // Architectural Accents: Red Medical Cross on Jaja Clinic
-            if (b.isHospital) {
-                const crossMat = new THREE.MeshBasicMaterial({ color: 0xef4444 });
-                const crossH = new THREE.Mesh(new THREE.BoxGeometry(8, 2, 0.4), crossMat);
-                crossH.position.set(0, b.h * 0.7, b.d / 2 + 0.3);
-                const crossV = new THREE.Mesh(new THREE.BoxGeometry(2, 8, 0.4), crossMat);
-                crossV.position.set(0, b.h * 0.7, b.d / 2 + 0.3);
-                group.add(crossH);
-                group.add(crossV);
-            }
-
-            // Floating University of Ibadan UI Navy & Gold Badge Sprite
-            const canvas = document.createElement('canvas');
-            canvas.width = 280;
-            canvas.height = 70;
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#002147';
-            ctx.fillRect(0, 0, 280, 70);
-            ctx.strokeStyle = '#C59B27';
-            ctx.lineWidth = 4;
-            ctx.strokeRect(2, 2, 276, 66);
-            ctx.fillStyle = '#FFFFFF';
-            ctx.font = 'bold 22px Inter, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(b.label, 140, 35);
-
-            const texture = new THREE.CanvasTexture(canvas);
-            const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true });
-            const sprite = new THREE.Sprite(spriteMat);
-            sprite.position.y = b.h + (b.tower ? 28 : 10);
-            sprite.scale.set(24, 6, 1);
-            group.add(sprite);
+            // Floating Campus Signboard Billboard
+            const labelSprite = this.createLandmarkBillboard(b.label || b.name);
+            labelSprite.position.set(0, b.h + (b.tower ? 32 : 12), 0);
+            group.add(labelSprite);
 
             this.scene.add(group);
             this.landmarks3D.push(group);
         });
     }
 
+    createLandmarkBillboard(text) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 384;
+        canvas.height = 96;
+        const ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = 'rgba(0, 33, 71, 0.88)';
+        ctx.beginPath();
+        ctx.roundRect(8, 8, 368, 80, 12);
+        ctx.fill();
+
+        ctx.strokeStyle = '#c59b27';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 22px Inter, system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(text, 192, 48);
+
+        const texture = new THREE.CanvasTexture(canvas);
+        const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true });
+        const sprite = new THREE.Sprite(spriteMat);
+        sprite.scale.set(24, 6, 1);
+        return sprite;
+    }
+
     async loadInitialVehicles() {
         try {
             const res = await fetch('/api/vehicles');
             const vehicles = await res.json();
-            if (vehicles && vehicles.length) {
+            if (vehicles && vehicles.length > 0) {
                 this.updateVehiclesTelemetry(vehicles);
             }
         } catch (err) {
@@ -481,126 +441,505 @@ class Campus3DEngine {
         }
     }
 
+    /**
+     * Creates authentic procedural 3D vehicle models representing genuine Nigerian campus utility assets:
+     * - UI-01-DSP: Bajaj Boxer BM 100 Courier Delivery Bike (2 wheels, courier parcel box)
+     * - UI-02-MED: TVS HLX 125 Laboratory Dispatch Bike (2 wheels, medical transport coolbox)
+     * - UI-03-KEKE: Piaggio Ape Cargo Delivery Tricycle (3 wheels: 1 front, 2 rear, open cargo bed)
+     * - UI-04-VAN: Suzuki Super Carry 1.0L Mini Delivery Van (cabover mini van)
+     * - UI-05-BUS: Toyota HiAce 2.7L Commuter Logistics Van (classic Nigerian campus van)
+     * - UI-06-WKS: Toyota Hilux 2.5 D-4D Workhorse Pickup (rugged utility single-cab pickup)
+     */
     createProceduralVehicleMesh(vType, plate, initialData = {}) {
         const group = new THREE.Group();
-        const typeLower = (vType || "").toLowerCase();
-
-        let bodyColor = 0xc59b27; // UI gold default
-        let w = 4.0, h = 3.4, l = 9.0;
-
-        if (typeLower.includes('bus') || typeLower.includes('shuttle')) {
-            bodyColor = 0x0284c7; // Blue Coaster Shuttle
-            w = 5.0; h = 4.8; l = 15.0;
-        } else if (typeLower.includes('pickup') || typeLower.includes('hilux')) {
-            bodyColor = 0xd97706; // Amber Hilux Pickup
-            w = 4.5; h = 3.6; l = 10.5;
-        } else if (typeLower.includes('ambulance') || typeLower.includes('health')) {
-            bodyColor = 0xf8fafc; // Clean White Emergency
-            w = 4.2; h = 4.0; l = 10.0;
-        } else if (typeLower.includes('bike') || typeLower.includes('courier')) {
-            bodyColor = 0x10b981; // Green Dispatch Bike
-            w = 1.8; h = 2.4; l = 4.5;
-        } else if (typeLower.includes('heavy') || typeLower.includes('truck')) {
-            bodyColor = 0x334155; // Heavy Grey Flatbed
-            w = 5.5; h = 5.2; l = 18.0;
-        }
-
-        // Vehicle Chassis Body
-        const chassisMat = new THREE.MeshStandardMaterial({
-            color: bodyColor,
-            roughness: 0.3,
-            metalness: 0.6
-        });
-        const chassisGeo = new THREE.BoxGeometry(w, h * 0.55, l);
-        const chassis = new THREE.Mesh(chassisGeo, chassisMat);
-        chassis.position.y = 1.6;
-        chassis.castShadow = true;
-        group.add(chassis);
-
-        // Glass Greenhouse Cabin
-        const glassMat = new THREE.MeshStandardMaterial({
-            color: 0x0f172a,
-            roughness: 0.1,
-            metalness: 0.9,
-            transparent: true,
-            opacity: 0.85
-        });
-        const cabinGeo = new THREE.BoxGeometry(w * 0.92, h * 0.5, l * 0.65);
-        const cabin = new THREE.Mesh(cabinGeo, glassMat);
-        cabin.position.set(0, 1.6 + h * 0.45, -l * 0.05);
-        cabin.castShadow = true;
-        group.add(cabin);
-
-        // Headlights
-        const lightMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xfff8db, emissiveIntensity: 1.8 });
-        const lightGeo = new THREE.BoxGeometry(w * 0.2, 0.4, 0.2);
-        const leftLight = new THREE.Mesh(lightGeo, lightMat);
-        leftLight.position.set(-w * 0.35, 1.6, -l / 2 - 0.05);
-        const rightLight = new THREE.Mesh(lightGeo, lightMat);
-        rightLight.position.set(w * 0.35, 1.6, -l / 2 - 0.05);
-        group.add(leftLight);
-        group.add(rightLight);
-
-        // Taillights
-        const tailMat = new THREE.MeshStandardMaterial({ color: 0xef4444, emissive: 0xef4444, emissiveIntensity: 1.5 });
-        const tailGeo = new THREE.BoxGeometry(w * 0.2, 0.4, 0.2);
-        const leftTail = new THREE.Mesh(tailGeo, tailMat);
-        leftTail.position.set(-w * 0.35, 1.6, l / 2 + 0.05);
-        const rightTail = new THREE.Mesh(tailGeo, tailMat);
-        rightTail.position.set(w * 0.35, 1.6, l / 2 + 0.05);
-        group.add(leftTail);
-        group.add(rightTail);
-
-        // Wheels with chrome hubs
-        const wheelGeo = new THREE.CylinderGeometry(1.0, 1.0, 0.7, 16);
-        const wheelMat = new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.8 });
-        const rimMat = new THREE.MeshStandardMaterial({ color: 0xd1d5db, metalness: 0.8, roughness: 0.2 });
-
-        const wheelPositions = [
-            [-w / 2 - 0.2, 1.0, -l * 0.32],
-            [w / 2 + 0.2, 1.0, -l * 0.32],
-            [-w / 2 - 0.2, 1.0, l * 0.32],
-            [w / 2 + 0.2, 1.0, l * 0.32]
-        ];
+        const pUpper = (plate || "").toUpperCase();
+        const mLower = (initialData.model || "").toLowerCase();
+        const tLower = (vType || "").toLowerCase();
 
         group.userData.wheels = [];
-        wheelPositions.forEach(wp => {
-            const wheelGroup = new THREE.Group();
-            wheelGroup.position.set(wp[0], wp[1], wp[2]);
+        let totalHeight = 3.5;
 
-            const tire = new THREE.Mesh(wheelGeo, wheelMat);
-            tire.rotation.z = Math.PI / 2;
-            tire.castShadow = true;
-            wheelGroup.add(tire);
+        // ==========================================
+        // 1 & 2. MOTORCYCLE / DISPATCH BIKES
+        // UI-01-DSP (Bajaj Boxer) & UI-02-MED (TVS HLX)
+        // ==========================================
+        if (pUpper.includes("01") || pUpper.includes("02") || mLower.includes("bike") || mLower.includes("bajaj") || mLower.includes("tvs")) {
+            const isMedical = pUpper.includes("MED") || pUpper.includes("02") || mLower.includes("lab");
+            totalHeight = 3.2;
 
-            const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.75, 8), rimMat);
-            rim.rotation.z = Math.PI / 2;
-            wheelGroup.add(rim);
+            // Slender Bike Chassis / Frame
+            const frameMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.7, roughness: 0.3 });
+            const frameGeo = new THREE.BoxGeometry(0.5, 0.7, 3.4);
+            const frame = new THREE.Mesh(frameGeo, frameMat);
+            frame.position.y = 1.1;
+            frame.castShadow = true;
+            group.add(frame);
 
-            group.add(wheelGroup);
-            group.userData.wheels.push(wheelGroup);
-        });
+            // Fuel Tank
+            const tankMat = new THREE.MeshStandardMaterial({
+                color: isMedical ? 0xef4444 : 0x15803d, // Red for TVS Medical, Green for UI Courier
+                roughness: 0.3,
+                metalness: 0.5
+            });
+            const tankGeo = new THREE.BoxGeometry(0.8, 0.6, 1.3);
+            const tank = new THREE.Mesh(tankGeo, tankMat);
+            tank.position.set(0, 1.5, -0.4);
+            tank.castShadow = true;
+            group.add(tank);
 
+            // Black Leather Saddle Seat
+            const seatMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.9 });
+            const seatGeo = new THREE.BoxGeometry(0.7, 0.35, 1.5);
+            const seat = new THREE.Mesh(seatGeo, seatMat);
+            seat.position.set(0, 1.45, 0.6);
+            seat.castShadow = true;
+            group.add(seat);
+
+            // Handlebars (Chrome horizontal bar with black grips)
+            const barMat = new THREE.MeshStandardMaterial({ color: 0xd1d5db, metalness: 0.9, roughness: 0.2 });
+            const barGeo = new THREE.CylinderGeometry(0.08, 0.08, 1.8, 8);
+            const bar = new THREE.Mesh(barGeo, barMat);
+            bar.rotation.z = Math.PI / 2;
+            bar.position.set(0, 1.9, -1.2);
+            group.add(bar);
+
+            // Front Fork Suspension
+            const forkGeo = new THREE.CylinderGeometry(0.07, 0.07, 1.6, 8);
+            const leftFork = new THREE.Mesh(forkGeo, barMat);
+            leftFork.position.set(-0.25, 1.1, -1.7);
+            const rightFork = new THREE.Mesh(forkGeo, barMat);
+            rightFork.position.set(0.25, 1.1, -1.7);
+            group.add(leftFork);
+            group.add(rightFork);
+
+            // Bright Round Headlight (Facing forward: -Z)
+            const headMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xfff8db, emissiveIntensity: 2.2 });
+            const headGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.2, 16);
+            const headlight = new THREE.Mesh(headGeo, headMat);
+            headlight.rotation.x = Math.PI / 2;
+            headlight.position.set(0, 1.6, -1.6);
+            group.add(headlight);
+
+            // Rear Red Taillight (+Z)
+            const tailMat = new THREE.MeshStandardMaterial({ color: 0xef4444, emissive: 0xef4444, emissiveIntensity: 2.0 });
+            const tailGeo = new THREE.BoxGeometry(0.3, 0.2, 0.1);
+            const taillight = new THREE.Mesh(tailGeo, tailMat);
+            taillight.position.set(0, 1.3, 2.1);
+            group.add(taillight);
+
+            // Rear Top Courier Transport Box
+            const boxColor = isMedical ? 0xf8fafc : 0xc59b27; // Clean white medical coolbox or UI Gold dispatch parcel box
+            const boxMat = new THREE.MeshStandardMaterial({ color: boxColor, roughness: 0.4 });
+            const boxGeo = new THREE.BoxGeometry(1.4, 1.2, 1.4);
+            const box = new THREE.Mesh(boxGeo, boxMat);
+            box.position.set(0, 2.0, 1.3);
+            box.castShadow = true;
+            group.add(box);
+
+            // Box Medical / Courier Accent Lid
+            const lidMat = new THREE.MeshStandardMaterial({ color: isMedical ? 0xdc2626 : 0x002147 });
+            const lidGeo = new THREE.BoxGeometry(1.45, 0.15, 1.45);
+            const lid = new THREE.Mesh(lidGeo, lidMat);
+            lid.position.set(0, 2.65, 1.3);
+            group.add(lid);
+
+            // 2 Motorcycle Wheels (Front at -Z, Rear at +Z)
+            const wheelGeo = new THREE.CylinderGeometry(0.75, 0.75, 0.3, 16);
+            const tireMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.85 });
+            const rimMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.8, roughness: 0.2 });
+
+            const wheelZPositions = [-1.7, 1.4];
+            wheelZPositions.forEach(zPos => {
+                const wheelGroup = new THREE.Group();
+                wheelGroup.position.set(0, 0.75, zPos);
+
+                const tire = new THREE.Mesh(wheelGeo, tireMat);
+                tire.rotation.z = Math.PI / 2;
+                tire.castShadow = true;
+                wheelGroup.add(tire);
+
+                const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 0.32, 12), rimMat);
+                rim.rotation.z = Math.PI / 2;
+                wheelGroup.add(rim);
+
+                group.add(wheelGroup);
+                group.userData.wheels.push(wheelGroup);
+            });
+        }
+        // ==========================================
+        // 3. PIAGGIO APE CARGO TRICYCLE (KEKE)
+        // UI-03-KEKE: 3 Wheels (1 Front, 2 Rear) + Yellow Canopy + Rear Tray
+        // ==========================================
+        else if (pUpper.includes("03") || pUpper.includes("KEKE") || mLower.includes("keke") || mLower.includes("tricycle") || mLower.includes("ape")) {
+            totalHeight = 3.8;
+
+            // Front Passenger Cabin Body (Classic Commercial Keke Yellow)
+            const bodyMat = new THREE.MeshStandardMaterial({ color: 0xeab308, roughness: 0.35, metalness: 0.4 });
+            const cabGeo = new THREE.BoxGeometry(2.4, 2.0, 2.2);
+            const cab = new THREE.Mesh(cabGeo, bodyMat);
+            cab.position.set(0, 1.5, -0.6);
+            cab.castShadow = true;
+            group.add(cab);
+
+            // Front Windshield
+            const glassMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.1, transparent: true, opacity: 0.8 });
+            const windGeo = new THREE.BoxGeometry(2.2, 1.2, 0.1);
+            const windshield = new THREE.Mesh(windGeo, glassMat);
+            windshield.position.set(0, 2.0, -1.7);
+            group.add(windshield);
+
+            // Black Vinyl Canopy Roof
+            const roofMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.8 });
+            const roofGeo = new THREE.BoxGeometry(2.5, 0.2, 2.4);
+            const roof = new THREE.Mesh(roofGeo, roofMat);
+            roof.position.set(0, 2.6, -0.6);
+            roof.castShadow = true;
+            group.add(roof);
+
+            // Single Center Round Headlight in front (-Z)
+            const headMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xfff8db, emissiveIntensity: 2.0 });
+            const headGeo = new THREE.CylinderGeometry(0.35, 0.35, 0.2, 16);
+            const headlight = new THREE.Mesh(headGeo, headMat);
+            headlight.rotation.x = Math.PI / 2;
+            headlight.position.set(0, 1.4, -1.75);
+            group.add(headlight);
+
+            // Rear Open Metal Cargo Tray (carrying parcels)
+            const trayMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.6, roughness: 0.4 });
+            const trayGeo = new THREE.BoxGeometry(2.8, 0.9, 2.6);
+            const tray = new THREE.Mesh(trayGeo, trayMat);
+            tray.position.set(0, 1.0, 1.5);
+            tray.castShadow = true;
+            group.add(tray);
+
+            // Parcels inside tray
+            const parcelMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.8 });
+            const p1 = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.7, 0.9), parcelMat);
+            p1.position.set(-0.6, 1.6, 1.4);
+            group.add(p1);
+            const p2 = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.8, 1.1), parcelMat);
+            p2.position.set(0.6, 1.65, 1.6);
+            group.add(p2);
+
+            // Taillights (+Z)
+            const tailMat = new THREE.MeshStandardMaterial({ color: 0xef4444, emissive: 0xef4444, emissiveIntensity: 1.8 });
+            const tl = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.2, 0.1), tailMat);
+            tl.position.set(-1.1, 0.9, 2.82);
+            const tr = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.2, 0.1), tailMat);
+            tr.position.set(1.1, 0.9, 2.82);
+            group.add(tl);
+            group.add(tr);
+
+            // 3 WHEELS: 1 Single Front Wheel at center, 2 Rear Wheels
+            const wheelGeo = new THREE.CylinderGeometry(0.65, 0.65, 0.35, 16);
+            const tireMat = new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.85 });
+            const rimMat = new THREE.MeshStandardMaterial({ color: 0xd1d5db, metalness: 0.7, roughness: 0.3 });
+
+            const kekeWheelConfigs = [
+                [0, 0.65, -1.6],     // 1 Front Wheel
+                [-1.3, 0.65, 1.6],   // Rear Left Wheel
+                [1.3, 0.65, 1.6]     // Rear Right Wheel
+            ];
+
+            kekeWheelConfigs.forEach(pos => {
+                const wg = new THREE.Group();
+                wg.position.set(pos[0], pos[1], pos[2]);
+                const tire = new THREE.Mesh(wheelGeo, tireMat);
+                tire.rotation.z = Math.PI / 2;
+                tire.castShadow = true;
+                wg.add(tire);
+                const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 0.37, 8), rimMat);
+                rim.rotation.z = Math.PI / 2;
+                wg.add(rim);
+                group.add(wg);
+                group.userData.wheels.push(wg);
+            });
+        }
+        // ==========================================
+        // 4. SUZUKI SUPER CARRY 1.0L MINI DELIVERY VAN
+        // UI-04-VAN: Compact cabover Kei van (White/Silver)
+        // ==========================================
+        else if (pUpper.includes("04") || mLower.includes("carry") || (tLower.includes("shuttle") && pUpper.includes("VAN"))) {
+            totalHeight = 4.2;
+
+            // Compact Japanese Mini Van Body
+            const vanMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.3, metalness: 0.4 });
+            const bodyGeo = new THREE.BoxGeometry(3.2, 2.6, 6.2);
+            const body = new THREE.Mesh(bodyGeo, vanMat);
+            body.position.set(0, 1.7, 0);
+            body.castShadow = true;
+            group.add(body);
+
+            // Vertical Front Cabover Windshield
+            const glassMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.1, transparent: true, opacity: 0.85 });
+            const windGeo = new THREE.BoxGeometry(2.9, 1.2, 0.1);
+            const windshield = new THREE.Mesh(windGeo, glassMat);
+            windshield.position.set(0, 2.2, -3.12);
+            group.add(windshield);
+
+            // Front Bumper & Black Grille
+            const grillMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.7 });
+            const grill = new THREE.Mesh(new THREE.BoxGeometry(2.9, 0.7, 0.2), grillMat);
+            grill.position.set(0, 0.9, -3.15);
+            group.add(grill);
+
+            // Headlights (-Z)
+            const lightMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xfff8db, emissiveIntensity: 2.0 });
+            const hl1 = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.35, 0.1), lightMat);
+            hl1.position.set(-1.1, 1.3, -3.16);
+            const hl2 = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.35, 0.1), lightMat);
+            hl2.position.set(1.1, 1.3, -3.16);
+            group.add(hl1);
+            group.add(hl2);
+
+            // Rear Roll-up Doors (+Z)
+            const rearDoor = new THREE.Mesh(new THREE.BoxGeometry(2.8, 2.2, 0.1), new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.5 }));
+            rearDoor.position.set(0, 1.6, 3.12);
+            group.add(rearDoor);
+
+            // Taillights (+Z)
+            const tailMat = new THREE.MeshStandardMaterial({ color: 0xef4444, emissive: 0xef4444, emissiveIntensity: 1.8 });
+            const tl1 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.6, 0.1), tailMat);
+            tl1.position.set(-1.3, 1.2, 3.16);
+            const tl2 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.6, 0.1), tailMat);
+            tl2.position.set(1.3, 1.2, 3.16);
+            group.add(tl1);
+            group.add(tl2);
+
+            // 4 Mini Van Wheels
+            const wheelGeo = new THREE.CylinderGeometry(0.7, 0.7, 0.45, 16);
+            const tireMat = new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.85 });
+            const rimMat = new THREE.MeshStandardMaterial({ color: 0xd1d5db, metalness: 0.8, roughness: 0.2 });
+
+            const miniWheelPositions = [
+                [-1.5, 0.7, -2.0],
+                [1.5, 0.7, -2.0],
+                [-1.5, 0.7, 2.0],
+                [1.5, 0.7, 2.0]
+            ];
+
+            miniWheelPositions.forEach(wp => {
+                const wg = new THREE.Group();
+                wg.position.set(wp[0], wp[1], wp[2]);
+                const tire = new THREE.Mesh(wheelGeo, tireMat);
+                tire.rotation.z = Math.PI / 2;
+                tire.castShadow = true;
+                wg.add(tire);
+                const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.48, 8), rimMat);
+                rim.rotation.z = Math.PI / 2;
+                wg.add(rim);
+                group.add(wg);
+                group.userData.wheels.push(wg);
+            });
+        }
+        // ==========================================
+        // 5. TOYOTA HIACE 2.7L COMMUTER LOGISTICS VAN
+        // UI-05-BUS: Classic Nigerian White Commuter Van with UI Crest Stripe
+        // ==========================================
+        else if (pUpper.includes("05") || pUpper.includes("BUS") || mLower.includes("hiace") || tLower.includes("shuttle")) {
+            totalHeight = 4.8;
+
+            // Long Aerodynamic HiAce Van Body
+            const vanMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.25, metalness: 0.5 });
+            const bodyGeo = new THREE.BoxGeometry(4.2, 3.2, 9.8);
+            const body = new THREE.Mesh(bodyGeo, vanMat);
+            body.position.set(0, 2.1, 0);
+            body.castShadow = true;
+            group.add(body);
+
+            // University of Ibadan Gold & Navy Logistics Stripe Decal
+            const stripeMat = new THREE.MeshBasicMaterial({ color: 0xc59b27 });
+            const leftStripe = new THREE.Mesh(new THREE.PlaneGeometry(9.6, 0.35), stripeMat);
+            leftStripe.position.set(-2.12, 1.8, 0);
+            leftStripe.rotation.y = -Math.PI / 2;
+            group.add(leftStripe);
+
+            const rightStripe = new THREE.Mesh(new THREE.PlaneGeometry(9.6, 0.35), stripeMat);
+            rightStripe.position.set(2.12, 1.8, 0);
+            rightStripe.rotation.y = Math.PI / 2;
+            group.add(rightStripe);
+
+            // Aerodynamic Sloped Front Windshield
+            const glassMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.1, transparent: true, opacity: 0.88 });
+            const windGeo = new THREE.BoxGeometry(3.9, 1.6, 0.2);
+            const windshield = new THREE.Mesh(windGeo, glassMat);
+            windshield.position.set(0, 2.7, -4.7);
+            windshield.rotation.x = -Math.PI / 16;
+            group.add(windshield);
+
+            // Side Passenger Tinted Windows
+            const sideWinGeo = new THREE.BoxGeometry(0.1, 1.1, 6.0);
+            const sideWinLeft = new THREE.Mesh(sideWinGeo, glassMat);
+            sideWinLeft.position.set(-2.12, 2.6, 0.5);
+            const sideWinRight = new THREE.Mesh(sideWinGeo, glassMat);
+            sideWinRight.position.set(2.12, 2.6, 0.5);
+            group.add(sideWinLeft);
+            group.add(sideWinRight);
+
+            // Dual Halogen Headlights (-Z)
+            const lightMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xfff8db, emissiveIntensity: 2.2 });
+            const hl1 = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.4, 0.1), lightMat);
+            hl1.position.set(-1.4, 1.5, -4.95);
+            const hl2 = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.4, 0.1), lightMat);
+            hl2.position.set(1.4, 1.5, -4.95);
+            group.add(hl1);
+            group.add(hl2);
+
+            // Rear Taillights (+Z)
+            const tailMat = new THREE.MeshStandardMaterial({ color: 0xef4444, emissive: 0xef4444, emissiveIntensity: 2.0 });
+            const tl1 = new THREE.Mesh(new THREE.BoxGeometry(0.35, 1.1, 0.1), tailMat);
+            tl1.position.set(-1.7, 1.9, 4.95);
+            const tl2 = new THREE.Mesh(new THREE.BoxGeometry(0.35, 1.1, 0.1), tailMat);
+            tl2.position.set(1.7, 1.9, 4.95);
+            group.add(tl1);
+            group.add(tl2);
+
+            // 4 Van Wheels
+            const wheelGeo = new THREE.CylinderGeometry(0.95, 0.95, 0.6, 16);
+            const tireMat = new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.85 });
+            const rimMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.85, roughness: 0.2 });
+
+            const vanWheelPositions = [
+                [-2.0, 0.95, -3.0],
+                [2.0, 0.95, -3.0],
+                [-2.0, 0.95, 2.8],
+                [2.0, 0.95, 2.8]
+            ];
+
+            vanWheelPositions.forEach(wp => {
+                const wg = new THREE.Group();
+                wg.position.set(wp[0], wp[1], wp[2]);
+                const tire = new THREE.Mesh(wheelGeo, tireMat);
+                tire.rotation.z = Math.PI / 2;
+                tire.castShadow = true;
+                wg.add(tire);
+                const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.65, 8), rimMat);
+                rim.rotation.z = Math.PI / 2;
+                wg.add(rim);
+                group.add(wg);
+                group.userData.wheels.push(wg);
+            });
+        }
+        // ==========================================
+        // 6. TOYOTA HILUX 2.5 D-4D WORKHORSE PICKUP
+        // UI-06-WKS: Rugged Single-Cab Works Pickup in Amber Gold
+        // ==========================================
+        else {
+            totalHeight = 4.2;
+
+            // Front Single-Cab (Amber Gold Utility Livery)
+            const cabMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.35, metalness: 0.4 });
+            const cabGeo = new THREE.BoxGeometry(4.2, 2.4, 4.4);
+            const cab = new THREE.Mesh(cabGeo, cabMat);
+            cab.position.set(0, 2.0, -1.8);
+            cab.castShadow = true;
+            group.add(cab);
+
+            // Front Hood & Rugged Bull Bar
+            const hoodGeo = new THREE.BoxGeometry(4.0, 1.4, 2.4);
+            const hood = new THREE.Mesh(hoodGeo, cabMat);
+            hood.position.set(0, 1.5, -4.2);
+            hood.castShadow = true;
+            group.add(hood);
+
+            const bullBarMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.6 });
+            const bullBar = new THREE.Mesh(new THREE.BoxGeometry(3.6, 1.0, 0.3), bullBarMat);
+            bullBar.position.set(0, 1.2, -5.5);
+            group.add(bullBar);
+
+            // Windshield
+            const glassMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.1, transparent: true, opacity: 0.85 });
+            const windGeo = new THREE.BoxGeometry(3.8, 1.3, 0.1);
+            const windshield = new THREE.Mesh(windGeo, glassMat);
+            windshield.position.set(0, 2.4, -3.9);
+            group.add(windshield);
+
+            // Rear Open Pickup Bed
+            const bedMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.5, roughness: 0.4 });
+            const bedGeo = new THREE.BoxGeometry(4.0, 1.5, 4.8);
+            const bed = new THREE.Mesh(bedGeo, bedMat);
+            bed.position.set(0, 1.5, 2.6);
+            bed.castShadow = true;
+            group.add(bed);
+
+            // Black Heavy-Duty Roll Bar in Bed
+            const barMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8, roughness: 0.3 });
+            const rollBar = new THREE.Mesh(new THREE.BoxGeometry(3.8, 2.0, 0.2), barMat);
+            rollBar.position.set(0, 2.6, 0.5);
+            group.add(rollBar);
+
+            // Headlights (-Z)
+            const lightMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xfff8db, emissiveIntensity: 2.2 });
+            const hl1 = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.4, 0.1), lightMat);
+            hl1.position.set(-1.4, 1.5, -5.45);
+            const hl2 = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.4, 0.1), lightMat);
+            hl2.position.set(1.4, 1.5, -5.45);
+            group.add(hl1);
+            group.add(hl2);
+
+            // Taillights (+Z)
+            const tailMat = new THREE.MeshStandardMaterial({ color: 0xef4444, emissive: 0xef4444, emissiveIntensity: 2.0 });
+            const tl1 = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.6, 0.1), tailMat);
+            tl1.position.set(-1.6, 1.6, 5.05);
+            const tl2 = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.6, 0.1), tailMat);
+            tl2.position.set(1.6, 1.6, 5.05);
+            group.add(tl1);
+            group.add(tl2);
+
+            // 4 Raised Pickup Tires
+            const wheelGeo = new THREE.CylinderGeometry(1.05, 1.05, 0.65, 16);
+            const tireMat = new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.85 });
+            const rimMat = new THREE.MeshStandardMaterial({ color: 0xd1d5db, metalness: 0.8, roughness: 0.2 });
+
+            const pickupWheelPositions = [
+                [-1.9, 1.05, -3.2],
+                [1.9, 1.05, -3.2],
+                [-1.9, 1.05, 3.0],
+                [1.9, 1.05, 3.0]
+            ];
+
+            pickupWheelPositions.forEach(wp => {
+                const wg = new THREE.Group();
+                wg.position.set(wp[0], wp[1], wp[2]);
+                const tire = new THREE.Mesh(wheelGeo, tireMat);
+                tire.rotation.z = Math.PI / 2;
+                tire.castShadow = true;
+                wg.add(tire);
+                const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.6, 0.7, 8), rimMat);
+                rim.rotation.z = Math.PI / 2;
+                wg.add(rim);
+                group.add(wg);
+                group.userData.wheels.push(wg);
+            });
+        }
+
+        // ==========================================
         // Dynamic Floating Telemetry & Fuel Gauge Billboard Sprite
-        const sprite = this.createVehicleTelemetrySprite(plate, initialData.battery_fuel_pct || 95, initialData.speed_kmh || 0, initialData.status || 'idle');
-        sprite.position.y = h + 5.5;
+        // ==========================================
+        const sprite = this.createVehicleTelemetrySprite(
+            plate,
+            initialData.battery_fuel_pct !== undefined ? initialData.battery_fuel_pct : 94,
+            initialData.speed_kmh || 0,
+            initialData.status || 'in_transit'
+        );
+        sprite.position.y = totalHeight + 4.0;
         group.add(sprite);
         group.userData.telemetrySprite = sprite;
-        group.userData.vehicleHeight = h;
+        group.userData.vehicleHeight = totalHeight;
 
         return group;
     }
 
     createVehicleTelemetrySprite(plate, fuelPct, speedKmh, status) {
         const canvas = document.createElement('canvas');
-        canvas.width = 360;
+        canvas.width = 380;
         canvas.height = 120;
         this.drawVehicleSpriteCanvas(canvas, plate, fuelPct, speedKmh, status);
 
         const texture = new THREE.CanvasTexture(canvas);
         const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true });
         const sprite = new THREE.Sprite(spriteMat);
-        sprite.scale.set(16, 5.3, 1);
+        sprite.scale.set(18, 5.7, 1);
         sprite.userData.canvas = canvas;
         sprite.userData.texture = texture;
         return sprite;
@@ -608,7 +947,7 @@ class Campus3DEngine {
 
     drawVehicleSpriteCanvas(canvas, plate, fuelPct, speedKmh, status) {
         const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, 360, 120);
+        ctx.clearRect(0, 0, 380, 120);
 
         const isTransit = status === 'in_transit';
         const fuel = Math.max(0, Math.min(100, Math.round(fuelPct)));
@@ -616,15 +955,15 @@ class Campus3DEngine {
         // 1. Background Pill Container
         ctx.fillStyle = 'rgba(0, 33, 71, 0.94)'; // Deep UI Navy
         ctx.beginPath();
-        ctx.roundRect(4, 4, 352, 112, 14);
+        ctx.roundRect(4, 4, 372, 112, 14);
         ctx.fill();
 
-        ctx.strokeStyle = '#C59B27'; // UI Gold Border
+        ctx.strokeStyle = '#c59b27'; // UI Gold Border
         ctx.lineWidth = 3;
         ctx.stroke();
 
         // 2. Top Row: Plate & Status Badge
-        ctx.fillStyle = '#FFFFFF';
+        ctx.fillStyle = '#ffffff';
         ctx.font = 'bold 24px JetBrains Mono, monospace';
         ctx.textAlign = 'left';
         ctx.fillText(plate || "UI-FLEET", 18, 36);
@@ -634,31 +973,31 @@ class Campus3DEngine {
         const tagBg = isTransit ? "#059669" : (status === 'maintenance' ? "#dc2626" : "#475569");
         ctx.fillStyle = tagBg;
         ctx.beginPath();
-        ctx.roundRect(220, 16, 120, 26, 6);
+        ctx.roundRect(235, 14, 125, 26, 6);
         ctx.fill();
-        ctx.fillStyle = '#FFFFFF';
+        ctx.fillStyle = '#ffffff';
         ctx.font = 'bold 13px Inter, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(tagText, 280, 33);
+        ctx.fillText(tagText, 297, 32);
 
         // 3. Middle Row: Speed Indicator
         ctx.fillStyle = '#94a3b8';
         ctx.font = '14px Inter, sans-serif';
         ctx.textAlign = 'left';
         ctx.fillText("Speed: ", 18, 64);
-        ctx.fillStyle = '#FFFFFF';
+        ctx.fillStyle = '#ffffff';
         ctx.font = 'bold 15px JetBrains Mono, monospace';
         ctx.fillText(`${Math.round(speedKmh || 0)} km/h`, 72, 64);
 
         // 4. Bottom Row: Animated Fuel / Battery Gauge Bar
         ctx.fillStyle = '#cbd5e1';
         ctx.font = 'bold 14px Inter, sans-serif';
-        ctx.fillText(`⛽ Fuel / Battery: ${fuel}%`, 18, 90);
+        ctx.fillText(`⛽ Fuel: ${fuel}%`, 18, 92);
 
         // Fuel Bar Track
-        const barX = 180;
-        const barY = 78;
-        const barW = 160;
+        const barX = 145;
+        const barY = 80;
+        const barW = 215;
         const barH = 14;
 
         ctx.fillStyle = '#1e293b';
@@ -699,27 +1038,26 @@ class Campus3DEngine {
         vehiclesList.forEach((veh, idx) => {
             const id = veh.vehicle_id;
             let targetPos = this.gpsToWorld(veh.latitude, veh.longitude);
-            let headingRad = THREE.MathUtils.degToRad(veh.heading_deg || 0);
 
             // If vehicle is stationed/idle at depot, park it in its designated outdoor parking bay!
             const distToDepot = Math.sqrt(
                 Math.pow(veh.latitude - this.originLat, 2) + Math.pow(veh.longitude - this.originLng, 2)
             );
 
-            if (veh.status === 'idle' || distToDepot < 0.0003) {
+            const isStationedAtDepot = veh.status === 'idle' || (distToDepot < 0.0003 && veh.status !== 'in_transit');
+
+            if (isStationedAtDepot) {
                 const bayInfo = this.depotBayPositions[idx % this.depotBayPositions.length];
                 targetPos = {
                     x: depotPos.x + bayInfo.x,
                     z: depotPos.z + bayInfo.z
                 };
-                headingRad = 0; // Park facing the road
             }
 
             if (!this.vehicles3D.has(id)) {
                 // Instantiate 3D vehicle
                 const vehMesh = this.createProceduralVehicleMesh(veh.vehicle_type, veh.plate_number, veh);
                 vehMesh.position.set(targetPos.x, 0.15, targetPos.z);
-                vehMesh.rotation.y = -headingRad;
                 vehMesh.userData.vehicleData = veh;
                 this.scene.add(vehMesh);
                 this.vehicles3D.set(id, vehMesh);
@@ -727,20 +1065,42 @@ class Campus3DEngine {
                 const vehMesh = this.vehicles3D.get(id);
                 vehMesh.userData.vehicleData = veh;
 
+                // Displacement delta to compute strictly forward velocity heading!
+                const dx = targetPos.x - vehMesh.position.x;
+                const dz = targetPos.z - vehMesh.position.z;
+                const distMoved = Math.hypot(dx, dz);
+
                 // Smooth position lerp
-                vehMesh.position.x += (targetPos.x - vehMesh.position.x) * 0.25;
-                vehMesh.position.z += (targetPos.z - vehMesh.position.z) * 0.25;
+                vehMesh.position.x += dx * 0.25;
+                vehMesh.position.z += dz * 0.25;
                 vehMesh.position.y = 0.15; // Ensure tires rest directly on road surface
 
-                // Smooth rotation lerp
-                const targetRot = -headingRad;
-                vehMesh.rotation.y += (targetRot - vehMesh.rotation.y) * 0.2;
+                // STRICT FORWARD ROTATION:
+                // Because headlights are at -Z and taillights at +Z,
+                // the forward heading angle along velocity vector (dx, dz) is Math.atan2(-dx, -dz).
+                // This guarantees the car ALWAYS faces forward in its movement direction and never drives backwards!
+                if (distMoved > 0.05) {
+                    const forwardAngle = Math.atan2(-dx, -dz);
 
-                // Wheel spin animation matching vehicle speed
-                if (veh.speed_kmh > 0 && vehMesh.userData.wheels) {
-                    vehMesh.userData.wheels.forEach(w => {
-                        w.rotation.x += (veh.speed_kmh * 0.04);
-                    });
+                    // Shortest-path angle interpolation to prevent 360-spin
+                    let diff = forwardAngle - vehMesh.rotation.y;
+                    while (diff < -Math.PI) diff += Math.PI * 2;
+                    while (diff > Math.PI) diff -= Math.PI * 2;
+                    vehMesh.rotation.y += diff * 0.25;
+
+                    // Wheel spin animation matching vehicle speed
+                    if (vehMesh.userData.wheels) {
+                        const rollSpeed = (veh.speed_kmh || 30) * 0.035;
+                        vehMesh.userData.wheels.forEach(w => {
+                            w.rotation.x -= rollSpeed;
+                        });
+                    }
+                } else if (isStationedAtDepot) {
+                    // Smoothly orient facing depot parking bay exit (heading 0)
+                    let diff = 0 - vehMesh.rotation.y;
+                    while (diff < -Math.PI) diff += Math.PI * 2;
+                    while (diff > Math.PI) diff -= Math.PI * 2;
+                    vehMesh.rotation.y += diff * 0.15;
                 }
 
                 // Redraw floating fuel gauge billboard
@@ -770,11 +1130,11 @@ class Campus3DEngine {
                     const points = [];
                     route.polyline.forEach(pt => {
                         const wPos = this.gpsToWorld(pt[0], pt[1]);
-                        points.push(new THREE.Vector3(wPos.x, 0.4, wPos.z));
+                        points.push(new THREE.Vector3(wPos.x, 0.45, wPos.z));
                     });
 
                     const curve = new THREE.CatmullRomCurve3(points);
-                    const tubeGeo = new THREE.TubeGeometry(curve, points.length * 4, 0.5, 6, false);
+                    const tubeGeo = new THREE.TubeGeometry(curve, points.length * 4, 0.55, 6, false);
                     const tubeMat = new THREE.MeshStandardMaterial({
                         color: idx % 2 === 0 ? 0x0284c7 : 0xd97706,
                         emissive: idx % 2 === 0 ? 0x0284c7 : 0xd97706,
@@ -787,15 +1147,15 @@ class Campus3DEngine {
                 }
             });
 
-            // Delivery Stops (Concentric Beacons & Holographic Pins)
+            // Load Orders Delivery Stops
             const ordersRes = await fetch('/api/orders');
             const orders = await ordersRes.json();
 
+            // Clear old stops
             this.stops3D.forEach(s => this.scene.remove(s));
             this.stops3D.clear();
 
             orders.forEach(o => {
-                if (o.status === 'cancelled') return;
                 const pos = this.gpsToWorld(o.destination_lat, o.destination_lng);
                 const stopGroup = new THREE.Group();
                 stopGroup.position.set(pos.x, 0.25, pos.z);
@@ -903,23 +1263,23 @@ class Campus3DEngine {
     followVehicle(vehicleId) {
         if (this.followedVehicleId === vehicleId) {
             this.followedVehicleId = null;
-            showToast("Chase Camera detached to free orbit", "info");
+            if (typeof showToast === 'function') showToast("Chase Camera detached to free orbit", "info");
         } else {
             this.followedVehicleId = vehicleId;
-            showToast(`Tracking vehicle in 3D Chase Camera`, "info");
+            if (typeof showToast === 'function') showToast(`Tracking vehicle in 3D Chase Camera`, "info");
         }
     }
 
     setCameraPreset(preset) {
         this.followedVehicleId = null; // Detach follow
         if (preset === 'bird') {
-            this.camera.position.set(0, 210, 290);
+            this.camera.position.set(0, 220, 310);
             this.controls.target.set(0, 0, 0);
         } else if (preset === 'street') {
             this.camera.position.set(0, 22, 60);
             this.controls.target.set(0, 8, -20);
         } else if (preset === 'top') {
-            this.camera.position.set(0, 420, 0.1);
+            this.camera.position.set(0, 440, 0.1);
             this.controls.target.set(0, 0, 0);
         } else if (preset === 'depot') {
             this.camera.position.set(-15, 30, 65);

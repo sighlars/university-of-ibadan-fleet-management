@@ -219,11 +219,11 @@
             <!-- View Tabs & Close Button -->
             <div class="flex items-center gap-2">
                 <div class="flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200">
-                    <button id="btn-tab-sketchfab" onclick="switchInspectorTab('sketchfab')" class="px-2.5 py-1 rounded text-xs font-semibold bg-uinavy text-white shadow-xs transition">
-                        Sketchfab 3D Models
-                    </button>
-                    <button id="btn-tab-turntable" onclick="switchInspectorTab('turntable')" class="px-2.5 py-1 rounded text-xs font-medium text-slate-600 hover:text-slate-900 transition">
+                    <button id="btn-tab-turntable" onclick="switchInspectorTab('turntable')" class="px-2.5 py-1 rounded text-xs font-semibold bg-uinavy text-white shadow-xs transition">
                         Digital Twin Turntable
+                    </button>
+                    <button id="btn-tab-sketchfab" onclick="switchInspectorTab('sketchfab')" class="px-2.5 py-1 rounded text-xs font-medium text-slate-600 hover:text-slate-900 transition">
+                        Sketchfab 3D Models
                     </button>
                 </div>
                 <button onclick="close3DVehicleInspector()" class="p-1.5 text-slate-400 hover:text-slate-700 transition">
@@ -236,8 +236,16 @@
         <div class="flex-1 flex flex-col md:flex-row overflow-y-auto">
             <!-- 3D Canvas / Embed Viewport -->
             <div class="w-full md:w-3/5 bg-slate-900 min-h-[340px] md:min-h-[460px] relative border-b md:border-b-0 md:border-r border-slate-200">
-                <!-- Tab 1: Sketchfab Collection Player -->
-                <div id="ins-tab-sketchfab" class="w-full h-full flex flex-col">
+                <!-- Tab 1: Three.js Real-Time Turntable Canvas (Default Primary View) -->
+                <div id="ins-tab-turntable" class="w-full h-full min-h-[420px] relative bg-slate-100">
+                    <div id="turntable-canvas-container" class="w-full h-full min-h-[420px]"></div>
+                    <div class="absolute bottom-2 left-2 right-2 text-center text-[10px] text-slate-500 pointer-events-none bg-white/80 py-1 rounded border border-slate-200/50 backdrop-blur-xs">
+                        Left Click & Drag: 360° Turntable Orbit | Scroll: Zoom in/out
+                    </div>
+                </div>
+
+                <!-- Tab 2: Sketchfab Collection Player (Secondary Reference) -->
+                <div id="ins-tab-sketchfab" class="w-full h-full min-h-[420px] hidden flex flex-col">
                     <iframe width="100%" height="420" src="https://sketchfab.com/playlists/embed?collection=9e2582d94d0341b09c0c4269f6dd172b&autostart=0"
                         title="Game-Ready Cars"
                         frameborder="0"
@@ -254,14 +262,6 @@
                     <div class="p-2 bg-white border-t border-slate-200 text-[10px] text-slate-600 flex items-center justify-between">
                         <span>Game-Ready Vehicles Collection via Sketchfab</span>
                         <span class="text-uinavy font-medium">Interactive 3D Inspector</span>
-                    </div>
-                </div>
-
-                <!-- Tab 2: Three.js Real-Time Turntable Canvas -->
-                <div id="ins-tab-turntable" class="w-full h-full min-h-[420px] hidden relative bg-slate-100">
-                    <div id="turntable-canvas-container" class="w-full h-full"></div>
-                    <div class="absolute bottom-2 left-2 right-2 text-center text-[10px] text-slate-500 pointer-events-none">
-                        Drag to rotate 360° | Scroll to zoom
                     </div>
                 </div>
             </div>

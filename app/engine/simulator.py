@@ -127,23 +127,19 @@ class FleetSimulator:
                             })
                             logger.info(f"Order #{order.tracking_number} delivered by {vehicle.plate_number}!")
 
-                    # Check if route completed (reached last waypoint)
+                    # Route loop: continuous campus logistics cycle
                     if next_idx >= total_wps - 1:
-                        route.status = RouteStatus.COMPLETED
-                        route.completed_at = datetime.now(timezone.utc)
-                        vehicle.status = VehicleStatus.IDLE
-                        # Mark any remaining assigned orders as delivered
-                        for ro in route_orders:
-                            if ro.status != OrderStatus.DELIVERED:
-                                ro.status = OrderStatus.DELIVERED
-                                ro.delivered_at = datetime.now(timezone.utc)
+                        route.current_waypoint_idx = 0
+                        # Replenish battery / fuel on return loop
+                        if vehicle.battery_fuel_pct < 25.0:
+                            vehicle.battery_fuel_pct = 95.0
 
                         events.append({
-                            "type": "route_completed",
+                            "type": "route_loop_completed",
                             "route_id": route.id,
                             "vehicle_plate": vehicle.plate_number
                         })
-                        logger.info(f"Route #{route.id} completed by vehicle {vehicle.plate_number}!")
+                        logger.info(f"Route #{route.id} completed loop by {vehicle.plate_number}; restarting active delivery loop!")
 
                     # Record telemetry packet
                     next_stop = None

@@ -8,7 +8,7 @@ from fastapi.responses import HTMLResponse
 from app.config import settings
 from app.database import Base, engine, get_db
 from app.seed import seed_database
-from app.api import vehicles, orders, routes, analytics
+from app.api import vehicles, orders, routes, analytics, tiles
 from app.api.websocket import ws_manager
 from app.engine.simulator import simulator
 
@@ -46,6 +46,7 @@ app.include_router(vehicles.router, prefix="/api")
 app.include_router(orders.router, prefix="/api")
 app.include_router(routes.router, prefix="/api")
 app.include_router(analytics.router, prefix="/api")
+app.include_router(tiles.router, prefix="/api")
 
 # WebSocket Endpoint for Live GPS & Telemetry Streaming
 @app.websocket("/ws/telemetry")

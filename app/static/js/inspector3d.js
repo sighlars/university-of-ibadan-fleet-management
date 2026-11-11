@@ -1,7 +1,7 @@
 /**
  * UI-FleetFlow 3D Vehicle Inspector
- * Combines Sketchfab 3D Interactive Collection with real-time Three.js turntable
- * and institutional telematics diagnostics.
+ * Combines authentic Three.js 3D Digital Twin turntable of the selected
+ * Nigerian campus dispatch vehicle with institutional telematics diagnostics.
  */
 
 let inspectorRenderer = null;
@@ -22,22 +22,37 @@ function open3DVehicleInspector(veh) {
     const lat = veh.latitude !== undefined ? veh.latitude : (veh.current_lat || 7.4452);
     const lng = veh.longitude !== undefined ? veh.longitude : (veh.current_lng || 3.8990);
     const speed = Math.round(veh.speed_kmh || 0);
-    const fuel = Math.round(veh.battery_fuel_pct !== undefined ? veh.battery_fuel_pct : 95);
+    const fuel = Math.round(veh.battery_fuel_pct !== undefined ? veh.battery_fuel_pct : 94);
 
-    document.getElementById('ins-plate').textContent = veh.plate_number;
-    document.getElementById('ins-model').textContent = veh.model || veh.vehicle_type;
-    document.getElementById('ins-type').textContent = veh.vehicle_type;
-    document.getElementById('ins-driver').textContent = veh.driver_name || (veh.driver ? veh.driver.name : 'Unassigned');
-    document.getElementById('ins-status').textContent = (veh.status || 'IDLE').toUpperCase();
-    document.getElementById('ins-speed').textContent = `${speed} km/h`;
-    document.getElementById('ins-fuel').textContent = `${fuel}%`;
-    document.getElementById('ins-latlng').textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+    const plateEl = document.getElementById('ins-plate');
+    if (plateEl) plateEl.textContent = veh.plate_number;
+
+    const modelEl = document.getElementById('ins-model');
+    if (modelEl) modelEl.textContent = veh.model || veh.vehicle_type;
+
+    const typeEl = document.getElementById('ins-type');
+    if (typeEl) typeEl.textContent = veh.vehicle_type;
+
+    const driverEl = document.getElementById('ins-driver');
+    if (driverEl) driverEl.textContent = veh.driver_name || (veh.driver ? veh.driver.name : 'Unassigned');
+
+    const statusEl = document.getElementById('ins-status');
+    if (statusEl) statusEl.textContent = (veh.status || 'IN_TRANSIT').toUpperCase().replace('_', ' ');
+
+    const speedEl = document.getElementById('ins-speed');
+    if (speedEl) speedEl.textContent = `${speed} km/h`;
+
+    const fuelEl = document.getElementById('ins-fuel');
+    if (fuelEl) fuelEl.textContent = `${fuel}%`;
+
+    const latlngEl = document.getElementById('ins-latlng');
+    if (latlngEl) latlngEl.textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
 
     const fuelBar = document.getElementById('ins-fuel-bar');
     if (fuelBar) fuelBar.style.width = `${fuel}%`;
 
-    // Start with Sketchfab tab active by default
-    switchInspectorTab('sketchfab');
+    // Always start with Digital Twin Turntable active as primary view!
+    switchInspectorTab('turntable');
 }
 
 function close3DVehicleInspector() {
@@ -56,16 +71,7 @@ function switchInspectorTab(tab) {
     const btnSketchfab = document.getElementById('btn-tab-sketchfab');
     const btnTurntable = document.getElementById('btn-tab-turntable');
 
-    if (tab === 'sketchfab') {
-        if (sketchfabContainer) sketchfabContainer.classList.remove('hidden');
-        if (turntableContainer) turntableContainer.classList.add('hidden');
-        if (btnSketchfab) {
-            btnSketchfab.className = 'px-3 py-1 rounded text-xs font-semibold bg-uinavy text-white shadow-sm';
-        }
-        if (btnTurntable) {
-            btnTurntable.className = 'px-3 py-1 rounded text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100';
-        }
-    } else {
+    if (tab === 'turntable') {
         if (sketchfabContainer) sketchfabContainer.classList.add('hidden');
         if (turntableContainer) turntableContainer.classList.remove('hidden');
         if (btnTurntable) {
@@ -75,6 +81,15 @@ function switchInspectorTab(tab) {
             btnSketchfab.className = 'px-3 py-1 rounded text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100';
         }
         initTurntable();
+    } else {
+        if (sketchfabContainer) sketchfabContainer.classList.remove('hidden');
+        if (turntableContainer) turntableContainer.classList.add('hidden');
+        if (btnSketchfab) {
+            btnSketchfab.className = 'px-3 py-1 rounded text-xs font-semibold bg-uinavy text-white shadow-sm';
+        }
+        if (btnTurntable) {
+            btnTurntable.className = 'px-3 py-1 rounded text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100';
+        }
     }
 }
 
@@ -84,52 +99,64 @@ function initTurntable() {
 
     if (!inspectorRenderer) {
         const width = container.clientWidth || 500;
-        const height = container.clientHeight || 340;
+        const height = container.clientHeight || 420;
 
         inspectorScene = new THREE.Scene();
-        inspectorScene.background = new THREE.Color(0xf1f5f9);
+        inspectorScene.background = new THREE.Color(0xf8fafc); // Clean light mode background
 
         inspectorCamera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
-        inspectorCamera.position.set(12, 8, 14);
+        inspectorCamera.position.set(12, 7, 13);
 
-        inspectorRenderer = new THREE.WebGLRenderer({ antialias: true });
+        inspectorRenderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
         inspectorRenderer.setSize(width, height);
+        inspectorRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         inspectorRenderer.shadowMap.enabled = true;
         inspectorRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+        inspectorRenderer.toneMappingExposure = 1.1;
         container.appendChild(inspectorRenderer.domElement);
 
         inspectorControls = new THREE.OrbitControls(inspectorCamera, inspectorRenderer.domElement);
         inspectorControls.enableDamping = true;
+        inspectorControls.dampingFactor = 0.08;
         inspectorControls.autoRotate = true;
-        inspectorControls.autoRotateSpeed = 1.8;
+        inspectorControls.autoRotateSpeed = 1.6;
+        inspectorControls.maxPolarAngle = Math.PI / 2 - 0.05;
+        inspectorControls.minDistance = 6;
+        inspectorControls.maxDistance = 25;
 
-        // Lights
-        const hemiLight = new THREE.HemisphereLight(0xffffff, 0xcbd5e1, 0.9);
+        // Studio Lighting Setup
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0xcbd5e1, 1.0);
         inspectorScene.add(hemiLight);
 
-        const dirLight = new THREE.DirectionalLight(0xfff8eb, 1.4);
-        dirLight.position.set(10, 15, 10);
-        dirLight.castShadow = true;
-        inspectorScene.add(dirLight);
+        const keyLight = new THREE.DirectionalLight(0xfff8eb, 1.5);
+        keyLight.position.set(12, 16, 12);
+        keyLight.castShadow = true;
+        inspectorScene.add(keyLight);
 
-        const fillLight = new THREE.DirectionalLight(0x93c5fd, 0.4);
-        fillLight.position.set(-10, 8, -10);
+        const fillLight = new THREE.DirectionalLight(0x93c5fd, 0.5);
+        fillLight.position.set(-12, 8, -12);
         inspectorScene.add(fillLight);
 
         // Circular Pedestal / Turntable Platform
-        const platGeo = new THREE.CylinderGeometry(8, 8.5, 0.6, 32);
+        const platGeo = new THREE.CylinderGeometry(8.5, 9.0, 0.6, 48);
         const platMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.25, metalness: 0.6 });
         const plat = new THREE.Mesh(platGeo, platMat);
         plat.position.y = -0.3;
         plat.receiveShadow = true;
         inspectorScene.add(plat);
 
-        const ringGeo = new THREE.RingGeometry(7.2, 7.5, 32);
+        const ringGeo = new THREE.RingGeometry(7.5, 7.8, 48);
         const ringMat = new THREE.MeshBasicMaterial({ color: 0x002147, side: THREE.DoubleSide });
         const ring = new THREE.Mesh(ringGeo, ringMat);
         ring.rotation.x = -Math.PI / 2;
         ring.position.y = 0.02;
         inspectorScene.add(ring);
+    } else {
+        const width = container.clientWidth || 500;
+        const height = container.clientHeight || 420;
+        inspectorCamera.aspect = width / height;
+        inspectorCamera.updateProjectionMatrix();
+        inspectorRenderer.setSize(width, height);
     }
 
     // Clear previous vehicle mesh from inspector
@@ -140,28 +167,36 @@ function initTurntable() {
     if (window.campus3D && inspectorCurrentVehicle) {
         const vMesh = window.campus3D.createProceduralVehicleMesh(
             inspectorCurrentVehicle.vehicle_type,
-            inspectorCurrentVehicle.plate_number
+            inspectorCurrentVehicle.plate_number,
+            inspectorCurrentVehicle
         );
         vMesh.name = "inspectedVehicle";
         vMesh.position.set(0, 0, 0);
+
+        // Remove floating sprite inside turntable for clean studio view
+        if (vMesh.userData.telemetrySprite) {
+            vMesh.remove(vMesh.userData.telemetrySprite);
+        }
+
         inspectorScene.add(vMesh);
     }
 
-    function animateTurntable() {
-        inspectorAnimId = requestAnimationFrame(animateTurntable);
-        if (inspectorControls) inspectorControls.update();
-        if (inspectorRenderer && inspectorScene && inspectorCamera) {
-            inspectorRenderer.render(inspectorScene, inspectorCamera);
+    if (!inspectorAnimId) {
+        function animateTurntable() {
+            inspectorAnimId = requestAnimationFrame(animateTurntable);
+            if (inspectorControls) inspectorControls.update();
+            if (inspectorRenderer && inspectorScene && inspectorCamera) {
+                inspectorRenderer.render(inspectorScene, inspectorCamera);
+            }
         }
+        animateTurntable();
     }
-    animateTurntable();
 }
 
 function chaseInspectedVehicle() {
     if (inspectorCurrentVehicle && window.campus3D) {
         window.campus3D.followVehicle(inspectorCurrentVehicle.vehicle_id);
         close3DVehicleInspector();
-        // Switch to 3D tab if not already
         if (window.switchViewMode) window.switchViewMode('3d');
     }
 }
