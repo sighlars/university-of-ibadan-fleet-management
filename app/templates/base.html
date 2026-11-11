@@ -163,9 +163,9 @@
                     <span class="sidebar-label truncate">Reset Demo Data</span>
                 </button>
 
-                <a href="/docs" target="_blank" title="FastAPI Swagger Docs" class="sidebar-nav-item flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">
+                <a href="/docs" target="_blank" title="Docs (FastAPI Swagger)" class="sidebar-nav-item flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">
                     <i class="fa-solid fa-code w-4 text-center text-slate-400"></i>
-                    <span class="sidebar-label truncate">FastAPI Swagger</span>
+                    <span class="sidebar-label truncate">Docs</span>
                 </a>
             </div>
         </div>
@@ -270,7 +270,7 @@
         </header>
 
         <!-- Main Content Viewport -->
-        <main class="flex-1 flex overflow-hidden relative">
+        <main class="flex-1 flex overflow-hidden relative w-full">
             {% block content %}{% endblock %}
         </main>
     </div>
@@ -305,6 +305,10 @@
                     <div onclick="cmdNavigate('/analytics')" class="cmd-item flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-slate-100 text-slate-700 hover:text-slate-900 cursor-pointer transition">
                         <div class="flex items-center gap-2.5"><i class="fa-solid fa-chart-line text-slate-400 w-4 text-center"></i><span>Logistics Analytics & KPIs</span></div>
                         <span class="text-[10px] font-mono text-slate-400">/analytics</span>
+                    </div>
+                    <div onclick="window.open('/docs', '_blank'); closeCommandPalette();" class="cmd-item flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-slate-100 text-slate-700 hover:text-slate-900 cursor-pointer transition">
+                        <div class="flex items-center gap-2.5"><i class="fa-solid fa-code text-slate-400 w-4 text-center"></i><span>Docs (Interactive API Reference)</span></div>
+                        <span class="text-[10px] font-mono text-slate-400">/docs</span>
                     </div>
                 </div>
 
@@ -394,6 +398,17 @@
                 const isNowCollapsed = sidebar.classList.contains('sidebar-collapsed');
                 localStorage.setItem('ui_sidebar_collapsed', isNowCollapsed ? 'true' : 'false');
             }
+
+            // Dispatch resize so 3D canvases, Leaflet maps, and data grids adapt instantly without leaving whitespace
+            setTimeout(() => {
+                window.dispatchEvent(new Event('resize'));
+                if (window.campus3D && typeof window.campus3D.onWindowResize === 'function') {
+                    window.campus3D.onWindowResize();
+                }
+                if (window.campusMap && typeof window.campusMap.invalidateSize === 'function') {
+                    window.campusMap.invalidateSize();
+                }
+            }, 210);
         }
 
         // Restore user's preferred sidebar state on load

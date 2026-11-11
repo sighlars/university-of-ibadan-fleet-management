@@ -107,8 +107,12 @@ class Campus3DEngine {
         this.loadRoutesAndStops();
         this.loadInitialVehicles();
 
-        // 6. Event Listeners
+        // 6. Event Listeners & ResizeObserver (ensures 3D canvas fills 100% width with no blank white gaps)
         window.addEventListener('resize', () => this.onWindowResize());
+        if (window.ResizeObserver && this.container) {
+            this.resizeObserver = new ResizeObserver(() => this.onWindowResize());
+            this.resizeObserver.observe(this.container);
+        }
         window.addEventListener('telemetry:update', (e) => this.onTelemetryUpdate(e));
         this.renderer.domElement.addEventListener('click', (e) => this.onPointerClick(e));
 
