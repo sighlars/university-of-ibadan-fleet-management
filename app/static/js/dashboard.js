@@ -33,14 +33,24 @@ window.addEventListener('telemetry:event', (e) => {
 
 function renderSidebarVehicles(vehicles) {
     lastVehiclesCache = vehicles;
+    window.lastVehiclesCache = vehicles;
     const container = document.getElementById('vehicle-card-list');
 
     const badge = document.getElementById('vehicle-count-badge');
+    const floatBadge = document.getElementById('floating-veh-count');
+    const mobileText = document.getElementById('mobile-telematics-text');
     if (!container) return;
 
     const activeCount = vehicles.filter(v => v.status === 'in_transit').length;
     if (badge) {
         badge.textContent = `${activeCount} / ${vehicles.length} Active`;
+    }
+    if (floatBadge) {
+        floatBadge.textContent = `${activeCount} in Transit`;
+    }
+    const sidebar = document.getElementById('fleet-sidebar');
+    if (mobileText && sidebar && sidebar.classList.contains('max-h-[52px]')) {
+        mobileText.textContent = `View All (${vehicles.length})`;
     }
 
     if (vehicles.length === 0) {
@@ -120,6 +130,9 @@ function renderSidebarVehicles(vehicles) {
 let lastVehiclesCache = [];
 
 function openVehicleInspectorFromCard(plateNumber) {
+    if (window.innerWidth < 1024 && typeof toggleMobileTelematics === 'function') {
+        toggleMobileTelematics(false);
+    }
     const veh = lastVehiclesCache.find(v => v.plate_number === plateNumber);
     if (veh && typeof open3DVehicleInspector === 'function') {
         open3DVehicleInspector(veh);
@@ -128,6 +141,9 @@ function openVehicleInspectorFromCard(plateNumber) {
 
 
 function focusVehicle(lat, lng) {
+    if (window.innerWidth < 1024 && typeof toggleMobileTelematics === 'function') {
+        toggleMobileTelematics(false);
+    }
     if (window.campus3D && typeof window.campus3D.gpsToWorld === 'function') {
         const wPos = window.campus3D.gpsToWorld(lat, lng);
         window.campus3D.controls.target.set(wPos.x, 0, wPos.z);

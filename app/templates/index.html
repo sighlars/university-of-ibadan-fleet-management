@@ -4,16 +4,21 @@
 
 {% block content %}
 <div class="relative w-full h-full flex flex-col lg:flex-row overflow-hidden bg-slate-100">
-    <!-- Desktop Left Sidebar / Mobile Collapsible Drawer -->
-    <aside id="fleet-sidebar" class="w-full lg:w-80 xl:w-96 bg-white border-b lg:border-b-0 lg:border-r border-slate-200/90 z-20 flex flex-col shrink-0 max-h-[40vh] lg:max-h-full transition-all duration-300 shadow-sm">
-        <!-- Sidebar Header -->
-        <div class="p-3.5 border-b border-slate-200/90 flex items-center justify-between shrink-0 bg-slate-50/80">
+    <!-- Desktop Left Sidebar / Mobile Sliding Telematics Bottom Drawer -->
+    <aside id="fleet-sidebar" class="fixed lg:static inset-x-0 bottom-0 z-30 w-full lg:w-80 xl:w-96 bg-white border-t lg:border-t-0 lg:border-r border-slate-200/90 shadow-2xl lg:shadow-none flex flex-col shrink-0 max-h-[52px] lg:max-h-full transition-all duration-300 ease-in-out">
+        <!-- Sidebar Header & Mobile Telematics Dock Bar -->
+        <div onclick="toggleMobileTelematics()" class="p-3.5 border-b border-slate-200/90 flex items-center justify-between shrink-0 bg-slate-50/95 cursor-pointer lg:cursor-default select-none">
             <div class="flex items-center gap-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 <h2 class="text-xs font-bold uppercase tracking-wider text-uinavy">Campus Telematics</h2>
+                <span id="vehicle-count-badge" class="px-2 py-0.5 rounded text-[11px] font-mono bg-white text-slate-700 border border-slate-200 shadow-2xs">0 Active</span>
             </div>
-            <div class="flex items-center gap-2">
-                <span id="vehicle-count-badge" class="px-2 py-0.5 rounded text-[11px] font-mono bg-white text-slate-700 border border-slate-200 shadow-xs">0 Active</span>
+            <!-- Mobile Toggle Indicator & Expand Pill -->
+            <div class="lg:hidden flex items-center gap-1.5">
+                <span class="text-[11px] font-semibold text-uinavy bg-uinavy-50 border border-uinavy-200 px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-2xs">
+                    <span id="mobile-telematics-text">View All Telematics</span>
+                    <i id="mobile-telematics-chevron" class="fa-solid fa-chevron-up text-[10px] transition-transform duration-300"></i>
+                </span>
             </div>
         </div>
 
@@ -66,6 +71,13 @@
         <div id="map-2d-container" class="w-full h-full z-10 absolute inset-0 hidden">
             <div id="map" class="w-full h-full"></div>
         </div>
+
+        <!-- Mobile Floating Telematics Trigger Button -->
+        <button id="mobile-floating-telematics-btn" onclick="toggleMobileTelematics(true)" class="lg:hidden absolute bottom-16 right-3 z-20 px-3.5 py-2 rounded-full bg-uinavy text-white text-xs font-bold shadow-lg flex items-center gap-2 border border-amber-400/80 active:scale-95 transition pointer-events-auto">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <i class="fa-solid fa-truck-fast text-uigold-light"></i>
+            <span id="floating-veh-count">Fleet Telematics</span>
+        </button>
 
         <!-- Top Floating HUD: View Switcher, Camera Presets, Telemetry & Simulation Deck -->
         <div class="absolute top-3 left-3 right-3 z-20 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
@@ -130,7 +142,7 @@
         </div>
 
         <!-- Interactive 3D Vehicle Quick-Card (Shown on vehicle click in 3D) -->
-        <div id="veh-quick-card" class="absolute bottom-14 right-4 z-30 bg-white/95 backdrop-blur-md border border-slate-200 rounded-xl p-4 shadow-xl max-w-xs w-full hidden text-xs space-y-3 transition-all pointer-events-auto">
+        <div id="veh-quick-card" class="absolute bottom-16 left-3 right-3 sm:left-auto sm:right-4 z-40 bg-white/95 backdrop-blur-md border border-slate-200 rounded-xl p-4 shadow-xl sm:max-w-xs w-auto sm:w-full hidden text-xs space-y-3 transition-all pointer-events-auto">
             <div class="flex items-center justify-between border-b border-slate-100 pb-2">
                 <div class="flex items-center gap-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -179,7 +191,7 @@
         </div>
 
         <!-- Interactive Landmark Quick-Card (Shown on building click in 3D) -->
-        <div id="landmark-quick-card" class="absolute bottom-14 left-4 z-30 bg-white/95 backdrop-blur-md border border-slate-200 rounded-xl p-3.5 shadow-xl max-w-xs w-full hidden text-xs space-y-2 transition-all pointer-events-auto">
+        <div id="landmark-quick-card" class="absolute bottom-16 left-3 right-3 sm:left-4 sm:right-auto z-40 bg-white/95 backdrop-blur-md border border-slate-200 rounded-xl p-3.5 shadow-xl sm:max-w-xs w-auto sm:w-full hidden text-xs space-y-2 transition-all pointer-events-auto">
             <div class="flex items-center justify-between border-b border-slate-100 pb-1.5">
                 <div class="flex items-center gap-2">
                     <i class="fa-solid fa-building-columns text-uinavy"></i>
@@ -390,7 +402,36 @@
         }
     });
 
+    // Mobile Telematics Bottom Sheet Drawer Toggle
+    function toggleMobileTelematics(forceOpen = null) {
+        if (window.innerWidth >= 1024) return;
+        const sidebar = document.getElementById('fleet-sidebar');
+        const textEl = document.getElementById('mobile-telematics-text');
+        const chevron = document.getElementById('mobile-telematics-chevron');
+        const floatBtn = document.getElementById('mobile-floating-telematics-btn');
+        if (!sidebar) return;
+
+        const isCollapsed = sidebar.classList.contains('max-h-[52px]');
+        const shouldOpen = forceOpen !== null ? forceOpen : isCollapsed;
+
+        if (shouldOpen) {
+            sidebar.classList.remove('max-h-[52px]');
+            sidebar.classList.add('max-h-[78vh]');
+            if (textEl) textEl.textContent = 'Minimize Simulation View';
+            if (chevron) chevron.classList.add('rotate-180');
+            if (floatBtn) floatBtn.classList.add('hidden');
+        } else {
+            sidebar.classList.remove('max-h-[78vh]');
+            sidebar.classList.add('max-h-[52px]');
+            const count = (window.lastVehiclesCache && window.lastVehiclesCache.length) || 6;
+            if (textEl) textEl.textContent = `View All (${count})`;
+            if (chevron) chevron.classList.remove('rotate-180');
+            if (floatBtn) floatBtn.classList.remove('hidden');
+        }
+    }
+
     // Global bindings
+    window.toggleMobileTelematics = toggleMobileTelematics;
     window.switchViewMode = switchViewMode;
     window.chaseSelectedVehicle = chaseSelectedVehicle;
     window.inspectSelectedVehicle = inspectSelectedVehicle;

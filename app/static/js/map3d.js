@@ -76,8 +76,14 @@ class Campus3DEngine {
         this.scene.fog = new THREE.FogExp2(0xdbeafe, 0.0008);
 
         // 2. Camera: Wide-angle perspective overlooking campus (isometric 3D Google Maps style)
-        this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 4500);
-        this.camera.position.set(0, 150, 210);
+        const isMobile = width < 768 || (width / height) < 1.0;
+        const initialFov = isMobile ? Math.min(62, Math.max(48, Math.round(45 / Math.sqrt(width / height)))) : 45;
+        this.camera = new THREE.PerspectiveCamera(initialFov, width / height, 1, 4500);
+        if (isMobile) {
+            this.camera.position.set(0, 190, 275);
+        } else {
+            this.camera.position.set(0, 150, 210);
+        }
 
         // 3. WebGL Renderer with PBR tone mapping & soft shadows
         this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
@@ -1228,6 +1234,9 @@ class Campus3DEngine {
     }
 
     selectVehicle(veh) {
+        if (window.innerWidth < 1024 && typeof window.toggleMobileTelematics === 'function') {
+            window.toggleMobileTelematics(false);
+        }
         this.selectedVehicleId = veh.vehicle_id;
         this.showVehicleQuickCard(veh);
 
@@ -1340,14 +1349,19 @@ class Campus3DEngine {
 
     setCameraPreset(preset) {
         this.unlockFollow(false);
+        const isMobile = window.innerWidth < 768;
         if (preset === 'bird') {
-            this.camera.position.set(0, 150, 210);
+            if (isMobile) {
+                this.camera.position.set(0, 190, 275);
+            } else {
+                this.camera.position.set(0, 150, 210);
+            }
             this.controls.target.set(0, 0, 0);
         } else if (preset === 'street') {
             this.camera.position.set(0, 24, 70);
             this.controls.target.set(0, 8, -25);
         } else if (preset === 'top') {
-            this.camera.position.set(0, 480, 0.1);
+            this.camera.position.set(0, isMobile ? 540 : 480, 0.1);
             this.controls.target.set(0, 0, 0);
         } else if (preset === 'depot') {
             this.camera.position.set(-15, 32, 70);
@@ -1360,7 +1374,15 @@ class Campus3DEngine {
         if (!this.container || !this.camera || !this.renderer) return;
         const width = this.container.clientWidth;
         const height = this.container.clientHeight;
-        this.camera.aspect = width / height;
+        const aspect = width / height;
+        const isMobile = width < 768 || aspect < 1.0;
+
+        this.camera.aspect = aspect;
+        if (isMobile) {
+            this.camera.fov = Math.min(62, Math.max(48, Math.round(45 / Math.sqrt(aspect))));
+        } else {
+            this.camera.fov = 45;
+        }
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(width, height);
     }
