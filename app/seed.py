@@ -29,14 +29,15 @@ def seed_database():
             Base.metadata.drop_all(bind=engine)
             Base.metadata.create_all(bind=engine)
 
-        logger.info("Seeding University of Ibadan Works & Transport Central Depot...")
+        logger.info("Seeding University of Ibadan Central Logistics Depot...")
         depot = Depot(
-            name="UI Works & Transport Central Pool",
-            address="Works & Maintenance Department, Central Transport Pool, University of Ibadan, Oyo State, Nigeria",
+            name="UI Central Campus Logistics Hub",
+            address="Central Logistics Area, University of Ibadan Campus, Oyo State, Nigeria",
             latitude=7.445210,
             longitude=3.899015,
-            contact_phone="+234 (0) 803 324 0001 / ext. 1102"
+            contact_phone="+234 (0) 803 000 0000"
         )
+
         db.add(depot)
         db.flush()
 

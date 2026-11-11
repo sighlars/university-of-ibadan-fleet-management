@@ -69,12 +69,13 @@ class FleetMapController {
             <div class="space-y-1">
                 <div class="font-bold text-amber-400 text-sm flex items-center gap-1.5">
                     <i class="fa-solid fa-warehouse"></i>
-                    UI Central Transport & Works Pool
+                    Central Campus Logistics Hub
                 </div>
-                <div class="text-slate-300 font-medium">Works & Maintenance Dept, University of Ibadan</div>
-                <div class="text-slate-400 text-[11px]">Central Logistics Depot, Fueling & Maintenance Facility</div>
+                <div class="text-slate-300 font-medium">University of Ibadan Campus, Ibadan</div>
+                <div class="text-slate-400 text-[11px]">Primary Dispatch, Fueling & Maintenance Depot</div>
             </div>
         `);
+
 
     }
 

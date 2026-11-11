@@ -18,13 +18,14 @@ Thank you for your interest in contributing to **UI-FleetFlow**, the open-source
 ## Development Setup
 
 ```bash
-git clone https://github.com/<your-username>/ui-fleetflow.git
-cd ui-fleetflow
+git clone <repository-url>
+cd <repository-directory>
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 python run.py
 ```
+
 
 ## Code of Conduct
 
