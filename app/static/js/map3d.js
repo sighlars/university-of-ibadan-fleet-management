@@ -1014,20 +1014,15 @@ class Campus3DEngine {
                     const points = [];
                     route.polyline.forEach(pt => {
                         const wPos = this.gpsToWorld(pt[0], pt[1]);
-                        points.push(new THREE.Vector3(wPos.x, 0.45, wPos.z));
+                        points.push(new THREE.Vector3(wPos.x, 0.13, wPos.z));
                     });
 
-                    const curve = new THREE.CatmullRomCurve3(points);
-                    const tubeGeo = new THREE.TubeGeometry(curve, points.length * 4, 0.55, 6, false);
-                    const tubeMat = new THREE.MeshStandardMaterial({
-                        color: idx % 2 === 0 ? 0x0284c7 : 0xd97706,
-                        emissive: idx % 2 === 0 ? 0x0284c7 : 0xd97706,
-                        emissiveIntensity: 0.65,
-                        roughness: 0.3
-                    });
-                    const tubeMesh = new THREE.Mesh(tubeGeo, tubeMat);
-                    this.scene.add(tubeMesh);
-                    this.routes3D.set(route.id, tubeMesh);
+                    const routeColor = idx % 2 === 0 ? 0x0284c7 : 0xd97706;
+                    const routeRibbon = this.createRouteRibbonMesh(points, routeColor, 2.4);
+                    if (routeRibbon) {
+                        this.scene.add(routeRibbon);
+                        this.routes3D.set(route.id, routeRibbon);
+                    }
                 }
             });
 
@@ -1070,6 +1065,135 @@ class Campus3DEngine {
         } catch (err) {
             console.error('Error loading 3D routes & stops', err);
         }
+    }
+
+    /**
+     * Builds a sleek flat highway navigation ribbon that drapes right onto the road asphalt (y = 0.13),
+     * replacing bulky 3D cylindrical pipes with Google Maps / Apple Maps style flat navigation paths.
+     */
+    createRouteRibbonMesh(points, colorHex, width = 2.4) {
+        if (!points || points.length < 2) return null;
+
+        const group = new THREE.Group();
+
+        // 1. Create a smooth CatmullRom curve through the waypoint sequence
+        const curve = new THREE.CatmullRomCurve3(points);
+        const sampleCount = Math.max(40, points.length * 14);
+        const sampledPoints = curve.getSpacedPoints(sampleCount);
+
+        // 2. Build flat ribbon vertices draped just above road asphalt (y = 0.13)
+        const yOffset = 0.13;
+        const halfWidth = width / 2;
+        const positions = [];
+        const indices = [];
+
+        for (let i = 0; i < sampledPoints.length; i++) {
+            const curr = sampledPoints[i];
+            let tx, tz;
+
+            if (i === 0) {
+                const next = sampledPoints[1];
+                tx = next.x - curr.x;
+                tz = next.z - curr.z;
+            } else if (i === sampledPoints.length - 1) {
+                const prev = sampledPoints[i - 1];
+                tx = curr.x - prev.x;
+                tz = curr.z - prev.z;
+            } else {
+                const next = sampledPoints[i + 1];
+                const prev = sampledPoints[i - 1];
+                tx = next.x - prev.x;
+                tz = next.z - prev.z;
+            }
+
+            const len = Math.hypot(tx, tz) || 1;
+            const nx = -tz / len;
+            const nz = tx / len;
+
+            // Left vertex
+            positions.push(curr.x + nx * halfWidth, yOffset, curr.z + nz * halfWidth);
+            // Right vertex
+            positions.push(curr.x - nx * halfWidth, yOffset, curr.z - nz * halfWidth);
+
+            if (i < sampledPoints.length - 1) {
+                const v0 = i * 2;
+                const v1 = i * 2 + 1;
+                const v2 = (i + 1) * 2;
+                const v3 = (i + 1) * 2 + 1;
+
+                indices.push(v0, v1, v2);
+                indices.push(v1, v3, v2);
+            }
+        }
+
+        const ribbonGeo = new THREE.BufferGeometry();
+        ribbonGeo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        ribbonGeo.setIndex(indices);
+        ribbonGeo.computeVertexNormals();
+
+        const ribbonMat = new THREE.MeshBasicMaterial({
+            color: colorHex,
+            transparent: true,
+            opacity: 0.88,
+            side: THREE.DoubleSide,
+            depthWrite: false
+        });
+
+        const ribbonMesh = new THREE.Mesh(ribbonGeo, ribbonMat);
+        group.add(ribbonMesh);
+
+        // 3. Crisp white inner guidance centerline
+        const centerPositions = [];
+        const centerIndices = [];
+        const centerHalfWidth = halfWidth * 0.22;
+
+        for (let i = 0; i < sampledPoints.length; i++) {
+            const curr = sampledPoints[i];
+            let tx, tz;
+            if (i === 0) {
+                tx = sampledPoints[1].x - curr.x;
+                tz = sampledPoints[1].z - curr.z;
+            } else if (i === sampledPoints.length - 1) {
+                tx = curr.x - sampledPoints[i - 1].x;
+                tz = curr.z - sampledPoints[i - 1].z;
+            } else {
+                tx = sampledPoints[i + 1].x - sampledPoints[i - 1].x;
+                tz = sampledPoints[i + 1].z - sampledPoints[i - 1].z;
+            }
+            const len = Math.hypot(tx, tz) || 1;
+            const nx = -tz / len;
+            const nz = tx / len;
+
+            centerPositions.push(curr.x + nx * centerHalfWidth, yOffset + 0.01, curr.z + nz * centerHalfWidth);
+            centerPositions.push(curr.x - nx * centerHalfWidth, yOffset + 0.01, curr.z - nz * centerHalfWidth);
+
+            if (i < sampledPoints.length - 1) {
+                const v0 = i * 2;
+                const v1 = i * 2 + 1;
+                const v2 = (i + 1) * 2;
+                const v3 = (i + 1) * 2 + 1;
+                centerIndices.push(v0, v1, v2);
+                centerIndices.push(v1, v3, v2);
+            }
+        }
+
+        const centerGeo = new THREE.BufferGeometry();
+        centerGeo.setAttribute('position', new THREE.Float32BufferAttribute(centerPositions, 3));
+        centerGeo.setIndex(centerIndices);
+        centerGeo.computeVertexNormals();
+
+        const centerMat = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.95,
+            side: THREE.DoubleSide,
+            depthWrite: false
+        });
+
+        const centerMesh = new THREE.Mesh(centerGeo, centerMat);
+        group.add(centerMesh);
+
+        return group;
     }
 
     onPointerClick(event) {

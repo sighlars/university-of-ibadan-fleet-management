@@ -18,9 +18,21 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![Three.js](https://img.shields.io/badge/Three.js-WebGL%203D-049EF4.svg?logo=threedotjs&logoColor=white)](https://threejs.org/)
+[![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-Components-000000.svg?logo=shadcnui&logoColor=white)](https://ui.shadcn.com/)
 [![SQLite](https://img.shields.io/badge/Database-SQLite-003B57.svg?logo=sqlite&logoColor=white)](https://www.sqlite.org/)
 [![Leaflet.js](https://img.shields.io/badge/GIS%20Maps-Leaflet.js-199900.svg?logo=leaflet&logoColor=white)](https://leafletjs.com/)
 [![Tests](https://img.shields.io/badge/Tests-12%20Passing-brightgreen.svg)]()
+
+---
+
+## 📸 User Interface Showcase
+
+| View | Preview |
+|---|---|
+| **Live 3D Digital Twin Viewport**<br>• 818 Extruded OpenStreetMap Campus Buildings<br>• Dynamic Flat Highway Navigation Ribbons<br>• Authentic Campus Fleet (Keke, HiAce, Carry, Hilux) | ![Live 3D Digital Twin](docs/screenshots/ui_campus_3d_viewport.jpg) |
+| **Analytics & SLA KPIs Dashboard**<br>• Built with authentic shadcn/ui Dashboard block<br>• 4-card KPI metric deck + Area Load Chart<br>• Real-time telematics dispatches table | ![shadcn Analytics Dashboard](docs/screenshots/analytics_dashboard_shadcn.jpg) |
+| **Fleet & Drivers Management Registry**<br>• Built with authentic shadcn/ui Data Table<br>• Monospace plate tags, battery bars, driver ratings<br>• Instant asset modal dialogs & filters | ![shadcn Fleet & Drivers Table](docs/screenshots/fleet_drivers_shadcn.jpg) |
 
 ---
 
@@ -170,6 +182,64 @@ pytest -v
 ```
 
 All 12 unit and integration tests will execute.
+
+---
+
+## 🌐 Deployment Guide & Cloud Architecture
+
+### Can You Deploy on Cloudflare?
+
+| Layer | Cloudflare Suitability | Recommendation |
+|---|---|---|
+| **Cloudflare Workers (Edge Serverless)** | ❌ **Not Recommended for Backend** | Workers is an ephemeral V8 JS runtime. FastAPI with persistent background tasks (`telemetry_publisher_loop` running every second), WebSockets, and SQLite writes cannot run reliably in serverless functions without major rewrites. |
+| **Cloudflare Tunnel (`cloudflared`)** |  **Excellent** | Securely expose your local machine or a $4/mo VPS directly to a public domain without opening any router ports or configuring SSL certificates. |
+| **Cloudflare CDN & DNS Proxy** |  **Recommended** | Put Cloudflare's free proxy in front of Render, Railway, or a VPS for instant global edge caching of 3D tiles, DDoS protection, and free SSL. |
+
+---
+
+### Top Recommended Platforms for FastAPI + WebSockets
+
+#### 1. Render.com (Easiest — Recommended)
+Render supports Python web services with WebSockets and persistent disks out of the box:
+1. Fork or push this repository to GitHub.
+2. Sign in to [Render.com](https://render.com) and click **New + > Web Service**.
+3. Connect your repository and configure:
+   - **Environment**: `Python 3`
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+4. *(Optional)* Under **Disks**, attach a persistent disk mounted at `/app/data` if you wish to persist `fleet.db` across re-deploys.
+5. Click **Create Web Service**. Render provisions a free SSL URL (`https://your-app.onrender.com`) with full WebSocket support (`wss://`).
+
+#### 2. Railway.app (Fastest 1-Click Deploy)
+1. Go to [Railway.app](https://railway.app) and create a **New Project > Deploy from GitHub repo**.
+2. Railway detects Python and automatically launches Uvicorn.
+3. In **Settings > Networking**, click **Generate Domain**.
+4. Full background asyncio simulation loops and WebSockets are enabled by default.
+
+#### 3. Fly.io (Best Global Performance)
+Run lightweight microVMs close to users with persistent storage:
+```bash
+# Install flyctl & authenticate
+fly auth login
+
+# Launch configuration (generates fly.toml)
+fly launch --name ui-fleetflow
+
+# Attach persistent storage volume for SQLite
+fly volumes create fleet_data --size 1
+
+# Deploy
+fly deploy
+```
+
+#### 4. Docker Container (Self-Hosted / VPS)
+```bash
+# Build the Docker image
+docker build -t ui-fleetflow:latest .
+
+# Run with persistent volume
+docker run -d -p 8000:8000 -v $(pwd)/data:/app/data --name fleet-app ui-fleetflow:latest
+```
 
 ---
 
