@@ -198,21 +198,29 @@
     <!-- Main Content Wrapper -->
     <div class="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
         <!-- Shadcn App Header -->
-        <header id="app-header" class="h-14 border-b border-slate-200/80 bg-white/95 px-4 sm:px-6 flex items-center justify-between shrink-0 backdrop-blur-xs z-30 shadow-2xs">
+        <header id="app-header" class="h-14 border-b border-slate-200/80 bg-white/95 px-3 sm:px-6 flex items-center justify-between shrink-0 backdrop-blur-xs z-30 shadow-2xs">
             
-            <!-- Left: Shadcn PanelLeft Trigger + Breadcrumbs -->
-            <div class="flex items-center gap-3 min-w-0">
+            <!-- Left: Shadcn PanelLeft Trigger + Mobile Title / Desktop Breadcrumbs -->
+            <div class="flex items-center gap-2 sm:gap-3 min-w-0">
                 <!-- Authentic Shadcn SidebarTrigger with PanelLeft Icon -->
-                <button onclick="toggleSidebar()" title="Toggle Sidebar (Panel Left)" class="p-2 -ml-1 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition border border-transparent hover:border-slate-200 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-panel-left w-4 h-4 text-slate-600">
+                <button onclick="toggleSidebar()" aria-label="Toggle Sidebar Menu" title="Toggle Sidebar (Panel Left)" class="p-2 -ml-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition border border-transparent hover:border-slate-200 flex items-center justify-center shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-panel-left w-4 h-4 text-slate-700">
                         <rect width="18" height="18" x="3" y="3" rx="2"/>
                         <path d="M9 3v18"/>
                     </svg>
                 </button>
 
+                <!-- Mobile Page Title Badge -->
+                <span class="sm:hidden text-xs font-bold text-slate-900 truncate">
+                    {% if active_tab == 'analytics' %}Analytics & KPIs
+                    {% elif active_tab == 'vehicles' %}Fleet & Drivers
+                    {% elif active_tab == 'orders' %}Orders & VRP
+                    {% else %}3D Operations{% endif %}
+                </span>
+
                 <div class="h-4 w-[1px] bg-slate-200 hidden sm:block"></div>
 
-                <!-- Breadcrumbs -->
+                <!-- Desktop Breadcrumbs -->
                 <nav class="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 truncate">
                     <span class="text-slate-400">UI-FleetFlow</span>
                     <i class="fa-solid fa-chevron-right text-[9px] text-slate-300"></i>
@@ -237,10 +245,10 @@
                 </button>
             </div>
 
-            <!-- Right: Simulation Controls, Status & Actions -->
-            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+            <!-- Right: Search, Simulation Controls & Status -->
+            <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
                 <!-- Mobile Search Trigger -->
-                <button onclick="openCommandPalette()" class="md:hidden p-2 text-slate-500 hover:text-slate-800 rounded-lg hover:bg-slate-100">
+                <button onclick="openCommandPalette()" aria-label="Search" title="Search (⌘K)" class="md:hidden p-2 text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition flex items-center justify-center">
                     <i class="fa-solid fa-magnifying-glass text-xs"></i>
                 </button>
 
@@ -250,10 +258,12 @@
                         <i class="fa-solid fa-pause text-[10px]" id="header-sim-icon"></i>
                         <span class="text-[11px] font-medium hidden lg:inline">Sim</span>
                     </button>
-                    <div class="h-3 w-[1px] bg-slate-200 mx-0.5"></div>
-                    <button onclick="setSimSpeed(1.0)" id="header-spd-1x" class="px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-uinavy text-white shadow-2xs">1x</button>
-                    <button onclick="setSimSpeed(2.5)" id="header-spd-2x" class="px-1.5 py-0.5 rounded text-[10px] font-mono text-slate-600 hover:text-slate-900">2.5x</button>
-                    <button onclick="setSimSpeed(5.0)" id="header-spd-5x" class="px-1.5 py-0.5 rounded text-[10px] font-mono text-slate-600 hover:text-slate-900">5x</button>
+                    <div class="h-3 w-[1px] bg-slate-200 mx-0.5 hidden sm:block"></div>
+                    <div class="hidden sm:flex items-center">
+                        <button onclick="setSimSpeed(1.0)" id="header-spd-1x" class="px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-uinavy text-white shadow-2xs">1x</button>
+                        <button onclick="setSimSpeed(2.5)" id="header-spd-2x" class="px-1.5 py-0.5 rounded text-[10px] font-mono text-slate-600 hover:text-slate-900">2.5x</button>
+                        <button onclick="setSimSpeed(5.0)" id="header-spd-5x" class="px-1.5 py-0.5 rounded text-[10px] font-mono text-slate-600 hover:text-slate-900">5x</button>
+                    </div>
                 </div>
 
                 <!-- Live WebSocket Pill -->
@@ -263,7 +273,7 @@
                 </div>
 
                 <!-- GitHub Open Source Link -->
-                <a href="https://github.com/sighlars/university-of-ibadan-fleet-management" target="_blank" title="GitHub Repository" class="p-2 text-slate-400 hover:text-slate-700 rounded-lg transition border border-transparent hover:border-slate-200">
+                <a href="https://github.com/sighlars/university-of-ibadan-fleet-management" target="_blank" title="GitHub Repository" class="hidden sm:flex p-2 text-slate-400 hover:text-slate-700 rounded-lg transition border border-transparent hover:border-slate-200">
                     <i class="fa-brands fa-github text-sm"></i>
                 </a>
             </div>
