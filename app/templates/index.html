@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Live Campus Operations - {{ app_name }}{% endblock %}
+{% block title %}3D Live Campus Operations - {{ app_name }}{% endblock %}
 
 {% block content %}
 <div class="relative w-full h-full flex flex-col lg:flex-row overflow-hidden bg-slate-950">
@@ -44,29 +44,45 @@
         </div>
     </aside>
 
-    <!-- Map & Floating Overlays -->
+    <!-- Map Canvas Area (Dual 3D Digital Twin & 2D GIS Map) -->
     <div class="flex-1 relative w-full h-full min-h-[300px]">
-        <!-- Full Viewport Leaflet Map -->
-        <div id="map" class="w-full h-full z-10"></div>
+        <!-- 3D Three.js Digital Twin Viewport -->
+        <div id="map-3d-container" class="w-full h-full z-10 absolute inset-0"></div>
 
-        <!-- Top Floating HUD: Metrics & Simulation Deck -->
+        <!-- 2D Leaflet OpenStreetMap Fallback Viewport -->
+        <div id="map-2d-container" class="w-full h-full z-10 absolute inset-0 hidden">
+            <div id="map" class="w-full h-full"></div>
+        </div>
+
+        <!-- Top Floating HUD: View Switcher, Camera Presets, Telemetry & Simulation Deck -->
         <div class="absolute top-3 left-3 right-3 z-20 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
-            <!-- Left Stat Badges -->
-            <div class="flex items-center gap-2 pointer-events-auto">
-                <div class="bg-[#0C121E]/90 backdrop-blur border border-slate-800/80 px-3 py-1.5 rounded-lg shadow-md flex items-center gap-2">
+            <!-- Left Controls: 3D/2D View Toggle & Camera Angles -->
+            <div class="flex items-center gap-2 pointer-events-auto flex-wrap">
+                <!-- 3D vs 2D Switcher -->
+                <div class="bg-[#0C121E]/95 backdrop-blur border border-slate-800/80 p-0.5 rounded-lg shadow-md flex items-center">
+                    <button id="btn-view-3d" onclick="switchViewMode('3d')" class="px-2.5 py-1 rounded text-xs font-semibold bg-amber-500 text-slate-950 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-cube text-[10px]"></i>
+                        <span>3D Digital Twin</span>
+                    </button>
+                    <button id="btn-view-2d" onclick="switchViewMode('2d')" class="px-2.5 py-1 rounded text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-map text-[10px]"></i>
+                        <span>2D Map</span>
+                    </button>
+                </div>
+
+                <!-- 3D Camera Presets (visible when in 3D mode) -->
+                <div id="camera-presets-pill" class="bg-[#0C121E]/95 backdrop-blur border border-slate-800/80 px-2 py-1 rounded-lg shadow-md hidden sm:flex items-center gap-1.5 text-xs text-slate-400">
+                    <span class="text-[10px] font-mono text-slate-500 uppercase mr-0.5">Cam:</span>
+                    <button onclick="setCameraAngle('bird')" class="px-1.5 py-0.5 rounded text-[11px] hover:text-white hover:bg-slate-800 transition">Bird's Eye</button>
+                    <button onclick="setCameraAngle('street')" class="px-1.5 py-0.5 rounded text-[11px] hover:text-white hover:bg-slate-800 transition">Street Level</button>
+                    <button onclick="setCameraAngle('top')" class="px-1.5 py-0.5 rounded text-[11px] hover:text-white hover:bg-slate-800 transition">Top Down</button>
+                </div>
+
+                <!-- Live Transit Stats -->
+                <div class="bg-[#0C121E]/90 backdrop-blur border border-slate-800/80 px-2.5 py-1 rounded-lg shadow-md flex items-center gap-2 text-xs">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                    <span class="text-[11px] text-slate-400 font-medium">In Transit:</span>
+                    <span class="text-[11px] text-slate-400">Transit:</span>
                     <span id="stat-in-transit" class="font-mono text-xs font-bold text-white">0</span>
-                </div>
-                <div class="bg-[#0C121E]/90 backdrop-blur border border-slate-800/80 px-3 py-1.5 rounded-lg shadow-md flex items-center gap-2">
-                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-                    <span class="text-[11px] text-slate-400 font-medium">Pending:</span>
-                    <span id="stat-pending" class="font-mono text-xs font-bold text-white">0</span>
-                </div>
-                <div class="bg-[#0C121E]/90 backdrop-blur border border-slate-800/80 px-3 py-1.5 rounded-lg shadow-md hidden sm:flex items-center gap-2">
-                    <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
-                    <span class="text-[11px] text-slate-400 font-medium">Delivered:</span>
-                    <span id="stat-delivered" class="font-mono text-xs font-bold text-white">0</span>
                 </div>
             </div>
 
@@ -89,20 +105,140 @@
             </div>
         </div>
 
-        <!-- Bottom Map Legend -->
+        <!-- Bottom Controls & 3D Hints -->
         <div class="absolute bottom-3 left-3 z-20 bg-[#0C121E]/90 backdrop-blur border border-slate-800/80 px-3 py-2 rounded-lg shadow-md text-[11px] space-y-1 pointer-events-auto hidden sm:block">
-            <div class="font-semibold text-slate-300 text-[10px] uppercase tracking-wider mb-1">Campus Legend</div>
-            <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 border border-white"></span>
-                <span class="text-slate-300">Vehicle in Transit</span>
+            <div class="font-semibold text-slate-300 text-[10px] uppercase tracking-wider mb-0.5">3D Navigation Controls</div>
+            <div class="text-slate-400 text-[10px] flex items-center gap-3">
+                <span><i class="fa-regular fa-hand-pointer text-amber-400 mr-1"></i><b>Left Drag:</b> Orbit/Rotate</span>
+                <span><i class="fa-regular fa-hand text-amber-400 mr-1"></i><b>Right Drag:</b> Pan</span>
+                <span><i class="fa-solid fa-arrows-up-down text-amber-400 mr-1"></i><b>Scroll:</b> Zoom</span>
             </div>
-            <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-amber-600 border border-white"></span>
-                <span class="text-slate-300">Delivery Point</span>
+        </div>
+    </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- 3D VEHICLE INSPECTION & SKETCHFAB GAME-READY CARS MODAL -->
+<!-- ======================================================== -->
+<div id="inspector-3d-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-3 sm:p-5 hidden">
+    <div class="bg-[#0C121E] border border-slate-800 rounded-2xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl relative">
+        <!-- Modal Top Bar -->
+        <div class="px-5 py-3.5 border-b border-slate-800 flex items-center justify-between bg-[#0E1522]">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center">
+                    <i class="fa-solid fa-cube text-sm"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h3 class="text-sm font-bold text-white font-mono" id="ins-plate">UI-08-BUS</h3>
+                        <span id="ins-status" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-mono">IN_TRANSIT</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400" id="ins-model">Toyota Coaster Executive Campus Shuttle</p>
+                </div>
             </div>
+
+            <!-- View Tabs & Close Button -->
             <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-md bg-[#002147] border border-amber-400"></span>
-                <span class="text-slate-300">Central Campus Hub</span>
+                <div class="flex items-center bg-slate-900 rounded-lg p-0.5 border border-slate-800">
+                    <button id="btn-tab-sketchfab" onclick="switchInspectorTab('sketchfab')" class="px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 text-amber-400 border border-slate-700 transition">
+                        Sketchfab 3D Models
+                    </button>
+                    <button id="btn-tab-turntable" onclick="switchInspectorTab('turntable')" class="px-2.5 py-1 rounded text-xs font-medium text-slate-400 hover:text-white bg-slate-900 transition">
+                        Digital Twin Turntable
+                    </button>
+                </div>
+                <button onclick="close3DVehicleInspector()" class="p-1.5 text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal Body (3D Viewport on Left, Telematics Diagnostics on Right) -->
+        <div class="flex-1 flex flex-col md:flex-row overflow-y-auto">
+            <!-- 3D Canvas / Embed Viewport -->
+            <div class="w-full md:w-3/5 bg-slate-950 min-h-[340px] md:min-h-[460px] relative border-b md:border-b-0 md:border-r border-slate-800">
+                <!-- Tab 1: Sketchfab Collection Player -->
+                <div id="ins-tab-sketchfab" class="w-full h-full flex flex-col">
+                    <iframe width="100%" height="420" src="https://sketchfab.com/playlists/embed?collection=9e2582d94d0341b09c0c4269f6dd172b&autostart=0"
+                        title="Game-Ready Cars"
+                        frameborder="0"
+                        allowfullscreen
+                        mozallowfullscreen="true"
+                        webkitallowfullscreen="true"
+                        allow="autoplay; fullscreen; xr-spatial-tracking"
+                        xr-spatial-tracking
+                        execution-while-out-of-viewport
+                        execution-while-not-rendered
+                        web-share
+                        class="w-full flex-1 border-0">
+                    </iframe>
+                    <div class="p-2 bg-slate-950 border-t border-slate-800/80 text-[10px] text-slate-400 flex items-center justify-between">
+                        <span>Game-Ready Vehicles Collection via Sketchfab</span>
+                        <span class="text-amber-400">Interactive 3D Inspector</span>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Three.js Real-Time Turntable Canvas -->
+                <div id="ins-tab-turntable" class="w-full h-full min-h-[420px] hidden relative">
+                    <div id="turntable-canvas-container" class="w-full h-full"></div>
+                    <div class="absolute bottom-2 left-2 right-2 text-center text-[10px] text-slate-400 pointer-events-none">
+                        Drag to rotate 360° | Scroll to zoom
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Telematics Inspection Metrics -->
+            <div class="w-full md:w-2/5 p-4 sm:p-5 flex flex-col justify-between bg-[#0B0F17] space-y-4">
+                <div class="space-y-4 text-xs">
+                    <div class="border-b border-slate-800/80 pb-3">
+                        <h4 class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Live Powertrain Diagnostics</h4>
+                        <div class="grid grid-cols-2 gap-3 font-mono">
+                            <div class="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
+                                <div class="text-[10px] text-slate-400 font-sans">Current Speed</div>
+                                <div class="text-base font-bold text-white mt-0.5" id="ins-speed">0 km/h</div>
+                            </div>
+                            <div class="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
+                                <div class="text-[10px] text-slate-400 font-sans">Fuel / Battery</div>
+                                <div class="text-base font-bold text-emerald-400 mt-0.5" id="ins-fuel">95%</div>
+                            </div>
+                        </div>
+
+                        <!-- Fuel Gauge Bar -->
+                        <div class="mt-2.5">
+                            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                                <div id="ins-fuel-bar" class="h-full bg-emerald-400 transition-all duration-300" style="width: 95%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Operational Specs -->
+                    <div class="space-y-2 border-b border-slate-800/80 pb-3">
+                        <h4 class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Asset Specifications</h4>
+                        <div class="flex justify-between py-1 border-b border-slate-900">
+                            <span class="text-slate-400">Category:</span>
+                            <span class="text-white font-medium" id="ins-type">Campus Shuttle Bus</span>
+                        </div>
+                        <div class="flex justify-between py-1 border-b border-slate-900">
+                            <span class="text-slate-400">Allocated Driver:</span>
+                            <span class="text-amber-400 font-medium" id="ins-driver">Mr. Babatunde Adeyemi</span>
+                        </div>
+                        <div class="flex justify-between py-1 border-b border-slate-900">
+                            <span class="text-slate-400">GPS Position:</span>
+                            <span class="text-slate-200 font-mono text-[11px]" id="ins-latlng">7.4452, 3.8990</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Deck -->
+                <div class="pt-3 border-t border-slate-800/80 space-y-2">
+                    <button onclick="chaseInspectedVehicle()" class="w-full py-2.5 px-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition">
+                        <i class="fa-solid fa-video text-xs"></i>
+                        <span>Lock 3D Chase Camera</span>
+                    </button>
+                    <button onclick="close3DVehicleInspector()" class="w-full py-2 px-3 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 font-medium text-xs border border-slate-800 transition">
+                        Close Inspector
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -111,5 +247,66 @@
 
 {% block scripts %}
 <script src="/static/js/map.js"></script>
+<script src="/static/js/map3d.js"></script>
+<script src="/static/js/inspector3d.js"></script>
 <script src="/static/js/dashboard.js"></script>
+<script>
+    let currentViewMode = '3d';
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize 3D Engine on page load
+        window.campus3D = new Campus3DEngine('map-3d-container');
+
+        // Handle auto-focus URL query parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const focusId = urlParams.get('focus');
+        if (focusId) {
+            fetch('/api/vehicles/' + focusId).then(r => r.json()).then(veh => {
+                if (veh) {
+                    setTimeout(() => {
+                        focusVehicle(veh.current_lat, veh.current_lng);
+                        open3DVehicleInspector(veh);
+                    }, 600);
+                }
+            }).catch(e => console.error(e));
+        }
+    });
+
+
+    function switchViewMode(mode) {
+        currentViewMode = mode;
+        const container3D = document.getElementById('map-3d-container');
+        const container2D = document.getElementById('map-2d-container');
+        const btn3D = document.getElementById('btn-view-3d');
+        const btn2D = document.getElementById('btn-view-2d');
+        const cameraPill = document.getElementById('camera-presets-pill');
+
+        if (mode === '3d') {
+            container3D.classList.remove('hidden');
+            container2D.classList.add('hidden');
+            btn3D.className = 'px-2.5 py-1 rounded text-xs font-semibold bg-amber-500 text-slate-950 transition flex items-center gap-1.5';
+            btn2D.className = 'px-2.5 py-1 rounded text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5';
+            if (cameraPill) cameraPill.classList.remove('hidden');
+            if (window.campus3D) window.campus3D.onWindowResize();
+        } else {
+            container3D.classList.add('hidden');
+            container2D.classList.remove('hidden');
+            btn2D.className = 'px-2.5 py-1 rounded text-xs font-semibold bg-amber-500 text-slate-950 transition flex items-center gap-1.5';
+            btn3D.className = 'px-2.5 py-1 rounded text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5';
+            if (cameraPill) cameraPill.classList.add('hidden');
+            if (window.fleetMap && window.fleetMap.map) {
+                setTimeout(() => window.fleetMap.map.invalidateSize(), 150);
+            }
+        }
+    }
+
+    function setCameraAngle(preset) {
+        if (window.campus3D) {
+            window.campus3D.setCameraPreset(preset);
+        }
+    }
+
+    // Make switchViewMode global
+    window.switchViewMode = switchViewMode;
+</script>
 {% endblock %}

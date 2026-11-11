@@ -32,7 +32,9 @@ window.addEventListener('telemetry:event', (e) => {
 });
 
 function renderSidebarVehicles(vehicles) {
+    lastVehiclesCache = vehicles;
     const container = document.getElementById('vehicle-card-list');
+
     const badge = document.getElementById('vehicle-count-badge');
     if (!container) return;
 
@@ -99,21 +101,44 @@ function renderSidebarVehicles(vehicles) {
                     <div class="text-slate-500 text-[10px]">Stationed at Central Logistics Yard</div>
                 `}
 
-                <!-- Focus Map Button -->
-                <button onclick="focusVehicle(${v.latitude}, ${v.longitude})" class="w-full py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white text-[11px] font-medium border border-slate-700/60 flex items-center justify-center gap-1.5 transition">
-                    <i class="fa-solid fa-crosshairs text-amber-400"></i>
-                    <span>Focus on Map</span>
-                </button>
+                <!-- Focus Map & 3D Inspect Buttons -->
+                <div class="grid grid-cols-2 gap-1.5 pt-1">
+                    <button onclick="focusVehicle(${v.latitude}, ${v.longitude})" class="py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white text-[11px] font-medium border border-slate-700/60 flex items-center justify-center gap-1 transition">
+                        <i class="fa-solid fa-crosshairs text-amber-400"></i>
+                        <span>Focus Map</span>
+                    </button>
+                    <button onclick="openVehicleInspectorFromCard('${v.plate_number}')" class="py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 hover:text-amber-200 text-[11px] font-medium border border-amber-500/30 flex items-center justify-center gap-1 transition">
+                        <i class="fa-solid fa-cube text-[10px]"></i>
+                        <span>Inspect 3D</span>
+                    </button>
+                </div>
             </div>
         `;
     }).join('');
 }
 
+let lastVehiclesCache = [];
+
+function openVehicleInspectorFromCard(plateNumber) {
+    const veh = lastVehiclesCache.find(v => v.plate_number === plateNumber);
+    if (veh && typeof open3DVehicleInspector === 'function') {
+        open3DVehicleInspector(veh);
+    }
+}
+
+
 function focusVehicle(lat, lng) {
+    if (window.campus3D && typeof window.campus3D.gpsToWorld === 'function') {
+        const wPos = window.campus3D.gpsToWorld(lat, lng);
+        window.campus3D.controls.target.set(wPos.x, 0, wPos.z);
+        window.campus3D.camera.position.set(wPos.x + 25, 45, wPos.z + 55);
+        window.campus3D.controls.update();
+    }
     if (window.fleetMap) {
         window.fleetMap.flyTo(lat, lng, 16);
     }
 }
+
 
 async function refreshTopKPIs() {
     try {

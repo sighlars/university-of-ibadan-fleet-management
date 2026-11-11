@@ -190,10 +190,14 @@
                     </td>
                     <td class="py-3 px-3 sm:px-4 font-mono text-slate-300">${v.mileage_km} km</td>
                     <td class="py-3 px-4 sm:px-6 text-right">
-                        <button onclick="toggleMaintenance(${v.id})" class="px-2.5 py-1 rounded text-[10px] font-semibold border ${v.status === 'maintenance' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20' : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'} transition">
+                        <button onclick="inspectVehicleById(${v.id})" class="px-2 py-1 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 transition mr-1">
+                            <i class="fa-solid fa-cube text-[9px] mr-0.5"></i> 3D
+                        </button>
+                        <button onclick="toggleMaintenance(${v.id})" class="px-2 py-1 rounded text-[10px] font-semibold border ${v.status === 'maintenance' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20' : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'} transition">
                             ${v.status === 'maintenance' ? 'Activate' : 'Service'}
                         </button>
                     </td>
+
                 </tr>
             `;
         }).join('');
@@ -212,7 +216,16 @@
         renderVehicles(filtered);
     }
 
+    function inspectVehicleById(id) {
+        const veh = allVehicles.find(v => v.id === id);
+        if (veh) {
+            // Forward to dashboard 3D map focusing on this vehicle
+            window.location.href = `/?focus=${id}`;
+        }
+    }
+
     async function toggleMaintenance(id) {
+
         try {
             const res = await fetch(`/api/vehicles/${id}/maintenance`, { method: 'POST' });
             if (res.ok) {
