@@ -2,8 +2,8 @@ import os
 from pydantic import BaseModel
 
 class Settings(BaseModel):
-    APP_NAME: str = "UI-FleetFlow — Campus Fleet & Logistics Management System"
-    CASE_STUDY: str = "University of Ibadan (Academic Case Study)"
+    APP_NAME: str = "Fleet Management System for a Delivery Company — Optimizing Logistics & Real-Time Tracking"
+    CASE_STUDY: str = "University of Ibadan Campus Delivery Network"
     APP_VERSION: str = "2.0.0"
     DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./fleet.db")
     

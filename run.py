@@ -8,8 +8,8 @@ def main():
     host = os.environ.get("HOST", "0.0.0.0")
 
     print("=" * 70)
-    print(" 🚚 UI-FleetFlow — Campus Fleet & Logistics Management System")
-    print("    Academic School Project | Case Study: University of Ibadan")
+    print(" 🚚 Fleet Management System for a Delivery Company")
+    print("    Sub-topic: Optimizing Logistics & Real-Time Tracking (UI Campus Case Study)")
     print("=" * 70)
     print("Initializing case study database & vehicle roster...")
     seed_database()

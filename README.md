@@ -1,10 +1,9 @@
 <div align="center">
   <img src="app/static/images/ui_logo.png" alt="University of Ibadan Crest" width="220"/>
   <br/><br/>
-  <h1>UI-FleetFlow</h1>
-  <p><b>Intelligent Campus Fleet & Logistics Management System</b><br/>
-  <i>Academic Case Study: University of Ibadan (UI), Ibadan, Nigeria</i><br/>
-  Real-Time 3D Digital Twin • Autonomous CVRP Dispatch Solver • High-Frequency Telematics</p>
+  <h1>Fleet Management System for a Delivery Company</h1>
+  <h3><b>Sub-topic:</b> Optimizing Logistics and Real-Time Tracking — Case Study of the University of Ibadan Campus Delivery Network</h3>
+  <p><i>Real-Time 3D Digital Twin • Autonomous CVRP Dispatch Solver • High-Frequency Telematics</i></p>
 
   <p>
     <a href="https://university-of-ibadan-fleet-management.onrender.com/" target="_blank">
@@ -37,7 +36,7 @@
 ---
 
 > [!NOTE]
-> **Academic Project Note**: UI-FleetFlow is an independent student academic school project modeling campus-scale urban logistics and telematics. It is not an officially affiliated platform of the University of Ibadan administration; all campus facilities and landmarks are studied as an empirical case study for logistics optimization.
+> **Academic Project Note**: This project—**Fleet Management System for a Delivery Company: Optimizing Logistics and Real-Time Tracking** (Case Study of the University of Ibadan Campus Delivery Network)—is an independent student academic school project modeling campus-scale urban logistics and telematics. It is not an officially affiliated platform of the University of Ibadan administration; all campus facilities and landmarks are studied as an empirical case study for logistics optimization.
 
 ---
 
@@ -57,7 +56,7 @@
 
 ## 📌 Project Overview
 
-**UI-FleetFlow** was developed as a school project exploring computational logistics and real-time telematics. It models multi-vehicle parcel distribution and shuttle routing across a university campus, using the **University of Ibadan (UI)**—Nigeria's premier university—as a practical real-world case study.
+This project—**Fleet Management System for a Delivery Company** (Sub-topic: *Optimizing Logistics and Real-Time Tracking — Case Study of the University of Ibadan Campus Delivery Network*)—was developed as a school project exploring computational logistics and real-time telematics. It models multi-vehicle parcel distribution and shuttle routing across a university campus, using the **University of Ibadan (UI)**—Nigeria's premier university—as a practical real-world case study.
 
 The platform addresses common university and institutional logistics scenarios:
 1. **Inter-Faculty Consignments & Material Logistics**: Document, parcel, and examination logistics between academic departments, libraries, and administrative units.
