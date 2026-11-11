@@ -24,9 +24,13 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
-    description="Intelligent Fleet Management & Logistics Optimization System with Real-Time Telematics",
-    lifespan=lifespan
+    description="Intelligent Campus Fleet Management & Logistics Routing System (Academic Case Study: University of Ibadan)",
+    lifespan=lifespan,
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json"
 )
+
 
 # Static and Templates
 base_dir = os.path.dirname(os.path.abspath(__file__))
