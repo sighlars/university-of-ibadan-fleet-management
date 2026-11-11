@@ -62,24 +62,26 @@ function renderSidebarVehicles(vehicles) {
         const isMaint = v.status === 'maintenance';
 
         const statusBadge = isActive
-            ? '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase font-mono">In Transit</span>'
+            ? '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase font-mono shrink-0 whitespace-nowrap">In Transit</span>'
             : (isMaint 
-                ? '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200 uppercase font-mono">Maintenance</span>'
-                : '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200 uppercase font-mono">Idle</span>');
+                ? '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200 uppercase font-mono shrink-0 whitespace-nowrap">Maintenance</span>'
+                : '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200 uppercase font-mono shrink-0 whitespace-nowrap">Idle</span>');
 
         const fuelColor = v.battery_fuel_pct > 50 ? 'bg-emerald-500' : (v.battery_fuel_pct > 20 ? 'bg-amber-500' : 'bg-rose-500');
 
         return `
             <div class="bg-white border border-slate-200 hover:border-uinavy/40 hover:shadow-sm rounded-xl p-3 text-xs space-y-2.5 transition">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <div class="font-bold text-slate-900 font-mono text-xs flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full ${isActive ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}"></span>
-                            ${v.plate_number}
+                <div class="flex items-center justify-between gap-2">
+                    <div class="min-w-0">
+                        <div class="font-bold text-slate-900 font-mono text-xs flex items-center gap-1.5 truncate">
+                            <span class="w-2 h-2 rounded-full ${isActive ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'} shrink-0"></span>
+                            <span class="truncate">${v.plate_number}</span>
                         </div>
-                        <div class="text-[11px] text-slate-500 truncate max-w-[150px]">${v.model || v.vehicle_type}</div>
+                        <div class="text-[11px] text-slate-500 truncate max-w-[130px] sm:max-w-[160px]">${v.model || v.vehicle_type}</div>
                     </div>
-                    ${statusBadge}
+                    <div class="shrink-0">
+                        ${statusBadge}
+                    </div>
                 </div>
 
                 <!-- Driver & Telemetry Row -->

@@ -37,7 +37,16 @@ function open3DVehicleInspector(veh) {
     if (driverEl) driverEl.textContent = veh.driver_name || (veh.driver ? veh.driver.name : 'Unassigned');
 
     const statusEl = document.getElementById('ins-status');
-    if (statusEl) statusEl.textContent = (veh.status || 'IN_TRANSIT').toUpperCase().replace('_', ' ');
+    if (statusEl) {
+        const isTransit = veh.status === 'in_transit';
+        const isMaint = veh.status === 'maintenance';
+        statusEl.textContent = isTransit ? 'IN TRANSIT' : (isMaint ? 'MAINTENANCE' : 'STATIONED');
+        statusEl.className = isTransit
+            ? 'px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 font-mono shrink-0 whitespace-nowrap'
+            : (isMaint
+                ? 'px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200 font-mono shrink-0 whitespace-nowrap'
+                : 'px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200 font-mono shrink-0 whitespace-nowrap');
+    }
 
     const speedEl = document.getElementById('ins-speed');
     if (speedEl) speedEl.textContent = `${speed} km/h`;
@@ -57,8 +66,10 @@ function open3DVehicleInspector(veh) {
         window.campus3D.updateFollowUI(isLocked, veh.vehicle_id);
     }
 
-    // Initialize 3D Turntable directly
-    initTurntable();
+    // Initialize 3D Turntable directly on next layout frame
+    requestAnimationFrame(() => {
+        initTurntable();
+    });
 }
 
 function close3DVehicleInspector() {
@@ -79,15 +90,15 @@ function initTurntable() {
     const container = document.getElementById('turntable-canvas-container');
     if (!container) return;
 
-    if (!inspectorRenderer) {
-        const width = container.clientWidth || 500;
-        const height = container.clientHeight || 420;
+    const width = container.clientWidth || 360;
+    const height = container.clientHeight || 220;
 
+    if (!inspectorRenderer) {
         inspectorScene = new THREE.Scene();
         inspectorScene.background = new THREE.Color(0xf8fafc); // Clean light mode background
 
-        inspectorCamera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
-        inspectorCamera.position.set(12, 7, 13);
+        inspectorCamera = new THREE.PerspectiveCamera(36, width / height, 0.1, 100);
+        inspectorCamera.position.set(11, 6.5, 12);
 
         inspectorRenderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
         inspectorRenderer.setSize(width, height);
@@ -95,6 +106,7 @@ function initTurntable() {
         inspectorRenderer.shadowMap.enabled = true;
         inspectorRenderer.toneMapping = THREE.ACESFilmicToneMapping;
         inspectorRenderer.toneMappingExposure = 1.1;
+        container.innerHTML = '';
         container.appendChild(inspectorRenderer.domElement);
 
         inspectorControls = new THREE.OrbitControls(inspectorCamera, inspectorRenderer.domElement);
@@ -103,8 +115,13 @@ function initTurntable() {
         inspectorControls.autoRotate = true;
         inspectorControls.autoRotateSpeed = 1.6;
         inspectorControls.maxPolarAngle = Math.PI / 2 - 0.05;
-        inspectorControls.minDistance = 6;
-        inspectorControls.maxDistance = 25;
+        inspectorControls.minDistance = 5;
+        inspectorControls.maxDistance = 22;
+        inspectorControls.enableZoom = true;
+        inspectorControls.touches = {
+            ONE: THREE.TOUCH.ROTATE,
+            TWO: THREE.TOUCH.DOLLY_PAN
+        };
 
         // Studio Lighting Setup
         const hemiLight = new THREE.HemisphereLight(0xffffff, 0xcbd5e1, 1.0);
@@ -134,8 +151,8 @@ function initTurntable() {
         ring.position.y = 0.02;
         inspectorScene.add(ring);
     } else {
-        const width = container.clientWidth || 500;
-        const height = container.clientHeight || 420;
+        const width = container.clientWidth || 360;
+        const height = container.clientHeight || 220;
         inspectorCamera.aspect = width / height;
         inspectorCamera.updateProjectionMatrix();
         inspectorRenderer.setSize(width, height);
@@ -182,3 +199,20 @@ function chaseInspectedVehicle() {
         if (window.switchViewMode) window.switchViewMode('3d');
     }
 }
+
+// Window resize listener to keep turntable aspect ratio accurate
+window.addEventListener('resize', () => {
+    const modal = document.getElementById('inspector-3d-modal');
+    if (modal && !modal.classList.contains('hidden') && inspectorRenderer && inspectorCamera) {
+        const container = document.getElementById('turntable-canvas-container');
+        if (container) {
+            const w = container.clientWidth;
+            const h = container.clientHeight;
+            if (w && h) {
+                inspectorCamera.aspect = w / h;
+                inspectorCamera.updateProjectionMatrix();
+                inspectorRenderer.setSize(w, h);
+            }
+        }
+    }
+});
