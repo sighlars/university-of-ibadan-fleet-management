@@ -201,7 +201,53 @@
             </div>
         </div>
 
-        <!-- Bottom Controls & 3D Hints -->
+        <!-- Mobile 3D Touch Gestures Helper Pill -->
+        <div class="sm:hidden absolute bottom-5 left-3 z-20 pointer-events-auto">
+            <button onclick="toggleMobileTouchGuide()" id="btn-mobile-touch-guide" class="px-3 py-2 rounded-full bg-white/95 backdrop-blur border border-slate-200 shadow-md text-xs font-semibold text-uinavy flex items-center gap-1.5 active:scale-95 transition">
+                <i class="fa-solid fa-hand-pointer text-uigold-dark text-xs"></i>
+                <span>3D Touch Guide</span>
+            </button>
+        </div>
+
+        <!-- Mobile 3D Touch Guide Popover / Card (Dismissible) -->
+        <div id="mobile-touch-guide-popover" class="sm:hidden hidden absolute bottom-16 left-3 right-3 z-30 bg-white/95 backdrop-blur-md border border-slate-200 rounded-xl p-3.5 shadow-xl text-xs space-y-2 pointer-events-auto">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                <span class="font-bold text-slate-900 text-xs flex items-center gap-1.5">
+                    <i class="fa-solid fa-mobile-screen text-uinavy"></i> 3D Touchscreen Navigation
+                </span>
+                <button onclick="toggleMobileTouchGuide(false)" class="text-slate-400 hover:text-slate-700 p-0.5">
+                    <i class="fa-solid fa-xmark text-xs"></i>
+                </button>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-600">
+                <div class="bg-slate-50 p-2 rounded-lg border border-slate-200/80">
+                    <div class="font-bold text-uinavy flex items-center gap-1 mb-0.5">
+                        <i class="fa-solid fa-arrow-pointer text-[10px] text-uigold-dark"></i> 1 Finger Drag
+                    </div>
+                    <div class="text-[10px] text-slate-500">Orbit & rotate 360° campus</div>
+                </div>
+                <div class="bg-slate-50 p-2 rounded-lg border border-slate-200/80">
+                    <div class="font-bold text-uinavy flex items-center gap-1 mb-0.5">
+                        <i class="fa-solid fa-hand text-[10px] text-uigold-dark"></i> 2 Fingers Drag
+                    </div>
+                    <div class="text-[10px] text-slate-500">Pan map across campus</div>
+                </div>
+                <div class="bg-slate-50 p-2 rounded-lg border border-slate-200/80">
+                    <div class="font-bold text-uinavy flex items-center gap-1 mb-0.5">
+                        <i class="fa-solid fa-compress text-[10px] text-uigold-dark"></i> Pinch In / Out
+                    </div>
+                    <div class="text-[10px] text-slate-500">Zoom camera in and out</div>
+                </div>
+                <div class="bg-slate-50 p-2 rounded-lg border border-slate-200/80">
+                    <div class="font-bold text-uinavy flex items-center gap-1 mb-0.5">
+                        <i class="fa-solid fa-crosshairs text-[10px] text-uigold-dark"></i> Tap Vehicle
+                    </div>
+                    <div class="text-[10px] text-slate-500">Inspect & lock chase camera</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desktop Bottom Controls & 3D Hints -->
         <div class="absolute bottom-3 left-3 z-20 bg-white/95 backdrop-blur border border-slate-200 px-3 py-2 rounded-lg shadow-sm text-[11px] space-y-1 pointer-events-auto hidden sm:block">
             <div class="font-bold text-slate-800 text-[10px] uppercase tracking-wider mb-0.5">3D Navigation Controls</div>
             <div class="text-slate-600 text-[10px] flex items-center gap-3">
@@ -648,7 +694,33 @@
         openVehicleInspectorFromCard(plateNumber);
     }
 
+    // Mobile 3D Touch Navigation Guide Controller
+    function toggleMobileTouchGuide(forceState = null) {
+        const popover = document.getElementById('mobile-touch-guide-popover');
+        if (!popover) return;
+        const isHidden = popover.classList.contains('hidden');
+        const show = forceState !== null ? forceState : isHidden;
+        if (show) {
+            popover.classList.remove('hidden');
+        } else {
+            popover.classList.add('hidden');
+        }
+    }
+
+    // Auto-display touch guide for mobile users on first visit
+    if (window.innerWidth < 768) {
+        setTimeout(() => {
+            const popover = document.getElementById('mobile-touch-guide-popover');
+            if (popover && !sessionStorage.getItem('touch_guide_seen')) {
+                popover.classList.remove('hidden');
+                sessionStorage.setItem('touch_guide_seen', 'true');
+                setTimeout(() => popover.classList.add('hidden'), 7000);
+            }
+        }, 1200);
+    }
+
     // Global bindings
+    window.toggleMobileTouchGuide = toggleMobileTouchGuide;
     window.openShadcnDrawer = openShadcnDrawer;
     window.closeShadcnDrawer = closeShadcnDrawer;
     window.setDrawerFilter = setDrawerFilter;
