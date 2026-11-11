@@ -4,96 +4,127 @@
 
 {% block content %}
 <div class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
-    <!-- Header with Action Buttons -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
+
+    <!-- Shadcn Page Header with Actions -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/80">
         <div>
-            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Campus Consignments & Dispatch</h2>
-            <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Order queues, Capacitated Vehicle Routing Problem (CVRP) solver, and route dispatching</p>
+            <h2 class="text-2xl font-bold tracking-tight text-slate-900">Campus Consignments & Dispatch</h2>
+            <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Order queues, Capacitated Vehicle Routing Problem (CVRP) solver, and route dispatching.</p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-            <button onclick="addSampleOrders(5)" class="px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs border border-slate-200 flex items-center gap-1.5 transition">
-                <i class="fa-solid fa-plus text-[10px] text-uinavy"></i>
-                <span>+5 Dispatches</span>
+            <button onclick="addSampleOrders(5)" class="h-9 px-3 rounded-lg bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs border border-slate-200 shadow-xs flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-plus text-[10px] text-slate-400"></i>
+                <span>+5 Sample Orders</span>
             </button>
-            <button onclick="openCreateOrderModal()" class="px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs border border-slate-200 flex items-center gap-1.5 transition">
-                <i class="fa-solid fa-pen text-[10px] text-uinavy"></i>
+            <button onclick="openCreateOrderModal()" class="h-9 px-3 rounded-lg bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs border border-slate-200 shadow-xs flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-pen text-[10px] text-slate-400"></i>
                 <span>New Consignment</span>
             </button>
-            <button onclick="optimizeAndDispatch()" class="px-3.5 py-2 rounded-lg bg-uinavy hover:bg-uinavy-light text-white font-semibold text-xs shadow-sm flex items-center gap-1.5 transition active:scale-[0.99]">
+            <button onclick="optimizeAndDispatch()" class="h-9 px-4 rounded-lg bg-uinavy hover:bg-uinavy-light text-white font-medium text-xs shadow-xs flex items-center gap-1.5 transition active:scale-[0.99]">
                 <i class="fa-solid fa-wand-magic-sparkles text-[11px] text-uigold-light"></i>
                 <span>Solve VRP & Dispatch</span>
             </button>
         </div>
     </div>
 
-    <!-- Metrics Row -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div class="bg-white border border-slate-200/90 p-4 rounded-xl shadow-xs">
-            <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Total Consignments</div>
-            <div id="stat-ord-total" class="text-2xl font-bold font-mono text-slate-900 mt-1">0</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">All campus orders</div>
+    <!-- Quick Stats Cards (Shadcn Metric Blocks) -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="rounded-xl border border-slate-200/80 bg-white p-5 shadow-xs space-y-2">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Consignments</span>
+                <i class="fa-solid fa-boxes-stacked text-slate-400 text-xs"></i>
+            </div>
+            <div>
+                <div id="stat-ord-total" class="text-2xl font-bold font-mono tracking-tight text-slate-900">18</div>
+                <p class="text-[11px] text-slate-400 mt-0.5">All campus orders</p>
+            </div>
         </div>
 
-        <div class="bg-white border border-slate-200/90 p-4 rounded-xl shadow-xs">
-            <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Pending Dispatch</div>
-            <div id="stat-ord-pending" class="text-2xl font-bold font-mono text-amber-600 mt-1">0</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">Awaiting VRP assignment</div>
+        <div class="rounded-xl border border-slate-200/80 bg-white p-5 shadow-xs space-y-2">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Pending Dispatch</span>
+                <i class="fa-solid fa-clock text-amber-500 text-xs"></i>
+            </div>
+            <div>
+                <div id="stat-ord-pending" class="text-2xl font-bold font-mono tracking-tight text-amber-600">0</div>
+                <p class="text-[11px] text-slate-400 mt-0.5">Awaiting VRP assignment</p>
+            </div>
         </div>
 
-        <div class="bg-white border border-slate-200/90 p-4 rounded-xl shadow-xs">
-            <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">In Transit</div>
-            <div id="stat-ord-intransit" class="text-2xl font-bold font-mono text-blue-600 mt-1">0</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">En route to faculty / hall</div>
+        <div class="rounded-xl border border-slate-200/80 bg-white p-5 shadow-xs space-y-2">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">In Transit</span>
+                <i class="fa-solid fa-truck-moving text-blue-500 text-xs"></i>
+            </div>
+            <div>
+                <div id="stat-ord-intransit" class="text-2xl font-bold font-mono tracking-tight text-blue-600">0</div>
+                <p class="text-[11px] text-slate-400 mt-0.5">En route to faculty / hall</p>
+            </div>
         </div>
 
-        <div class="bg-white border border-slate-200/90 p-4 rounded-xl shadow-xs">
-            <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Delivered</div>
-            <div id="stat-ord-delivered" class="text-2xl font-bold font-mono text-emerald-600 mt-1">0</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">Handed over to department</div>
+        <div class="rounded-xl border border-slate-200/80 bg-white p-5 shadow-xs space-y-2">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Delivered</span>
+                <i class="fa-solid fa-circle-check text-emerald-500 text-xs"></i>
+            </div>
+            <div>
+                <div id="stat-ord-delivered" class="text-2xl font-bold font-mono tracking-tight text-emerald-600">18</div>
+                <p class="text-[11px] text-slate-400 mt-0.5">Handed over to department</p>
+            </div>
         </div>
     </div>
 
     <!-- Active Optimization Routes Banner (if any) -->
-    <div id="active-routes-summary" class="hidden bg-amber-50/70 border border-amber-300/80 p-4 rounded-xl space-y-3">
+    <div id="active-routes-summary" class="hidden rounded-xl border border-amber-200 bg-amber-50/60 p-4 shadow-xs space-y-3">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
                 <i class="fa-solid fa-route text-amber-700 text-sm"></i>
                 <h3 class="text-xs font-bold text-amber-900 uppercase tracking-wider">Optimized Route Solution Ready</h3>
             </div>
-            <button onclick="dispatchActivePlan()" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-sm transition">
+            <button onclick="dispatchActivePlan()" class="h-8 px-3.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs shadow-xs transition">
                 Confirm & Launch Dispatch
             </button>
         </div>
         <div id="routes-cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
     </div>
 
-    <!-- Orders Table Card -->
-    <div class="bg-white border border-slate-200/90 rounded-xl overflow-hidden shadow-xs">
+    <!-- Shadcn Table Container -->
+    <div class="rounded-xl border border-slate-200/80 bg-white shadow-xs overflow-hidden">
+        <!-- Table Toolbar -->
         <div class="p-4 border-b border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
             <div class="flex items-center gap-2">
-                <span class="text-xs font-bold text-uinavy uppercase tracking-wider">Consignment Ledger</span>
-                <span id="order-count-tag" class="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-mono border border-slate-200">0 consignments</span>
+                <span class="text-xs font-bold text-slate-900 uppercase tracking-wider">Consignment Ledger</span>
+                <span id="order-count-tag" class="text-[10px] px-2 py-0.5 rounded font-mono bg-white text-slate-600 border border-slate-200 shadow-2xs">18 consignments</span>
             </div>
-            <!-- Filter by Status -->
-            <div class="flex items-center gap-1.5 overflow-x-auto">
-                <button onclick="filterOrders('')" class="order-tab-btn active px-3 py-1 rounded-lg text-xs font-semibold bg-uinavy text-white shadow-xs">All</button>
-                <button onclick="filterOrders('pending')" class="order-tab-btn px-3 py-1 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100">Pending</button>
-                <button onclick="filterOrders('in_transit')" class="order-tab-btn px-3 py-1 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100">In Transit</button>
-                <button onclick="filterOrders('delivered')" class="order-tab-btn px-3 py-1 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100">Delivered</button>
+
+            <!-- Search & Filter Tabs -->
+            <div class="flex items-center gap-2.5 flex-wrap">
+                <div class="relative w-44 sm:w-56">
+                    <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                    <input type="text" id="order-search" oninput="filterOrdersText()" placeholder="Filter consignment..." class="w-full pl-7 pr-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-1 focus:ring-uinavy text-slate-900 shadow-xs placeholder:text-slate-400">
+                </div>
+
+                <div class="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg border border-slate-200/80">
+                    <button onclick="filterOrders('')" id="tab-all" class="px-2.5 py-1 rounded text-xs font-semibold bg-uinavy text-white shadow-xs transition">All</button>
+                    <button onclick="filterOrders('pending')" id="tab-pending" class="px-2.5 py-1 rounded text-xs font-medium text-slate-600 hover:text-slate-900 transition">Pending</button>
+                    <button onclick="filterOrders('in_transit')" id="tab-in_transit" class="px-2.5 py-1 rounded text-xs font-medium text-slate-600 hover:text-slate-900 transition">In Transit</button>
+                    <button onclick="filterOrders('delivered')" id="tab-delivered" class="px-2.5 py-1 rounded text-xs font-medium text-slate-600 hover:text-slate-900 transition">Delivered</button>
+                </div>
             </div>
         </div>
 
+        <!-- Table -->
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
                 <thead>
-                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-semibold text-[11px]">
+                    <tr class="border-b border-slate-200/80 bg-slate-50/80 text-slate-500 font-semibold text-[11px] uppercase tracking-wider">
                         <th class="py-3 px-4 sm:px-6">Tracking #</th>
                         <th class="py-3 px-3 sm:px-4">Department / Unit</th>
                         <th class="py-3 px-3 sm:px-4">Delivery Location</th>
                         <th class="py-3 px-3 sm:px-4">Weight</th>
                         <th class="py-3 px-3 sm:px-4">Priority</th>
                         <th class="py-3 px-3 sm:px-4">Status</th>
-                        <th class="py-3 px-3 sm:px-4">Assigned Route</th>
+                        <th class="py-3 px-3 sm:px-4">Assigned Vehicle</th>
                         <th class="py-3 px-4 sm:px-6 text-right">Action</th>
                     </tr>
                 </thead>
@@ -104,48 +135,61 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Table Pagination / Footer -->
+        <div class="p-3 border-t border-slate-200/80 bg-slate-50/40 flex items-center justify-between text-xs text-slate-500">
+            <div id="order-entries-count">Showing 18 of 18 consignments</div>
+            <div class="flex items-center gap-1.5">
+                <button disabled class="h-7 px-2.5 rounded border border-slate-200 bg-white text-slate-400 opacity-50 cursor-not-allowed">Previous</button>
+                <button disabled class="h-7 px-2.5 rounded border border-slate-200 bg-white text-slate-400 opacity-50 cursor-not-allowed">Next</button>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Modal: Create Order -->
-<div id="create-order-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 hidden">
-    <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-md p-5 sm:p-6 shadow-2xl relative">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-200">
-            <h3 class="text-sm font-bold text-uinavy">Create Campus Consignment</h3>
-            <button onclick="closeCreateOrderModal()" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark"></i></button>
+<!-- Shadcn Dialog Modal: Create Order -->
+<div id="create-order-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4 hidden">
+    <div class="bg-white border border-slate-200 rounded-xl w-full max-w-md p-6 shadow-2xl relative space-y-4">
+        <!-- Dialog Header -->
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div>
+                <h3 class="text-sm font-bold text-slate-900">Create Campus Consignment</h3>
+                <p class="text-xs text-slate-500 mt-0.5">Queue a new delivery for automated VRP route optimization.</p>
+            </div>
+            <button onclick="closeCreateOrderModal()" class="text-slate-400 hover:text-slate-700 p-1 rounded-md hover:bg-slate-100"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
-        <form id="create-order-form" onsubmit="submitOrderForm(event)" class="space-y-3.5 text-xs pt-4">
+        <form id="create-order-form" onsubmit="submitOrderForm(event)" class="space-y-3.5 text-xs">
             <div>
                 <label class="block text-slate-700 font-semibold mb-1">Receiving Faculty / Department</label>
-                <input type="text" id="ord-name" required placeholder="e.g. Faculty of Technology Mechanical Labs" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-uinavy">
+                <input type="text" id="ord-name" required placeholder="e.g. Faculty of Technology Mechanical Labs" class="w-full h-9 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-slate-900 focus:outline-none focus:ring-1 focus:ring-uinavy shadow-xs">
             </div>
             <div>
                 <label class="block text-slate-700 font-semibold mb-1">Contact Phone</label>
-                <input type="text" id="ord-phone" required placeholder="+234 803 555 0199" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono focus:outline-none focus:border-uinavy">
+                <input type="text" id="ord-phone" required placeholder="+234 803 555 0199" class="w-full h-9 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-slate-900 font-mono focus:outline-none focus:ring-1 focus:ring-uinavy shadow-xs">
             </div>
             <div>
-                <label class="block text-slate-700 font-semibold mb-1">Delivery Address / Building</label>
-                <input type="text" id="ord-address" required placeholder="e.g. Civil Engineering Complex, UI Campus" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-uinavy">
+                <label class="block text-slate-700 font-semibold mb-1">Delivery Address / Campus Landmark</label>
+                <input type="text" id="ord-address" required placeholder="e.g. Civil Engineering Complex, UI Campus" class="w-full h-9 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-slate-900 focus:outline-none focus:ring-1 focus:ring-uinavy shadow-xs">
             </div>
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block text-slate-700 font-semibold mb-1">Latitude</label>
-                    <input type="number" step="0.00001" id="ord-lat" required value="7.4520" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono focus:outline-none focus:border-uinavy">
+                    <input type="number" step="0.00001" id="ord-lat" required value="7.4520" class="w-full h-9 bg-white border border-slate-200 rounded-lg px-3 font-mono text-slate-900 focus:outline-none focus:ring-1 focus:ring-uinavy shadow-xs">
                 </div>
                 <div>
                     <label class="block text-slate-700 font-semibold mb-1">Longitude</label>
-                    <input type="number" step="0.00001" id="ord-lng" required value="3.8985" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono focus:outline-none focus:border-uinavy">
+                    <input type="number" step="0.00001" id="ord-lng" required value="3.8985" class="w-full h-9 bg-white border border-slate-200 rounded-lg px-3 font-mono text-slate-900 focus:outline-none focus:ring-1 focus:ring-uinavy shadow-xs">
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block text-slate-700 font-semibold mb-1">Weight (kg)</label>
-                    <input type="number" step="0.1" id="ord-weight" required min="0.5" max="2500" value="25.0" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono focus:outline-none focus:border-uinavy">
+                    <input type="number" step="0.1" id="ord-weight" required min="0.5" max="2500" value="25.0" class="w-full h-9 bg-white border border-slate-200 rounded-lg px-3 font-mono text-slate-900 focus:outline-none focus:ring-1 focus:ring-uinavy shadow-xs">
                 </div>
                 <div>
                     <label class="block text-slate-700 font-semibold mb-1">Priority</label>
-                    <select id="ord-prio" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-uinavy">
+                    <select id="ord-prio" class="w-full h-9 bg-white border border-slate-200 rounded-lg px-2.5 text-slate-900 focus:outline-none focus:ring-1 focus:ring-uinavy shadow-xs">
                         <option value="low">Low</option>
                         <option value="medium" selected>Medium</option>
                         <option value="high">High</option>
@@ -153,9 +197,11 @@
                     </select>
                 </div>
             </div>
-            <div class="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-200">
-                <button type="button" onclick="closeCreateOrderModal()" class="px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium border border-slate-200">Cancel</button>
-                <button type="submit" class="px-4 py-2 rounded-lg bg-uinavy hover:bg-uinavy-light text-white font-semibold text-xs shadow-sm">Queue Consignment</button>
+
+            <!-- Dialog Footer -->
+            <div class="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
+                <button type="button" onclick="closeCreateOrderModal()" class="h-9 px-4 rounded-lg bg-white hover:bg-slate-50 text-slate-700 text-xs font-medium border border-slate-200 shadow-xs transition">Cancel</button>
+                <button type="submit" class="h-9 px-4 rounded-lg bg-uinavy hover:bg-uinavy-light text-white font-semibold text-xs shadow-xs transition">Queue Consignment</button>
             </div>
         </form>
     </div>
@@ -175,8 +221,89 @@
             renderOrders(allOrders);
             updateOrderStats();
         } catch (err) {
-            console.error(err);
+            console.error('Error loading orders', err);
         }
+    }
+
+    function renderOrders(orders) {
+        const tbody = document.getElementById('order-table-body');
+        document.getElementById('order-count-tag').textContent = `${orders.length} consignments`;
+        const countText = document.getElementById('order-entries-count');
+        if (countText) countText.textContent = `Showing ${orders.length} of ${allOrders.length} consignments`;
+
+        if (orders.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-slate-400">No consignments found.</td></tr>`;
+            return;
+        }
+
+        const prioConfig = {
+            urgent: { bg: 'bg-rose-50 text-rose-700 border-rose-200/80' },
+            high: { bg: 'bg-amber-50 text-amber-700 border-amber-200/80' },
+            medium: { bg: 'bg-blue-50 text-blue-700 border-blue-200/80' },
+            low: { bg: 'bg-slate-50 text-slate-600 border-slate-200/80' }
+        };
+
+        const statusConfig = {
+            delivered: { label: 'DELIVERED', bg: 'bg-emerald-50 text-emerald-700 border-emerald-200/80', dot: 'bg-emerald-500' },
+            in_transit: { label: 'IN TRANSIT', bg: 'bg-blue-50 text-blue-700 border-blue-200/80', dot: 'bg-blue-500 animate-pulse' },
+            pending: { label: 'PENDING', bg: 'bg-amber-50 text-amber-700 border-amber-200/80', dot: 'bg-amber-500' },
+            assigned: { label: 'ASSIGNED', bg: 'bg-purple-50 text-purple-700 border-purple-200/80', dot: 'bg-purple-500' }
+        };
+
+        tbody.innerHTML = orders.map(o => {
+            const sc = statusConfig[o.status] || statusConfig.pending;
+            const pc = prioConfig[o.priority] || prioConfig.medium;
+            const initials = o.customer_name ? o.customer_name.substring(0, 2).toUpperCase() : 'UI';
+
+            return `
+                <tr class="hover:bg-slate-50/70 transition-colors">
+                    <td class="py-3.5 px-4 sm:px-6">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded font-mono font-bold text-[10px] bg-slate-100 text-slate-800 border border-slate-200">
+                            ${o.tracking_number}
+                        </span>
+                    </td>
+                    <td class="py-3.5 px-3 sm:px-4">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-7 h-7 rounded-full bg-uinavy-50 text-uinavy font-bold font-mono text-[10px] flex items-center justify-center shrink-0 border border-uinavy-200/60">
+                                ${initials}
+                            </div>
+                            <div class="min-w-0">
+                                <div class="font-semibold text-slate-900 truncate max-w-[200px] text-[11px]">${o.customer_name}</div>
+                                <div class="text-[10px] text-slate-400 font-mono">${o.customer_phone}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-3 sm:px-4 text-slate-700 truncate max-w-[220px]">
+                        ${o.delivery_address}
+                    </td>
+                    <td class="py-3.5 px-3 sm:px-4 font-mono font-semibold text-slate-800">${o.weight_kg} kg</td>
+                    <td class="py-3.5 px-3 sm:px-4">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold font-mono border uppercase ${pc.bg}">
+                            ${o.priority}
+                        </span>
+                    </td>
+                    <td class="py-3.5 px-3 sm:px-4">
+                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-semibold font-mono border ${sc.bg}">
+                            <span class="w-1.5 h-1.5 rounded-full ${sc.dot}"></span>
+                            ${sc.label}
+                        </span>
+                    </td>
+                    <td class="py-3.5 px-3 sm:px-4 font-mono">
+                        ${o.assigned_route_id ? `
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] bg-uinavy-50 text-uinavy border border-uinavy-200/60 font-semibold">
+                                Route #${o.assigned_route_id}
+                            </span>
+                        ` : '<span class="text-slate-400 italic">Unassigned</span>'}
+                    </td>
+                    <td class="py-3.5 px-4 sm:px-6 text-right">
+                        <a href="/?lat=${o.destination_lat}&lng=${o.destination_lng}" class="h-7 px-2.5 rounded-md text-[11px] font-medium border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 shadow-2xs transition inline-flex items-center gap-1">
+                            <i class="fa-solid fa-location-crosshairs text-[10px] text-uinavy"></i>
+                            <span>View</span>
+                        </a>
+                    </td>
+                </tr>
+            `;
+        }).join('');
     }
 
     async function updateOrderStats() {
@@ -187,148 +314,60 @@
             document.getElementById('stat-ord-pending').textContent = data.pending_orders;
             document.getElementById('stat-ord-intransit').textContent = data.in_transit_orders;
             document.getElementById('stat-ord-delivered').textContent = data.delivered_orders;
-        } catch (err) {
-            console.error(err);
+        } catch (e) {
+            console.error(e);
         }
-    }
-
-    function renderOrders(orders) {
-        const tbody = document.getElementById('order-table-body');
-        document.getElementById('order-count-tag').textContent = `${orders.length} consignments`;
-
-        if (!orders.length) {
-            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-slate-400">No consignments found.</td></tr>`;
-            return;
-        }
-
-        tbody.innerHTML = orders.map(o => {
-            const statusBadges = {
-                'pending': '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 uppercase font-mono">Pending</span>',
-                'assigned': '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200 uppercase font-mono">Assigned</span>',
-                'in_transit': '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase font-mono">In Transit</span>',
-                'delivered': '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200 uppercase font-mono">Delivered</span>',
-                'cancelled': '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200 uppercase font-mono">Cancelled</span>'
-            };
-
-            const prioBadges = {
-                'low': '<span class="text-slate-500 font-medium">Low</span>',
-                'medium': '<span class="text-blue-700 font-medium">Medium</span>',
-                'high': '<span class="text-amber-700 font-semibold">High</span>',
-                'urgent': '<span class="text-rose-700 font-bold">Urgent</span>'
-            };
-
-            return `
-                <tr class="table-row-hover transition border-b border-slate-100">
-                    <td class="py-3 px-4 sm:px-6 font-mono font-bold text-slate-900 text-xs">${o.tracking_number}</td>
-                    <td class="py-3 px-3 sm:px-4 text-slate-700">
-                        <div class="font-medium text-slate-900">${o.customer_name}</div>
-                        <div class="text-slate-500 text-[11px] font-mono">${o.customer_phone}</div>
-                    </td>
-                    <td class="py-3 px-3 sm:px-4 text-slate-700 max-w-xs truncate" title="${o.delivery_address}">
-                        <div class="truncate">${o.delivery_address}</div>
-                        <div class="text-slate-400 text-[10px] font-mono">${o.destination_lat.toFixed(4)}, ${o.destination_lng.toFixed(4)}</div>
-                    </td>
-                    <td class="py-3 px-3 sm:px-4 font-mono text-slate-700">${o.weight_kg} kg</td>
-                    <td class="py-3 px-3 sm:px-4">${prioBadges[o.priority] || o.priority}</td>
-                    <td class="py-3 px-3 sm:px-4">${statusBadges[o.status] || o.status}</td>
-                    <td class="py-3 px-3 sm:px-4 text-slate-700 font-mono text-[11px]">
-                        ${o.assigned_route_id ? `<span class="text-uinavy font-semibold">Route #${o.assigned_route_id}</span> <span class="text-slate-400">(Stop ${o.stop_order})</span>` : '<span class="text-slate-400 italic">Unassigned</span>'}
-                    </td>
-                    <td class="py-3 px-4 sm:px-6 text-right">
-                        ${o.status === 'pending' ? `
-                            <button onclick="cancelOrder(${o.id})" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 transition">
-                                Cancel
-                            </button>
-                        ` : '-'}
-                    </td>
-                </tr>
-            `;
-        }).join('');
     }
 
     function filterOrders(status) {
         currentFilter = status;
-        document.querySelectorAll('.order-tab-btn').forEach(btn => {
-            btn.classList.remove('active', 'bg-uinavy', 'text-white', 'shadow-xs');
-            btn.classList.add('bg-slate-100', 'text-slate-600');
+        ['all', 'pending', 'in_transit', 'delivered'].forEach(s => {
+            const btn = document.getElementById(`tab-${s}`);
+            const isActive = (s === 'all' && !status) || (s === status);
+            if (btn) {
+                btn.className = isActive
+                    ? 'px-2.5 py-1 rounded text-xs font-semibold bg-uinavy text-white shadow-xs transition'
+                    : 'px-2.5 py-1 rounded text-xs font-medium text-slate-600 hover:text-slate-900 transition';
+            }
         });
-        event.target.classList.add('active', 'bg-uinavy', 'text-white', 'shadow-xs');
-        event.target.classList.remove('bg-slate-100', 'text-slate-600');
         loadOrders();
     }
 
-    async function addSampleOrders(count = 5) {
-        try {
-            const res = await fetch(`/api/orders/batch-sample?count=${count}`, { method: 'POST' });
-            if (res.ok) {
-                showToast(`Added ${count} sample campus dispatches`, "success");
-                loadOrders();
-            }
-        } catch (err) {
-            showToast("Failed to spawn sample dispatches", "error");
-        }
+    function filterOrdersText() {
+        const text = (document.getElementById('order-search').value || '').toLowerCase();
+        const filtered = allOrders.filter(o => 
+            o.tracking_number.toLowerCase().includes(text) ||
+            o.customer_name.toLowerCase().includes(text) ||
+            o.delivery_address.toLowerCase().includes(text)
+        );
+        renderOrders(filtered);
     }
 
     async function optimizeAndDispatch() {
         try {
-            showToast("Running Clarke-Wright CVRP algorithm...", "info");
+            showToast("Solving CVRP with Clarke-Wright Savings...", "info");
             const res = await fetch('/api/routes/optimize', { method: 'POST' });
-            if (!optRes.ok) {
-                const err = await res.json();
-                showToast(err.detail || "Optimization failed", "error");
-                return;
-            }
-            const routes = await res.json();
-            showToast(`Optimization complete: ${routes.length} vehicle routes calculated.`, "success");
-
-            // Display routes summary banner
-            const summaryDiv = document.getElementById('active-routes-summary');
-            const container = document.getElementById('routes-cards-container');
-            summaryDiv.classList.remove('hidden');
-
-            container.innerHTML = routes.map(r => `
-                <div class="bg-white border border-amber-200 p-3 rounded-lg text-xs space-y-1 shadow-xs">
-                    <div class="flex items-center justify-between font-bold">
-                        <span class="text-amber-800">Route #${r.id}</span>
-                        <span class="text-uinavy font-mono">${r.vehicle_plate || 'Assigned'}</span>
-                    </div>
-                    <div class="text-slate-600">Stops: <span class="text-slate-900 font-mono font-medium">${r.stops_count}</span></div>
-                    <div class="text-slate-600">Distance: <span class="text-slate-900 font-mono font-medium">${r.total_distance_km} km</span></div>
-                    <div class="text-slate-600">Est. Duration: <span class="text-slate-900 font-mono font-medium">${r.estimated_duration_mins} mins</span></div>
-                </div>
-            `).join('');
-
-            loadOrders();
-        } catch (err) {
-            showToast("Network error running route optimization", "error");
-        }
-    }
-
-    async function dispatchActivePlan() {
-        try {
-            const res = await fetch('/api/routes/dispatch-all', { method: 'POST' });
+            const data = await res.json();
             if (res.ok) {
-                showToast("Fleet dispatched! Campus simulation active.", "success");
-                setTimeout(() => window.location.href = '/', 1000);
+                showToast(`Generated ${data.routes_generated} consolidated routes!`, "success");
+                loadOrders();
             } else {
-                const err = await res.json();
-                showToast(err.detail || "Dispatch failed", "error");
+                showToast(data.detail || "Optimization complete", "info");
             }
         } catch (err) {
-            showToast("Network error dispatching fleet", "error");
+            showToast("Error optimizing routes", "error");
         }
     }
 
-    async function cancelOrder(id) {
-        if (!confirm("Cancel this consignment request?")) return;
+    async function addSampleOrders(n = 5) {
         try {
-            const res = await fetch(`/api/orders/${id}`, { method: 'DELETE' });
+            const res = await fetch(`/api/orders/seed/sample?count=${n}`, { method: 'POST' });
             if (res.ok) {
-                showToast("Consignment cancelled", "info");
+                showToast(`Added ${n} campus consignments`, "success");
                 loadOrders();
             }
         } catch (err) {
-            showToast("Failed to cancel consignment", "error");
+            showToast("Failed to generate sample orders", "error");
         }
     }
 
@@ -359,15 +398,15 @@
                 body: JSON.stringify(payload)
             });
             if (res.ok) {
-                showToast("Consignment queued successfully", "success");
+                showToast("Consignment registered successfully", "success");
                 closeCreateOrderModal();
                 loadOrders();
             } else {
                 const err = await res.json();
-                showToast(err.detail || "Error creating consignment", "error");
+                showToast(err.detail || "Error registering order", "error");
             }
         } catch (err) {
-            showToast("Network error creating consignment", "error");
+            showToast("Network error registering order", "error");
         }
     }
 

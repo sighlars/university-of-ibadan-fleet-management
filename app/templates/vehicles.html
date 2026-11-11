@@ -4,70 +4,101 @@
 
 {% block content %}
 <div class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
-    <!-- Header with Action -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
+
+    <!-- Shadcn Page Header with Register Action -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/80">
         <div>
-            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Campus Fleet & Driver Roster</h2>
-            <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Vehicle telemetry profiles, payload capacity limits, fuel efficiency, and driver allocations</p>
+            <h2 class="text-2xl font-bold tracking-tight text-slate-900">Campus Fleet & Driver Roster</h2>
+            <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Vehicle telemetry profiles, payload capacity limits, fuel efficiency, and driver allocations.</p>
         </div>
-        <button onclick="openAddVehicleModal()" class="self-start sm:self-auto px-4 py-2 rounded-lg bg-uinavy hover:bg-uinavy-light text-white font-semibold text-xs shadow-sm flex items-center gap-2 transition">
-            <i class="fa-solid fa-plus text-[11px] text-uigold-light"></i>
-            <span>Register Vehicle</span>
-        </button>
-    </div>
-
-    <!-- Quick Stats Cards -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div class="bg-white border border-slate-200/90 p-4 rounded-xl shadow-xs">
-            <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Total Fleet</div>
-            <div id="stat-veh-total" class="text-2xl font-bold font-mono text-slate-900 mt-1">0</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">Registered campus vehicles</div>
-        </div>
-
-        <div class="bg-white border border-slate-200/90 p-4 rounded-xl shadow-xs">
-            <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">In Transit</div>
-            <div id="stat-veh-active" class="text-2xl font-bold font-mono text-emerald-600 mt-1">0</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">Active on campus roads</div>
-        </div>
-
-        <div class="bg-white border border-slate-200/90 p-4 rounded-xl shadow-xs">
-            <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Idle at Hub</div>
-            <div id="stat-veh-idle" class="text-2xl font-bold font-mono text-slate-700 mt-1">0</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">Available for dispatch</div>
-        </div>
-
-        <div class="bg-white border border-slate-200/90 p-4 rounded-xl shadow-xs">
-            <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Maintenance</div>
-            <div id="stat-veh-maint" class="text-2xl font-bold font-mono text-rose-600 mt-1">0</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">In workshop servicing</div>
+        <div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
+            <button onclick="openAddVehicleModal()" class="h-9 px-4 rounded-lg bg-uinavy hover:bg-uinavy-light text-white font-medium text-xs shadow-xs flex items-center gap-2 transition active:scale-[0.99]">
+                <i class="fa-solid fa-plus text-[10px] text-uigold-light"></i>
+                <span>Register Vehicle Asset</span>
+            </button>
         </div>
     </div>
 
-    <!-- Vehicles Table Card -->
-    <div class="bg-white border border-slate-200/90 rounded-xl overflow-hidden shadow-xs">
+    <!-- Quick Stats Cards (Shadcn Metric Blocks) -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="rounded-xl border border-slate-200/80 bg-white p-5 shadow-xs space-y-2">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Fleet</span>
+                <i class="fa-solid fa-truck text-slate-400 text-xs"></i>
+            </div>
+            <div>
+                <div id="stat-veh-total" class="text-2xl font-bold font-mono tracking-tight text-slate-900">6</div>
+                <p class="text-[11px] text-slate-400 mt-0.5">Registered campus assets</p>
+            </div>
+        </div>
+
+        <div class="rounded-xl border border-slate-200/80 bg-white p-5 shadow-xs space-y-2">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">In Transit</span>
+                <i class="fa-solid fa-truck-fast text-emerald-500 text-xs"></i>
+            </div>
+            <div>
+                <div id="stat-veh-active" class="text-2xl font-bold font-mono tracking-tight text-emerald-600">6</div>
+                <p class="text-[11px] text-slate-400 mt-0.5">Active on campus roads</p>
+            </div>
+        </div>
+
+        <div class="rounded-xl border border-slate-200/80 bg-white p-5 shadow-xs space-y-2">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Stationed / Bay</span>
+                <i class="fa-solid fa-square-parking text-slate-400 text-xs"></i>
+            </div>
+            <div>
+                <div id="stat-veh-idle" class="text-2xl font-bold font-mono tracking-tight text-slate-700">0</div>
+                <p class="text-[11px] text-slate-400 mt-0.5">Available at Depot</p>
+            </div>
+        </div>
+
+        <div class="rounded-xl border border-slate-200/80 bg-white p-5 shadow-xs space-y-2">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Maintenance</span>
+                <i class="fa-solid fa-wrench text-rose-500 text-xs"></i>
+            </div>
+            <div>
+                <div id="stat-veh-maint" class="text-2xl font-bold font-mono tracking-tight text-rose-600">0</div>
+                <p class="text-[11px] text-slate-400 mt-0.5">In workshop servicing</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shadcn Table Container -->
+    <div class="rounded-xl border border-slate-200/80 bg-white shadow-xs overflow-hidden">
+        <!-- Table Toolbar -->
         <div class="p-4 border-b border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
             <div class="flex items-center gap-2">
-                <span class="text-xs font-bold text-uinavy uppercase tracking-wider">Vehicle Inventory</span>
-                <span id="vehicle-count-tag" class="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-mono border border-slate-200">0 vehicles</span>
+                <span class="text-xs font-bold text-slate-900 uppercase tracking-wider">Fleet Inventory</span>
+                <span id="vehicle-count-tag" class="text-[10px] px-2 py-0.5 rounded font-mono bg-white text-slate-600 border border-slate-200 shadow-2xs">6 vehicles</span>
             </div>
-            <!-- Search & Filter -->
-            <div class="flex items-center gap-2">
-                <select id="vehicle-type-filter" onchange="filterVehicles()" class="bg-white text-xs text-slate-700 rounded-lg px-3 py-1.5 border border-slate-300 focus:outline-none focus:border-uinavy shadow-xs">
+
+            <!-- Search & Filters -->
+            <div class="flex items-center gap-2.5">
+                <div class="relative w-48 sm:w-64">
+                    <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                    <input type="text" id="vehicle-search" oninput="filterVehicles()" placeholder="Filter by plate, model, driver..." class="w-full pl-7 pr-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-1 focus:ring-uinavy text-slate-900 shadow-xs placeholder:text-slate-400">
+                </div>
+
+                <select id="vehicle-type-filter" onchange="filterVehicles()" class="h-8 bg-white text-xs text-slate-700 rounded-lg px-2.5 border border-slate-200 focus:outline-none focus:ring-1 focus:ring-uinavy shadow-xs">
                     <option value="">All Categories</option>
                     <option value="Campus Shuttle Bus">Campus Shuttle Bus</option>
                     <option value="Works Utility Pickup">Works Utility Pickup</option>
                     <option value="Campus Dispatch Bike">Campus Dispatch Bike</option>
-                    <option value="Medical Logistics Ambulance">Medical Logistics Ambulance</option>
+                    <option value="Medical Logistics Ambulance">Medical Ambulance</option>
                     <option value="Heavy Maintenance Truck">Heavy Maintenance Truck</option>
                     <option value="Eco Solar Shuttle">Eco Solar Shuttle</option>
                 </select>
             </div>
         </div>
 
+        <!-- Shadcn Table -->
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
                 <thead>
-                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-semibold text-[11px]">
+                    <tr class="border-b border-slate-200/80 bg-slate-50/80 text-slate-500 font-semibold text-[11px] uppercase tracking-wider">
                         <th class="py-3 px-4 sm:px-6">Plate & Model</th>
                         <th class="py-3 px-3 sm:px-4">Category</th>
                         <th class="py-3 px-3 sm:px-4">Status</th>
@@ -75,7 +106,7 @@
                         <th class="py-3 px-3 sm:px-4">Capacity</th>
                         <th class="py-3 px-3 sm:px-4">Fuel / Power</th>
                         <th class="py-3 px-3 sm:px-4">Odometer</th>
-                        <th class="py-3 px-4 sm:px-6 text-right">Action</th>
+                        <th class="py-3 px-4 sm:px-6 text-right">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="vehicle-table-body" class="divide-y divide-slate-100 font-medium">
@@ -85,46 +116,61 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Shadcn Table Footer / Pagination -->
+        <div class="p-3 border-t border-slate-200/80 bg-slate-50/40 flex items-center justify-between text-xs text-slate-500">
+            <div id="table-entries-count">Showing 6 of 6 registered vehicles</div>
+            <div class="flex items-center gap-1.5">
+                <button disabled class="h-7 px-2.5 rounded border border-slate-200 bg-white text-slate-400 opacity-50 cursor-not-allowed">Previous</button>
+                <button disabled class="h-7 px-2.5 rounded border border-slate-200 bg-white text-slate-400 opacity-50 cursor-not-allowed">Next</button>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Modal: Add Vehicle -->
-<div id="add-vehicle-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 hidden">
-    <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-md p-5 sm:p-6 shadow-2xl relative">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-200">
-            <h3 class="text-sm font-bold text-uinavy">Register Vehicle Asset</h3>
-            <button onclick="closeAddVehicleModal()" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark"></i></button>
+<!-- Shadcn Dialog Modal: Register Vehicle Asset -->
+<div id="add-vehicle-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4 hidden">
+    <div class="bg-white border border-slate-200 rounded-xl w-full max-w-md p-6 shadow-2xl relative space-y-4">
+        <!-- Dialog Header -->
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div>
+                <h3 class="text-sm font-bold text-slate-900">Register Vehicle Asset</h3>
+                <p class="text-xs text-slate-500 mt-0.5">Add a new utility or courier dispatch asset to the university fleet.</p>
+            </div>
+            <button onclick="closeAddVehicleModal()" class="text-slate-400 hover:text-slate-700 p-1 rounded-md hover:bg-slate-100"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
-        <form id="add-vehicle-form" onsubmit="submitVehicleForm(event)" class="space-y-3.5 text-xs pt-4">
+        <form id="add-vehicle-form" onsubmit="submitVehicleForm(event)" class="space-y-3.5 text-xs">
             <div>
                 <label class="block text-slate-700 font-semibold mb-1">Plate Number</label>
-                <input type="text" id="veh-plate" required placeholder="e.g. UI-09-BUS or UI-25-WKS" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono focus:outline-none focus:border-uinavy">
+                <input type="text" id="veh-plate" required placeholder="e.g. UI-07-BUS" class="w-full h-9 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-slate-900 font-mono focus:outline-none focus:ring-1 focus:ring-uinavy shadow-xs">
             </div>
             <div>
-                <label class="block text-slate-700 font-semibold mb-1">Make & Model</label>
-                <input type="text" id="veh-model" required placeholder="e.g. Toyota HiAce 2.7L Commuter" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-uinavy">
+                <label class="block text-slate-700 font-semibold mb-1">Vehicle Make & Model</label>
+                <input type="text" id="veh-model" required placeholder="e.g. Toyota HiAce 2.7L Commuter" class="w-full h-9 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-slate-900 focus:outline-none focus:ring-1 focus:ring-uinavy shadow-xs">
             </div>
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block text-slate-700 font-semibold mb-1">Category</label>
-                    <select id="veh-type" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 focus:outline-none focus:border-uinavy">
+                    <select id="veh-type" class="w-full h-9 bg-white border border-slate-200 rounded-lg px-2.5 text-slate-900 focus:outline-none focus:ring-1 focus:ring-uinavy shadow-xs">
                         <option value="Campus Shuttle Bus">Campus Shuttle Bus</option>
                         <option value="Works Utility Pickup">Works Utility Pickup</option>
                         <option value="Campus Dispatch Bike">Campus Dispatch Bike</option>
-                        <option value="Medical Logistics Ambulance">Medical Logistics Ambulance</option>
+                        <option value="Medical Logistics Ambulance">Medical Ambulance</option>
                         <option value="Heavy Maintenance Truck">Heavy Maintenance Truck</option>
                         <option value="Eco Solar Shuttle">Eco Solar Shuttle</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-slate-700 font-semibold mb-1">Capacity (kg)</label>
-                    <input type="number" id="veh-cap" required min="50" max="10000" value="1000" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono focus:outline-none focus:border-uinavy">
+                    <input type="number" id="veh-cap" required min="50" max="10000" value="1000" class="w-full h-9 bg-white border border-slate-200 rounded-lg px-3 font-mono text-slate-900 focus:outline-none focus:ring-1 focus:ring-uinavy shadow-xs">
                 </div>
             </div>
-            <div class="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-200">
-                <button type="button" onclick="closeAddVehicleModal()" class="px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium border border-slate-200">Cancel</button>
-                <button type="submit" class="px-4 py-2 rounded-lg bg-uinavy hover:bg-uinavy-light text-white font-semibold text-xs shadow-sm">Save Asset</button>
+            
+            <!-- Dialog Footer -->
+            <div class="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
+                <button type="button" onclick="closeAddVehicleModal()" class="h-9 px-4 rounded-lg bg-white hover:bg-slate-50 text-slate-700 text-xs font-medium border border-slate-200 shadow-xs transition">Cancel</button>
+                <button type="submit" class="h-9 px-4 rounded-lg bg-uinavy hover:bg-uinavy-light text-white font-semibold text-xs shadow-xs transition">Save Asset</button>
             </div>
         </form>
     </div>
@@ -142,60 +188,85 @@
             renderVehicles(allVehicles);
             updateStats(allVehicles);
         } catch (err) {
-            console.error(err);
+            console.error('Error fetching vehicles', err);
         }
     }
 
     function renderVehicles(vehicles) {
         const tbody = document.getElementById('vehicle-table-body');
         document.getElementById('vehicle-count-tag').textContent = `${vehicles.length} vehicles`;
-        
-        if (!vehicles.length) {
-            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-slate-400">No vehicles found.</td></tr>`;
+        const countText = document.getElementById('table-entries-count');
+        if (countText) countText.textContent = `Showing ${vehicles.length} of ${allVehicles.length} registered vehicles`;
+
+        if (vehicles.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-slate-400">No vehicles matching filter.</td></tr>`;
             return;
         }
 
         tbody.innerHTML = vehicles.map(v => {
-            const statusBadges = {
-                'idle': '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200 uppercase font-mono">Idle</span>',
-                'in_transit': '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase font-mono">In Transit</span>',
-                'delivering': '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200 uppercase font-mono">Delivering</span>',
-                'maintenance': '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200 uppercase font-mono">Maintenance</span>'
+            const statusConfig = {
+                in_transit: { label: 'IN TRANSIT', bg: 'bg-emerald-50 text-emerald-700 border-emerald-200/80', dot: 'bg-emerald-500 animate-pulse' },
+                idle: { label: 'IDLE / BAY', bg: 'bg-slate-50 text-slate-700 border-slate-200/80', dot: 'bg-slate-400' },
+                maintenance: { label: 'SERVICE', bg: 'bg-rose-50 text-rose-700 border-rose-200/80', dot: 'bg-rose-500' }
             };
+            const sc = statusConfig[v.status] || statusConfig.idle;
 
-            const fuelColor = v.battery_fuel_pct > 50 ? 'bg-emerald-500' : (v.battery_fuel_pct > 20 ? 'bg-amber-500' : 'bg-rose-500');
+            const fuel = Math.round(v.battery_fuel_pct);
+            const fuelColor = fuel > 50 ? 'bg-emerald-500' : (fuel > 20 ? 'bg-amber-500' : 'bg-rose-500');
 
             return `
-                <tr class="table-row-hover transition border-b border-slate-100">
-                    <td class="py-3 px-4 sm:px-6">
-                        <div class="font-bold text-slate-900 font-mono text-xs">${v.plate_number}</div>
-                        <div class="text-slate-500 text-[11px]">${v.model}</div>
-                    </td>
-                    <td class="py-3 px-3 sm:px-4 text-slate-700">${v.vehicle_type}</td>
-                    <td class="py-3 px-3 sm:px-4">${statusBadges[v.status] || v.status}</td>
-                    <td class="py-3 px-3 sm:px-4 text-slate-700">
-                        ${v.driver ? `
-                            <div class="font-medium text-slate-900">${v.driver.name}</div>
-                            <div class="text-slate-400 text-[10px]">⭐ ${v.driver.rating.toFixed(2)}</div>
-                        ` : '<span class="text-slate-400 italic">Unassigned</span>'}
-                    </td>
-                    <td class="py-3 px-3 sm:px-4 font-mono text-slate-700">${v.capacity_kg} kg</td>
-                    <td class="py-3 px-3 sm:px-4">
-                        <div class="flex items-center gap-2">
-                            <div class="w-12 h-1.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
-                                <div class="h-full ${fuelColor}" style="width: ${v.battery_fuel_pct}%"></div>
+                <tr class="hover:bg-slate-50/70 transition-colors">
+                    <td class="py-3.5 px-4 sm:px-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-uinavy-50 text-uinavy flex items-center justify-center font-mono font-bold text-xs border border-uinavy-200/60 shrink-0">
+                                <i class="fa-solid fa-truck text-[11px]"></i>
                             </div>
-                            <span class="text-[11px] font-mono text-slate-600">${v.battery_fuel_pct}%</span>
+                            <div class="min-w-0">
+                                <div class="font-bold font-mono text-slate-900">${v.plate_number}</div>
+                                <div class="text-[11px] text-slate-500 truncate max-w-[180px]">${v.model || v.vehicle_type}</div>
+                            </div>
                         </div>
                     </td>
-                    <td class="py-3 px-3 sm:px-4 font-mono text-slate-700">${v.mileage_km} km</td>
-                    <td class="py-3 px-4 sm:px-6 text-right">
-                        <button onclick="inspectVehicleById(${v.id})" class="px-2 py-1 rounded text-[10px] font-semibold bg-uinavy-50 text-uinavy border border-uinavy-200 hover:bg-uinavy-100 transition mr-1">
-                            <i class="fa-solid fa-cube text-[9px] text-uigold-dark mr-0.5"></i> 3D
-                        </button>
-                        <button onclick="toggleMaintenance(${v.id})" class="px-2 py-1 rounded text-[10px] font-semibold border ${v.status === 'maintenance' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'} transition">
-                            ${v.status === 'maintenance' ? 'Activate' : 'Service'}
-                        </button>
+                    <td class="py-3.5 px-3 sm:px-4">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-700 border border-slate-200/70">
+                            ${v.vehicle_type}
+                        </span>
+                    </td>
+                    <td class="py-3.5 px-3 sm:px-4">
+                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-semibold font-mono border ${sc.bg}">
+                            <span class="w-1.5 h-1.5 rounded-full ${sc.dot}"></span>
+                            ${sc.label}
+                        </span>
+                    </td>
+                    <td class="py-3.5 px-3 sm:px-4">
+                        ${v.driver ? `
+                            <div class="font-medium text-slate-900">${v.driver.name}</div>
+                            <div class="text-slate-400 text-[10px] flex items-center gap-1">
+                                <i class="fa-solid fa-star text-amber-400 text-[9px]"></i>
+                                <span>${v.driver.rating.toFixed(2)}</span>
+                            </div>
+                        ` : '<span class="text-slate-400 italic">Unassigned</span>'}
+                    </td>
+                    <td class="py-3.5 px-3 sm:px-4 font-mono font-semibold text-slate-700">${v.capacity_kg} kg</td>
+                    <td class="py-3.5 px-3 sm:px-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200/80">
+                                <div class="h-full ${fuelColor} rounded-full" style="width: ${fuel}%"></div>
+                            </div>
+                            <span class="text-[11px] font-mono text-slate-700 font-semibold">${fuel}%</span>
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-3 sm:px-4 font-mono text-slate-600">${v.mileage_km} km</td>
+                    <td class="py-3.5 px-4 sm:px-6 text-right">
+                        <div class="flex items-center justify-end gap-1.5">
+                            <button onclick="inspectVehicleById(${v.id})" class="h-7 px-2.5 rounded-md text-[11px] font-medium border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 shadow-2xs transition flex items-center gap-1">
+                                <i class="fa-solid fa-cube text-[9px] text-uinavy"></i>
+                                <span>3D</span>
+                            </button>
+                            <button onclick="toggleMaintenance(${v.id})" class="h-7 px-2.5 rounded-md text-[11px] font-medium border ${v.status === 'maintenance' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'} shadow-2xs transition">
+                                ${v.status === 'maintenance' ? 'Activate' : 'Service'}
+                            </button>
+                        </div>
                     </td>
                 </tr>
             `;
@@ -210,16 +281,23 @@
     }
 
     function filterVehicles() {
-        const type = document.getElementById('vehicle-type-filter').value;
-        const filtered = type ? allVehicles.filter(v => v.vehicle_type === type) : allVehicles;
+        const type = document.getElementById('vehicle-type-filter').value.toLowerCase();
+        const search = (document.getElementById('vehicle-search').value || '').toLowerCase();
+
+        const filtered = allVehicles.filter(v => {
+            const matchesType = !type || v.vehicle_type.toLowerCase() === type;
+            const matchesSearch = !search || 
+                v.plate_number.toLowerCase().includes(search) ||
+                (v.model && v.model.toLowerCase().includes(search)) ||
+                (v.driver && v.driver.name.toLowerCase().includes(search));
+            return matchesType && matchesSearch;
+        });
+
         renderVehicles(filtered);
     }
 
     function inspectVehicleById(id) {
-        const veh = allVehicles.find(v => v.id === id);
-        if (veh) {
-            window.location.href = `/?focus=${id}`;
-        }
+        window.location.href = `/?focus=${id}`;
     }
 
     async function toggleMaintenance(id) {
