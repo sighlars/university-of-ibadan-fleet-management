@@ -98,6 +98,13 @@ class Campus3DEngine {
         this.controls.maxDistance = 1200;
         this.controls.target.set(0, 0, 0);
 
+        // Auto-unlock 3D camera tracking whenever user manually drags, orbits, or pans
+        this.controls.addEventListener('start', () => {
+            if (this.followedVehicleId) {
+                this.unlockFollow(true);
+            }
+        });
+
         // 5. Environment & Real OpenStreetMap 3D City Layout
         this.setupLighting();
         this.buildCampusTerrain();
@@ -995,12 +1002,6 @@ class Campus3DEngine {
                 }
 
                 this.updateVehicleSprite(vehMesh, veh);
-
-                if (this.followedVehicleId === id) {
-                    const chaseOffset = new THREE.Vector3(0, 24, 45).applyAxisAngle(new THREE.Vector3(0, 1, 0), vehMesh.rotation.y);
-                    this.camera.position.lerp(new THREE.Vector3().addVectors(vehMesh.position, chaseOffset), 0.12);
-                    this.controls.target.lerp(vehMesh.position, 0.18);
-                }
             }
         });
     }
@@ -1268,11 +1269,68 @@ class Campus3DEngine {
 
     followVehicle(vehicleId) {
         if (this.followedVehicleId === vehicleId) {
-            this.followedVehicleId = null;
-            if (typeof showToast === 'function') showToast("Chase Camera detached to free orbit", "info");
-        } else {
-            this.followedVehicleId = vehicleId;
-            if (typeof showToast === 'function') showToast(`Tracking vehicle in 3D Chase Camera`, "info");
+            this.unlockFollow(true);
+            return;
+        }
+
+        this.followedVehicleId = vehicleId;
+        const vehMesh = this.vehicles3D.get(vehicleId);
+
+        if (vehMesh) {
+            // Snappy instant initial lock: snap camera directly into chase perspective behind vehicle
+            const chaseOffset = new THREE.Vector3(0, 16, 32).applyAxisAngle(new THREE.Vector3(0, 1, 0), vehMesh.rotation.y);
+            const targetCamPos = new THREE.Vector3().addVectors(vehMesh.position, chaseOffset);
+            this.camera.position.copy(targetCamPos);
+            this.controls.target.copy(vehMesh.position);
+            this.controls.update();
+        }
+
+        this.updateFollowUI(true, vehicleId);
+        const plate = (vehMesh && vehMesh.userData && vehMesh.userData.vehicleData) ? vehMesh.userData.vehicleData.license_plate : `Vehicle #${vehicleId}`;
+        if (typeof showToast === 'function') showToast(`Locked 3D Chase Camera on ${plate}`, "info");
+    }
+
+    unlockFollow(notify = true) {
+        if (!this.followedVehicleId) return;
+        this.followedVehicleId = null;
+        this.updateFollowUI(false);
+        if (notify && typeof showToast === 'function') {
+            showToast("Camera unlocked — free orbit enabled", "info");
+        }
+    }
+
+    updateFollowUI(isLocked, vehicleId = null) {
+        const pill = document.getElementById('camera-lock-pill');
+        const label = document.getElementById('camera-lock-label');
+        if (pill) {
+            if (isLocked) {
+                pill.classList.remove('hidden');
+                pill.classList.add('flex');
+                if (label && vehicleId) {
+                    const vehMesh = this.vehicles3D.get(vehicleId);
+                    const plate = (vehMesh && vehMesh.userData && vehMesh.userData.vehicleData) ? vehMesh.userData.vehicleData.license_plate : `Vehicle #${vehicleId}`;
+                    label.textContent = plate;
+                }
+            } else {
+                pill.classList.add('hidden');
+                pill.classList.remove('flex');
+            }
+        }
+
+        // Update button text in inspector modal
+        const btnLock = document.getElementById('btn-lock-chase');
+        const iconLock = document.getElementById('btn-lock-icon');
+        const textLock = document.getElementById('btn-lock-text');
+        if (btnLock && textLock) {
+            if (isLocked) {
+                btnLock.className = "w-full py-2.5 px-3 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition";
+                if (iconLock) iconLock.className = "fa-solid fa-lock-open text-xs text-white";
+                textLock.textContent = "Unlock 3D Camera";
+            } else {
+                btnLock.className = "w-full py-2.5 px-3 rounded-lg bg-uinavy hover:bg-uinavy-light text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition";
+                if (iconLock) iconLock.className = "fa-solid fa-video text-xs text-uigold-light";
+                textLock.textContent = "Lock 3D Chase Camera";
+            }
         }
     }
 
@@ -1281,7 +1339,7 @@ class Campus3DEngine {
     }
 
     setCameraPreset(preset) {
-        this.followedVehicleId = null;
+        this.unlockFollow(false);
         if (preset === 'bird') {
             this.camera.position.set(0, 240, 340);
             this.controls.target.set(0, 0, 0);
@@ -1309,6 +1367,15 @@ class Campus3DEngine {
 
     animate() {
         this.animationFrameId = requestAnimationFrame(() => this.animate());
+
+        // Snappy, smooth 60fps chase camera lock
+        if (this.followedVehicleId && this.vehicles3D.has(this.followedVehicleId)) {
+            const vehMesh = this.vehicles3D.get(this.followedVehicleId);
+            const chaseOffset = new THREE.Vector3(0, 16, 32).applyAxisAngle(new THREE.Vector3(0, 1, 0), vehMesh.rotation.y);
+            const targetCamPos = new THREE.Vector3().addVectors(vehMesh.position, chaseOffset);
+            this.camera.position.lerp(targetCamPos, 0.15);
+            this.controls.target.lerp(vehMesh.position, 0.22);
+        }
 
         if (this.controls) {
             this.controls.update();

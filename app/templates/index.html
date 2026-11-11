@@ -98,6 +98,16 @@
                     <span class="text-[11px] text-slate-500">Transit:</span>
                     <span id="stat-in-transit" class="font-mono text-xs font-bold text-slate-900">0</span>
                 </div>
+
+                <!-- Active 3D Chase Camera Lock Badge (Visible only when tracking a vehicle) -->
+                <div id="camera-lock-pill" class="hidden bg-uinavy text-white px-2.5 py-1 rounded-lg border border-amber-400/80 shadow-md items-center gap-2 text-xs">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span class="text-[11px] font-semibold text-slate-100">Tracking: <span id="camera-lock-label" class="font-mono text-uigold-light">UI-01-DSP</span></span>
+                    <button onclick="window.campus3D ? window.campus3D.unlockFollow() : null" title="Unlock 3D Camera" class="ml-1 px-2 py-0.5 rounded bg-white/20 hover:bg-rose-500 hover:text-white text-[10px] font-semibold transition flex items-center gap-1 cursor-pointer">
+                        <i class="fa-solid fa-lock-open"></i>
+                        <span>Unlock</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Right Simulation Control Deck -->
@@ -216,16 +226,11 @@
                 </div>
             </div>
 
-            <!-- View Tabs & Close Button -->
+            <!-- Modal Top Bar Actions -->
             <div class="flex items-center gap-2">
-                <div class="flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200">
-                    <button id="btn-tab-turntable" onclick="switchInspectorTab('turntable')" class="px-2.5 py-1 rounded text-xs font-semibold bg-uinavy text-white shadow-xs transition">
-                        Digital Twin Turntable
-                    </button>
-                    <button id="btn-tab-sketchfab" onclick="switchInspectorTab('sketchfab')" class="px-2.5 py-1 rounded text-xs font-medium text-slate-600 hover:text-slate-900 transition">
-                        Sketchfab 3D Models
-                    </button>
-                </div>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-100 text-uinavy border border-slate-200">
+                    <i class="fa-solid fa-cube text-[11px] text-uigold-dark mr-1"></i>3D Asset Turntable
+                </span>
                 <button onclick="close3DVehicleInspector()" class="p-1.5 text-slate-400 hover:text-slate-700 transition">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
@@ -234,35 +239,13 @@
 
         <!-- Modal Body (3D Viewport on Left, Telematics Diagnostics on Right) -->
         <div class="flex-1 flex flex-col md:flex-row overflow-y-auto">
-            <!-- 3D Canvas / Embed Viewport -->
+            <!-- 3D Canvas Viewport -->
             <div class="w-full md:w-3/5 bg-slate-900 min-h-[340px] md:min-h-[460px] relative border-b md:border-b-0 md:border-r border-slate-200">
-                <!-- Tab 1: Three.js Real-Time Turntable Canvas (Default Primary View) -->
+                <!-- Three.js Real-Time Turntable Canvas -->
                 <div id="ins-tab-turntable" class="w-full h-full min-h-[420px] relative bg-slate-100">
                     <div id="turntable-canvas-container" class="w-full h-full min-h-[420px]"></div>
                     <div class="absolute bottom-2 left-2 right-2 text-center text-[10px] text-slate-500 pointer-events-none bg-white/80 py-1 rounded border border-slate-200/50 backdrop-blur-xs">
                         Left Click + Drag: 360° Turntable Orbit | Right Click + Drag: Pan | Scroll: Zoom
-                    </div>
-                </div>
-
-                <!-- Tab 2: Sketchfab Collection Player (Secondary Reference) -->
-                <div id="ins-tab-sketchfab" class="w-full h-full min-h-[420px] hidden flex flex-col">
-                    <iframe width="100%" height="420" data-src="https://sketchfab.com/playlists/embed?collection=9e2582d94d0341b09c0c4269f6dd172b&autostart=0"
-                        title="Game-Ready Cars"
-                        loading="lazy"
-                        frameborder="0"
-                        allowfullscreen
-                        mozallowfullscreen="true"
-                        webkitallowfullscreen="true"
-                        allow="autoplay; fullscreen; xr-spatial-tracking"
-                        xr-spatial-tracking
-                        execution-while-out-of-viewport
-                        execution-while-not-rendered
-                        web-share
-                        class="w-full flex-1 border-0">
-                    </iframe>
-                    <div class="p-2 bg-white border-t border-slate-200 text-[10px] text-slate-600 flex items-center justify-between">
-                        <span>Game-Ready Vehicles Collection via Sketchfab</span>
-                        <span class="text-uinavy font-medium">Interactive 3D Inspector</span>
                     </div>
                 </div>
             </div>
@@ -311,9 +294,9 @@
 
                 <!-- Action Deck -->
                 <div class="pt-3 border-t border-slate-200 space-y-2">
-                    <button onclick="chaseInspectedVehicle()" class="w-full py-2.5 px-3 rounded-lg bg-uinavy hover:bg-uinavy-light text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition">
-                        <i class="fa-solid fa-video text-xs text-uigold-light"></i>
-                        <span>Lock 3D Chase Camera</span>
+                    <button id="btn-lock-chase" onclick="chaseInspectedVehicle()" class="w-full py-2.5 px-3 rounded-lg bg-uinavy hover:bg-uinavy-light text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition">
+                        <i class="fa-solid fa-video text-xs text-uigold-light" id="btn-lock-icon"></i>
+                        <span id="btn-lock-text">Lock 3D Chase Camera</span>
                     </button>
                     <button onclick="close3DVehicleInspector()" class="w-full py-2 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs border border-slate-200 transition">
                         Close Inspector
@@ -399,6 +382,13 @@
             }
         }
     }
+
+    // Escape key to unlock 3D camera
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && window.campus3D && window.campus3D.followedVehicleId) {
+            window.campus3D.unlockFollow(true);
+        }
+    });
 
     // Global bindings
     window.switchViewMode = switchViewMode;

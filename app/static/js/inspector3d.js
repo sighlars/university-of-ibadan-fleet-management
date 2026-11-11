@@ -51,8 +51,14 @@ function open3DVehicleInspector(veh) {
     const fuelBar = document.getElementById('ins-fuel-bar');
     if (fuelBar) fuelBar.style.width = `${fuel}%`;
 
-    // Always start with Digital Twin Turntable active as primary view!
-    switchInspectorTab('turntable');
+    // Update lock button text based on current lock state
+    if (window.campus3D) {
+        const isLocked = window.campus3D.followedVehicleId === veh.vehicle_id;
+        window.campus3D.updateFollowUI(isLocked, veh.vehicle_id);
+    }
+
+    // Initialize 3D Turntable directly
+    initTurntable();
 }
 
 function close3DVehicleInspector() {
@@ -66,37 +72,7 @@ function close3DVehicleInspector() {
 }
 
 function switchInspectorTab(tab) {
-    const sketchfabContainer = document.getElementById('ins-tab-sketchfab');
-    const turntableContainer = document.getElementById('ins-tab-turntable');
-    const btnSketchfab = document.getElementById('btn-tab-sketchfab');
-    const btnTurntable = document.getElementById('btn-tab-turntable');
-
-    if (tab === 'turntable') {
-        if (sketchfabContainer) sketchfabContainer.classList.add('hidden');
-        if (turntableContainer) turntableContainer.classList.remove('hidden');
-        if (btnTurntable) {
-            btnTurntable.className = 'px-3 py-1 rounded text-xs font-semibold bg-uinavy text-white shadow-sm';
-        }
-        if (btnSketchfab) {
-            btnSketchfab.className = 'px-3 py-1 rounded text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100';
-        }
-        initTurntable();
-    } else {
-        if (sketchfabContainer) {
-            sketchfabContainer.classList.remove('hidden');
-            const iframe = sketchfabContainer.querySelector('iframe');
-            if (iframe && !iframe.src && iframe.getAttribute('data-src')) {
-                iframe.src = iframe.getAttribute('data-src');
-            }
-        }
-        if (turntableContainer) turntableContainer.classList.add('hidden');
-        if (btnSketchfab) {
-            btnSketchfab.className = 'px-3 py-1 rounded text-xs font-semibold bg-uinavy text-white shadow-sm';
-        }
-        if (btnTurntable) {
-            btnTurntable.className = 'px-3 py-1 rounded text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100';
-        }
-    }
+    initTurntable();
 }
 
 function initTurntable() {
