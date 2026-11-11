@@ -6,6 +6,10 @@
   <h3><b>An Open-Source Logistics & Fleet Optimization Research Project</b></h3>
   <p><b>Academic Case Study: University of Ibadan (UI), Ibadan, Nigeria</b></p>
   <p><i>Real-time telematics, vehicle routing problem (CVRP) heuristics, and live campus dispatch.</i></p>
+  <br/>
+  <a href="https://university-of-ibadan-fleet-management.onrender.com/" target="_blank">
+    <img src="https://img.shields.io/badge/🚀%20Live%20Demo-Render%20Cloud-46E3B7?style=for-the-badge&logo=render&logoColor=white" alt="Live Demo on Render"/>
+  </a>
 </div>
 
 ---
@@ -15,6 +19,7 @@
 
 ---
 
+[![Live Demo](https://img.shields.io/badge/Demo-Live%20on%20Render-46E3B7.svg?logo=render&logoColor=white)](https://university-of-ibadan-fleet-management.onrender.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
@@ -163,7 +168,21 @@ python run.py
 
 The database (`fleet.db`) will automatically initialize with sample case study data.
 
-Open your browser to:
+### 🌐 Live Production Deployment
+
+The project is deployed and live on Render:
+- 🚀 **Live 3D Operations Dashboard**: [https://university-of-ibadan-fleet-management.onrender.com/](https://university-of-ibadan-fleet-management.onrender.com/)
+- 🚚 **Campus Fleet & Drivers Roster**: [https://university-of-ibadan-fleet-management.onrender.com/vehicles](https://university-of-ibadan-fleet-management.onrender.com/vehicles)
+- 📦 **Campus Consignments & Orders Ledger**: [https://university-of-ibadan-fleet-management.onrender.com/orders](https://university-of-ibadan-fleet-management.onrender.com/orders)
+- 📊 **Logistics Analytics & KPIs**: [https://university-of-ibadan-fleet-management.onrender.com/analytics](https://university-of-ibadan-fleet-management.onrender.com/analytics)
+- 📖 **Interactive API Documentation (Docs)**: [https://university-of-ibadan-fleet-management.onrender.com/docs](https://university-of-ibadan-fleet-management.onrender.com/docs)
+- 📑 **ReDoc API Specifications**: [https://university-of-ibadan-fleet-management.onrender.com/redoc](https://university-of-ibadan-fleet-management.onrender.com/redoc)
+
+---
+
+### 💻 Local Development Links
+
+When running locally, open your browser to:
 - **Operations Dashboard**: [http://localhost:8000](http://localhost:8000) (or [http://127.0.0.1:8000](http://127.0.0.1:8000))
 - **Fleet & Drivers Registry**: [http://localhost:8000/vehicles](http://localhost:8000/vehicles)
 - **Logistics Dispatch Desk**: [http://localhost:8000/orders](http://localhost:8000/orders)
