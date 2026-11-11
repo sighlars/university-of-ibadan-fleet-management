@@ -7,7 +7,14 @@
 
   <p>
     <a href="https://university-of-ibadan-fleet-management.onrender.com/" target="_blank">
-      <img src="https://img.shields.io/badge/🎮%20LAUNCH%20LIVE%203D%20SIMULATION-EXPLORE%20CAMPUS%20TWIN-002147?style=for-the-badge&logo=threedotjs&logoColor=F59E0B&labelColor=001633" alt="Launch Live 3D Simulation" height="42"/>
+      <img src="https://img.shields.io/badge/▶%20LAUNCH%20LIVE%203D%20SIMULATION-EXPLORE%20CAMPUS%20TWIN-2563EB?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Launch Live 3D Simulation" height="44"/>
+    </a>
+  </p>
+
+  <p>
+    <a href="https://university-of-ibadan-fleet-management.onrender.com/" target="_blank">
+      <b>👉 Click Here to Open the Live 3D Simulation:</b><br/>
+      <code>https://university-of-ibadan-fleet-management.onrender.com/</code>
     </a>
   </p>
 
@@ -37,6 +44,11 @@
 
 > [!NOTE]
 > **Academic Project Note**: This project—**Fleet Management System for a Delivery Company: Optimizing Logistics and Real-Time Tracking** (Case Study of the University of Ibadan Campus Delivery Network)—is an independent student academic school project modeling campus-scale urban logistics and telematics. It is not an officially affiliated platform of the University of Ibadan administration; all campus facilities and landmarks are studied as an empirical case study for logistics optimization.
+
+> [!TIP]
+> ### 🎮 [▶ Launch Live 3D Simulation & Campus Digital Twin](https://university-of-ibadan-fleet-management.onrender.com/)
+> **Direct Live Link:** [https://university-of-ibadan-fleet-management.onrender.com/](https://university-of-ibadan-fleet-management.onrender.com/)  
+> *Click the link above to interact directly with the live autonomous CVRP dispatch solver, real-time 3D chase camera tracking, and campus logistics telemetry in your browser. Free instant access, zero installation or login required.*
 
 ---
 
