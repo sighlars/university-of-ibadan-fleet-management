@@ -11,6 +11,7 @@ from app.seed import seed_database
 from app.api import vehicles, orders, routes, analytics, tiles
 from app.api.websocket import ws_manager
 from app.engine.simulator import simulator
+from fastapi.middleware.cors import CORSMiddleware
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -30,6 +31,15 @@ app = FastAPI(
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_url="/openapi.json"
+)
+
+# Enable CORS for localhost, 127.0.0.1, ngrok tunnels, and custom hostnames
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 

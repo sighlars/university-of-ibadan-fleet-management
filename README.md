@@ -28,11 +28,12 @@
 
 ## 📸 User Interface Showcase
 
-| View | Preview |
+| View | Live UI Preview |
 |---|---|
-| **Live 3D Digital Twin Viewport**<br>• 818 Extruded OpenStreetMap Campus Buildings<br>• Dynamic Flat Highway Navigation Ribbons<br>• Authentic Campus Fleet (Keke, HiAce, Carry, Hilux) | ![Live 3D Digital Twin](docs/screenshots/ui_campus_3d_viewport.jpg) |
-| **Analytics & SLA KPIs Dashboard**<br>• Built with authentic shadcn/ui Dashboard block<br>• 4-card KPI metric deck + Area Load Chart<br>• Real-time telematics dispatches table | ![shadcn Analytics Dashboard](docs/screenshots/analytics_dashboard_shadcn.jpg) |
-| **Fleet & Drivers Management Registry**<br>• Built with authentic shadcn/ui Data Table<br>• Monospace plate tags, battery bars, driver ratings<br>• Instant asset modal dialogs & filters | ![shadcn Fleet & Drivers Table](docs/screenshots/fleet_drivers_shadcn.jpg) |
+| **Live 3D Digital Twin Viewport**<br>• Real OpenStreetMap Satellite & Street Layouts<br>• Flat Dynamic Highway Navigation Ribbons<br>• Authentic Campus Fleet (Bajaj, TVS, Piaggio, Carry, HiAce)<br>• Live Telematics Sidebar Drawer | ![Live 3D Digital Twin](docs/screenshots/ui_campus_3d_viewport.png) |
+| **Analytics & SLA KPIs Dashboard**<br>• Authentic shadcn/ui Dashboard block<br>• 4-card metric block (Deliveries, Fleet Utilization, Odometer, CO₂ Conserved)<br>• Campus Delivery Velocity & Throughput Area Chart<br>• Real-time dispatches stream | ![shadcn Analytics Dashboard](docs/screenshots/analytics_dashboard_shadcn.png) |
+| **Fleet & Drivers Management Roster**<br>• Authentic shadcn/ui Data Table block<br>• Monospace plate tags, battery/fuel progress bars, driver ratings<br>• Real-time asset filtering & modal registration | ![shadcn Fleet & Drivers Table](docs/screenshots/fleet_drivers_shadcn.png) |
+| **Campus Consignments & Orders Ledger**<br>• Capacitated Vehicle Routing Problem (CVRP) queue<br>• Priority badges (Urgent, High, Medium, Low)<br>• Consignment ledger with 1-click batch solver | ![shadcn Orders & Logistics Table](docs/screenshots/orders_logistics_shadcn.png) |
 
 ---
 
@@ -163,12 +164,26 @@ python run.py
 The database (`fleet.db`) will automatically initialize with sample case study data.
 
 Open your browser to:
-- **Operations Dashboard**: [http://localhost:8000](http://localhost:8000)
+- **Operations Dashboard**: [http://localhost:8000](http://localhost:8000) (or [http://127.0.0.1:8000](http://127.0.0.1:8000))
 - **Fleet & Drivers Registry**: [http://localhost:8000/vehicles](http://localhost:8000/vehicles)
 - **Logistics Dispatch Desk**: [http://localhost:8000/orders](http://localhost:8000/orders)
 - **Analytics & SLA KPIs**: [http://localhost:8000/analytics](http://localhost:8000/analytics)
-- **Interactive API Documentation (Swagger)**: [http://localhost:8000/docs](http://localhost:8000/docs)
+- **Interactive API Documentation (Docs)**: [http://localhost:8000/docs](http://localhost:8000/docs)
 - **ReDoc Specification**: [http://localhost:8000/redoc](http://localhost:8000/redoc)
+
+### 4. Remote Tunneling with ngrok
+
+To expose the application over the internet to mobile or external devices:
+
+```bash
+# Point ngrok directly to the local port:
+ngrok http 127.0.0.1:8000
+```
+
+> [!TIP]
+> - Always point ngrok to the same port as FastAPI (`8000` by default).
+> - If you want FastAPI to run on port `8080` instead, set `PORT=8080 python run.py` and run `ngrok http 127.0.0.1:8080`.
+> - CORS and proxy headers are pre-configured so WebSockets and tile streams work through ngrok without restrictions.
 
 ---
 

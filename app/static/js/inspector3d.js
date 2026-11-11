@@ -82,7 +82,13 @@ function switchInspectorTab(tab) {
         }
         initTurntable();
     } else {
-        if (sketchfabContainer) sketchfabContainer.classList.remove('hidden');
+        if (sketchfabContainer) {
+            sketchfabContainer.classList.remove('hidden');
+            const iframe = sketchfabContainer.querySelector('iframe');
+            if (iframe && !iframe.src && iframe.getAttribute('data-src')) {
+                iframe.src = iframe.getAttribute('data-src');
+            }
+        }
         if (turntableContainer) turntableContainer.classList.add('hidden');
         if (btnSketchfab) {
             btnSketchfab.className = 'px-3 py-1 rounded text-xs font-semibold bg-uinavy text-white shadow-sm';

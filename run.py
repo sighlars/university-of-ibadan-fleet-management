@@ -1,8 +1,12 @@
+import os
 import sys
 import uvicorn
 from app.seed import seed_database
 
 def main():
+    port = int(os.environ.get("PORT", 8000))
+    host = os.environ.get("HOST", "0.0.0.0")
+
     print("=" * 70)
     print(" 🚚 UI-FleetFlow — Campus Fleet & Logistics Management System")
     print("    Academic School Project | Case Study: University of Ibadan")
@@ -11,14 +15,19 @@ def main():
     seed_database()
     print("Database ready.")
     print("Starting local server...")
-    print(" • Web Dashboard:   http://localhost:8000")
-    print(" • Interactive Docs: http://localhost:8000/docs")
-    print(" • ReDoc Specs:     http://localhost:8000/redoc")
+    print(f" • Web Dashboard:   http://localhost:{port} (or http://127.0.0.1:{port})")
+    print(f" • Interactive Docs: http://localhost:{port}/docs")
+    print(f" • ReDoc Specs:     http://localhost:{port}/redoc")
     print("=" * 70)
-
-
     
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run(
+        "app.main:app",
+        host=host,
+        port=port,
+        reload=True,
+        proxy_headers=True,
+        forwarded_allow_ips="*"
+    )
 
 if __name__ == "__main__":
     main()
