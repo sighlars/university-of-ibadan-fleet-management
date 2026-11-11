@@ -298,11 +298,11 @@ class Campus3DEngine {
                 const cx = sumX / coords.length;
                 const cz = sumZ / coords.length;
 
-                // Create 2D shape relative to center
+                // Create 2D shape relative to center with 0.92 inset for clean architectural setbacks
                 const shape = new THREE.Shape();
                 worldPts.forEach((w, idx) => {
-                    const rx = w.x - cx;
-                    const rz = w.z - cz;
+                    const rx = (w.x - cx) * 0.92;
+                    const rz = (w.z - cz) * 0.92;
                     if (idx === 0) shape.moveTo(rx, -rz);
                     else shape.lineTo(rx, -rz);
                 });
@@ -360,8 +360,9 @@ class Campus3DEngine {
 
                 buildingsGroup.add(mesh);
 
-                // Add floating billboard sprite for major landmarks
-                if (name && name.length > 2) {
+                // Add floating billboard sprite only for major recognizable landmarks
+                const isTrivialLabel = /pavillion|generator|court|shed/i.test(nameLower);
+                if (name && name.length > 2 && !isTrivialLabel) {
                     const labelSprite = this.createLandmarkBillboard(name);
                     labelSprite.position.set(cx, heightUnits + 8.0, cz);
                     buildingsGroup.add(labelSprite);

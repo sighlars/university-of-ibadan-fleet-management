@@ -51,6 +51,35 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/static/css/style.css">
+
+    <style>
+        /* Shadcn Collapsible Sidebar Styles */
+        .sidebar-collapsed {
+            width: 4.25rem !important; /* 68px */
+        }
+        .sidebar-collapsed .sidebar-label,
+        .sidebar-collapsed .sidebar-badge,
+        .sidebar-collapsed .sidebar-subtitle,
+        .sidebar-collapsed .sidebar-details {
+            display: none !important;
+        }
+        .sidebar-collapsed .sidebar-nav-item {
+            justify-content: center !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            width: 2.75rem !important;
+            height: 2.75rem !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+        .sidebar-collapsed .sidebar-brand {
+            justify-content: center !important;
+        }
+        .sidebar-collapsed .sidebar-footer-card {
+            padding: 0.5rem !important;
+            justify-content: center !important;
+        }
+    </style>
 </head>
 <body class="h-full flex overflow-hidden bg-slate-50 font-sans antialiased text-slate-900 selection:bg-uinavy-100 selection:text-uinavy">
 
@@ -58,75 +87,88 @@
     <div id="sidebar-backdrop" onclick="toggleSidebar(false)" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-40 hidden lg:hidden transition-opacity"></div>
 
     <!-- Shadcn App Sidebar -->
-    <aside id="app-sidebar" class="fixed inset-y-0 left-0 z-50 lg:static flex flex-col w-64 bg-white border-r border-slate-200/80 transition-all duration-300 ease-in-out shrink-0 -translate-x-full lg:translate-x-0 shadow-sm">
+    <aside id="app-sidebar" class="fixed inset-y-0 left-0 z-50 lg:static flex flex-col w-64 bg-white border-r border-slate-200/80 transition-all duration-200 ease-in-out shrink-0 -translate-x-full lg:translate-x-0 shadow-xs">
         
-        <!-- Sidebar Header: Organization / Brand Identity -->
-        <div class="h-14 border-b border-slate-200/80 px-4 flex items-center justify-between shrink-0">
-            <a href="/" class="flex items-center gap-3 group min-w-0">
+        <!-- Sidebar Header: Organization & Shadcn PanelLeft Toggle -->
+        <div class="h-14 border-b border-slate-200/80 px-3.5 flex items-center justify-between shrink-0">
+            <a href="/" class="sidebar-brand flex items-center gap-3 group min-w-0">
                 <img src="/static/images/ui_crest.svg" alt="UI Crest" class="w-8 h-8 shrink-0">
-                <div class="min-w-0 flex-1 truncate">
+                <div class="sidebar-label min-w-0 flex-1 truncate">
                     <div class="flex items-center gap-1.5">
                         <span class="text-xs font-bold tracking-tight text-slate-900 truncate">UI-FleetFlow</span>
-                        <span class="text-[9px] px-1.5 py-0.2 rounded font-medium bg-uinavy-50 text-uinavy border border-uinavy-200/60 font-mono">v2.0</span>
+                        <!-- Shadcn Badge -->
+                        <span class="inline-flex items-center rounded-md border border-uinavy-200/60 bg-uinavy-50 px-1.5 py-0.2 text-[9px] font-semibold text-uinavy font-mono">v2.0</span>
                     </div>
-                    <div class="text-[11px] text-slate-500 truncate">University of Ibadan</div>
+                    <div class="sidebar-subtitle text-[11px] text-slate-500 truncate">University of Ibadan</div>
                 </div>
             </a>
-            <button onclick="toggleSidebar(false)" class="lg:hidden p-1 text-slate-400 hover:text-slate-600 rounded">
-                <i class="fa-solid fa-xmark text-sm"></i>
+            
+            <!-- Shadcn Sidebar Close Trigger (PanelLeft Icon) -->
+            <button onclick="toggleSidebar()" title="Toggle Sidebar (Panel Left)" class="p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-md transition border border-transparent hover:border-slate-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-panel-left w-4 h-4">
+                    <rect width="18" height="18" x="3" y="3" rx="2"/>
+                    <path d="M9 3v18"/>
+                </svg>
             </button>
         </div>
 
         <!-- Sidebar Navigation Content -->
-        <div class="flex-1 overflow-y-auto px-3 py-3 space-y-6">
+        <div class="flex-1 overflow-y-auto px-2.5 py-3 space-y-6">
             <!-- Platform Section -->
             <div class="space-y-1">
-                <div class="px-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Platform</div>
+                <div class="sidebar-label px-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Platform</div>
                 
-                <a href="/" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition {% if active_tab == 'dashboard' %}bg-uinavy text-white font-semibold shadow-xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                <a href="/" title="Live 3D & 2D Map" class="sidebar-nav-item flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition {% if active_tab == 'dashboard' %}bg-uinavy text-white font-semibold shadow-xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
                     <i class="fa-solid fa-map-location-dot w-4 text-center {% if active_tab == 'dashboard' %}text-uigold-light{% else %}text-slate-400{% endif %}"></i>
-                    <span class="truncate">Live 3D & 2D Map</span>
+                    <span class="sidebar-label truncate">Live 3D & 2D Map</span>
                 </a>
 
-                <a href="/vehicles" class="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition {% if active_tab == 'vehicles' %}bg-uinavy text-white font-semibold shadow-xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                <a href="/vehicles" title="Fleet & Drivers" class="sidebar-nav-item flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition {% if active_tab == 'vehicles' %}bg-uinavy text-white font-semibold shadow-xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
                     <div class="flex items-center gap-3 truncate">
                         <i class="fa-solid fa-truck w-4 text-center {% if active_tab == 'vehicles' %}text-uigold-light{% else %}text-slate-400{% endif %}"></i>
-                        <span class="truncate">Fleet & Drivers</span>
+                        <span class="sidebar-label truncate">Fleet & Drivers</span>
                     </div>
-                    <span class="px-1.5 py-0.5 rounded text-[10px] font-mono {% if active_tab == 'vehicles' %}bg-white/20 text-white{% else %}bg-slate-100 text-slate-600 border border-slate-200{% endif %}">6</span>
+                    <!-- Shadcn Secondary Badge -->
+                    <span class="sidebar-badge inline-flex items-center rounded-md border border-slate-200 px-1.5 py-0.5 text-[10px] font-mono font-semibold {% if active_tab == 'vehicles' %}bg-white/20 text-white border-transparent{% else %}bg-slate-100 text-slate-700{% endif %}">6</span>
                 </a>
 
-                <a href="/orders" class="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition {% if active_tab == 'orders' %}bg-uinavy text-white font-semibold shadow-xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                <a href="/orders" title="Orders & Logistics" class="sidebar-nav-item flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition {% if active_tab == 'orders' %}bg-uinavy text-white font-semibold shadow-xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
                     <div class="flex items-center gap-3 truncate">
                         <i class="fa-solid fa-boxes-stacked w-4 text-center {% if active_tab == 'orders' %}text-uigold-light{% else %}text-slate-400{% endif %}"></i>
-                        <span class="truncate">Orders & Logistics</span>
+                        <span class="sidebar-label truncate">Orders & Logistics</span>
                     </div>
-                    <span class="px-1.5 py-0.5 rounded text-[10px] font-mono {% if active_tab == 'orders' %}bg-white/20 text-white{% else %}bg-slate-100 text-slate-600 border border-slate-200{% endif %}">18</span>
+                    <!-- Shadcn Secondary Badge -->
+                    <span class="sidebar-badge inline-flex items-center rounded-md border border-slate-200 px-1.5 py-0.5 text-[10px] font-mono font-semibold {% if active_tab == 'orders' %}bg-white/20 text-white border-transparent{% else %}bg-slate-100 text-slate-700{% endif %}">18</span>
                 </a>
 
-                <a href="/analytics" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition {% if active_tab == 'analytics' %}bg-uinavy text-white font-semibold shadow-xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                <a href="/analytics" title="Analytics & KPIs" class="sidebar-nav-item flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition {% if active_tab == 'analytics' %}bg-uinavy text-white font-semibold shadow-xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
                     <i class="fa-solid fa-chart-line w-4 text-center {% if active_tab == 'analytics' %}text-uigold-light{% else %}text-slate-400{% endif %}"></i>
-                    <span class="truncate">Analytics & KPIs</span>
+                    <span class="sidebar-label truncate">Analytics & KPIs</span>
                 </a>
             </div>
 
             <!-- Operations Section -->
             <div class="space-y-1">
-                <div class="px-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Operations & Tools</div>
+                <div class="sidebar-label px-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Operations & Tools</div>
                 
-                <button onclick="triggerOptimization()" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition text-left">
+                <button onclick="triggerOptimization()" title="Run VRP Optimizer" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition text-left">
                     <i class="fa-solid fa-wand-magic-sparkles w-4 text-center text-amber-500"></i>
-                    <span class="truncate">Run VRP Optimizer</span>
+                    <span class="sidebar-label truncate">Run VRP Optimizer</span>
                 </button>
 
-                <button onclick="resetDemoData()" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition text-left">
+                <button onclick="openCommandPalette()" title="Open Command Palette (⌘K)" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition text-left">
+                    <i class="fa-solid fa-terminal w-4 text-center text-slate-400"></i>
+                    <span class="sidebar-label truncate">Command Palette</span>
+                </button>
+
+                <button onclick="resetDemoData()" title="Reset Demo Data" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition text-left">
                     <i class="fa-solid fa-rotate-left w-4 text-center text-slate-400"></i>
-                    <span class="truncate">Reset Demo Data</span>
+                    <span class="sidebar-label truncate">Reset Demo Data</span>
                 </button>
 
-                <a href="/docs" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">
+                <a href="/docs" target="_blank" title="FastAPI Swagger Docs" class="sidebar-nav-item flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">
                     <i class="fa-solid fa-code w-4 text-center text-slate-400"></i>
-                    <span class="truncate">FastAPI Swagger Docs</span>
+                    <span class="sidebar-label truncate">FastAPI Swagger</span>
                 </a>
             </div>
         </div>
@@ -134,20 +176,21 @@
         <!-- Sidebar Footer: Telemetry Badge & Dispatcher Profile -->
         <div class="p-3 border-t border-slate-200/80 bg-slate-50/60 shrink-0 space-y-2">
             <!-- Telemetry Status Card -->
-            <div class="p-2.5 rounded-lg bg-white border border-slate-200/80 shadow-xs flex items-center justify-between">
+            <div class="sidebar-footer-card p-2.5 rounded-lg bg-white border border-slate-200/80 shadow-2xs flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span class="text-[11px] font-medium text-slate-700">Campus Fleet Sync</span>
+                    <span class="sidebar-label text-[11px] font-medium text-slate-700">Campus Fleet Sync</span>
                 </div>
-                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200/60">6/6 Active</span>
+                <!-- Shadcn Success Badge -->
+                <span class="sidebar-badge inline-flex items-center rounded-md border border-emerald-200/80 bg-emerald-50 px-1.5 py-0.5 text-[10px] font-mono font-semibold text-emerald-700">6/6 Active</span>
             </div>
 
             <!-- Dispatcher Profile -->
-            <div class="flex items-center gap-2.5 p-1.5 rounded-lg">
+            <div class="sidebar-footer-card flex items-center gap-2.5 p-1 rounded-lg">
                 <div class="w-8 h-8 rounded-full bg-uinavy text-white flex items-center justify-center font-bold text-xs shrink-0 font-mono border border-uinavy-200">
                     UI
                 </div>
-                <div class="min-w-0 flex-1">
+                <div class="sidebar-details min-w-0 flex-1">
                     <div class="text-xs font-semibold text-slate-900 truncate">Central Transport Pool</div>
                     <div class="text-[10px] text-slate-500 truncate">dispatch@ui.edu.ng</div>
                 </div>
@@ -158,12 +201,16 @@
     <!-- Main Content Wrapper -->
     <div class="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
         <!-- Shadcn App Header -->
-        <header id="app-header" class="h-14 border-b border-slate-200/80 bg-white/95 px-4 sm:px-6 flex items-center justify-between shrink-0 backdrop-blur-xs z-30 shadow-xs">
+        <header id="app-header" class="h-14 border-b border-slate-200/80 bg-white/95 px-4 sm:px-6 flex items-center justify-between shrink-0 backdrop-blur-xs z-30 shadow-2xs">
             
-            <!-- Left: Sidebar Toggle + Breadcrumb -->
+            <!-- Left: Shadcn PanelLeft Trigger + Breadcrumbs -->
             <div class="flex items-center gap-3 min-w-0">
-                <button onclick="toggleSidebar()" title="Toggle Sidebar" class="p-2 -ml-1 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition border border-transparent hover:border-slate-200">
-                    <i class="fa-solid fa-bars text-sm"></i>
+                <!-- Authentic Shadcn SidebarTrigger with PanelLeft Icon -->
+                <button onclick="toggleSidebar()" title="Toggle Sidebar (Panel Left)" class="p-2 -ml-1 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition border border-transparent hover:border-slate-200 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-panel-left w-4 h-4 text-slate-600">
+                        <rect width="18" height="18" x="3" y="3" rx="2"/>
+                        <path d="M9 3v18"/>
+                    </svg>
                 </button>
 
                 <div class="h-4 w-[1px] bg-slate-200 hidden sm:block"></div>
@@ -183,17 +230,23 @@
                 </nav>
             </div>
 
-            <!-- Center: Command Search Bar (⌘K) -->
+            <!-- Center: Functional Shadcn Command Search Bar (⌘K) -->
             <div class="hidden md:flex items-center max-w-sm w-full mx-4">
-                <div class="relative w-full">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
-                    <input type="text" id="global-search-input" placeholder="Search dispatches, vehicles, landmarks..." class="w-full pl-8 pr-12 py-1.5 text-xs rounded-lg border border-slate-200 bg-slate-50/50 hover:bg-white focus:bg-white focus:border-uinavy focus:outline-none focus:ring-1 focus:ring-uinavy transition placeholder:text-slate-400 text-slate-900">
-                    <kbd class="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[10px] font-mono text-slate-400 shadow-2xs pointer-events-none">⌘K</kbd>
-                </div>
+                <button onclick="openCommandPalette()" class="w-full relative flex items-center justify-between pl-8 pr-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-slate-300 text-slate-400 transition shadow-2xs text-left cursor-pointer">
+                    <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <span class="text-slate-500">Search dispatches, vehicles, landmarks...</span>
+                    <!-- Shadcn kbd badge -->
+                    <kbd class="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[10px] font-mono text-slate-500 shadow-2xs">⌘K</kbd>
+                </button>
             </div>
 
             <!-- Right: Simulation Controls, Status & Actions -->
             <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                <!-- Mobile Search Trigger -->
+                <button onclick="openCommandPalette()" class="md:hidden p-2 text-slate-500 hover:text-slate-800 rounded-lg hover:bg-slate-100">
+                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                </button>
+
                 <!-- Simulation Quick Deck -->
                 <div class="flex items-center bg-slate-50 rounded-lg p-0.5 border border-slate-200">
                     <button id="header-sim-play-btn" onclick="toggleSimulation()" title="Play/Pause Simulation" class="px-2 py-1 rounded text-xs text-slate-700 hover:text-slate-900 transition flex items-center gap-1">
@@ -201,7 +254,7 @@
                         <span class="text-[11px] font-medium hidden lg:inline">Sim</span>
                     </button>
                     <div class="h-3 w-[1px] bg-slate-200 mx-0.5"></div>
-                    <button onclick="setSimSpeed(1.0)" id="header-spd-1x" class="px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-uinavy text-white shadow-xs">1x</button>
+                    <button onclick="setSimSpeed(1.0)" id="header-spd-1x" class="px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-uinavy text-white shadow-2xs">1x</button>
                     <button onclick="setSimSpeed(2.5)" id="header-spd-2x" class="px-1.5 py-0.5 rounded text-[10px] font-mono text-slate-600 hover:text-slate-900">2.5x</button>
                     <button onclick="setSimSpeed(5.0)" id="header-spd-5x" class="px-1.5 py-0.5 rounded text-[10px] font-mono text-slate-600 hover:text-slate-900">5x</button>
                 </div>
@@ -225,12 +278,100 @@
         </main>
     </div>
 
+    <!-- Shadcn Command Palette Modal (cmdk) -->
+    <div id="cmd-dialog" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-start justify-center pt-16 sm:pt-24 px-4 hidden" onclick="handleCmdBackdropClick(event)">
+        <div class="w-full max-w-lg rounded-xl border border-slate-200 bg-white shadow-2xl overflow-hidden relative">
+            <!-- Command Input Header -->
+            <div class="flex items-center border-b border-slate-100 px-3 py-2.5">
+                <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs mr-2.5"></i>
+                <input type="text" id="cmd-search-input" oninput="filterCommandItems(this.value)" placeholder="Type a command or search campus assets..." class="w-full text-xs text-slate-900 placeholder:text-slate-400 bg-transparent focus:outline-none">
+                <kbd class="px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200 text-[10px] font-mono text-slate-400 cursor-pointer" onclick="closeCommandPalette()">ESC</kbd>
+            </div>
+
+            <!-- Command Results Group List -->
+            <div id="cmd-results-container" class="max-h-80 overflow-y-auto p-2 text-xs space-y-3">
+                <!-- Group 1: Navigation -->
+                <div class="cmd-group space-y-1">
+                    <div class="px-2 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Navigation</div>
+                    <div onclick="cmdNavigate('/')" class="cmd-item flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-slate-100 text-slate-700 hover:text-slate-900 cursor-pointer transition">
+                        <div class="flex items-center gap-2.5"><i class="fa-solid fa-map text-slate-400 w-4 text-center"></i><span>Live 3D & 2D Campus Map</span></div>
+                        <span class="text-[10px] font-mono text-slate-400">/</span>
+                    </div>
+                    <div onclick="cmdNavigate('/vehicles')" class="cmd-item flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-slate-100 text-slate-700 hover:text-slate-900 cursor-pointer transition">
+                        <div class="flex items-center gap-2.5"><i class="fa-solid fa-truck text-slate-400 w-4 text-center"></i><span>Fleet & Drivers Roster</span></div>
+                        <span class="text-[10px] font-mono text-slate-400">/vehicles</span>
+                    </div>
+                    <div onclick="cmdNavigate('/orders')" class="cmd-item flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-slate-100 text-slate-700 hover:text-slate-900 cursor-pointer transition">
+                        <div class="flex items-center gap-2.5"><i class="fa-solid fa-boxes-stacked text-slate-400 w-4 text-center"></i><span>Orders & Logistics</span></div>
+                        <span class="text-[10px] font-mono text-slate-400">/orders</span>
+                    </div>
+                    <div onclick="cmdNavigate('/analytics')" class="cmd-item flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-slate-100 text-slate-700 hover:text-slate-900 cursor-pointer transition">
+                        <div class="flex items-center gap-2.5"><i class="fa-solid fa-chart-line text-slate-400 w-4 text-center"></i><span>Logistics Analytics & KPIs</span></div>
+                        <span class="text-[10px] font-mono text-slate-400">/analytics</span>
+                    </div>
+                </div>
+
+                <!-- Group 2: Fleet Vehicles -->
+                <div class="cmd-group space-y-1">
+                    <div class="px-2 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Campus Fleet Vehicles</div>
+                    <div onclick="cmdFocusVehicle(1)" class="cmd-item flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-slate-100 text-slate-700 hover:text-slate-900 cursor-pointer transition">
+                        <div class="flex items-center gap-2.5"><i class="fa-solid fa-motorcycle text-emerald-600 w-4 text-center"></i><span>UI-01-DSP • Bajaj Boxer BM 100 Courier Bike</span></div>
+                        <span class="inline-flex items-center rounded-md border border-emerald-200/80 bg-emerald-50 px-1.5 py-0.2 text-[9px] font-semibold text-emerald-700">85 kg</span>
+                    </div>
+                    <div onclick="cmdFocusVehicle(2)" class="cmd-item flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-slate-100 text-slate-700 hover:text-slate-900 cursor-pointer transition">
+                        <div class="flex items-center gap-2.5"><i class="fa-solid fa-motorcycle text-red-600 w-4 text-center"></i><span>UI-02-MED • TVS HLX 125 Medical Courier</span></div>
+                        <span class="inline-flex items-center rounded-md border border-red-200/80 bg-red-50 px-1.5 py-0.2 text-[9px] font-semibold text-red-700">90 kg</span>
+                    </div>
+                    <div onclick="cmdFocusVehicle(3)" class="cmd-item flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-slate-100 text-slate-700 hover:text-slate-900 cursor-pointer transition">
+                        <div class="flex items-center gap-2.5"><i class="fa-solid fa-truck-pickup text-amber-500 w-4 text-center"></i><span>UI-03-KEKE • Piaggio Ape Delivery Tricycle</span></div>
+                        <span class="inline-flex items-center rounded-md border border-amber-200/80 bg-amber-50 px-1.5 py-0.2 text-[9px] font-semibold text-amber-700">350 kg</span>
+                    </div>
+                    <div onclick="cmdFocusVehicle(4)" class="cmd-item flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-slate-100 text-slate-700 hover:text-slate-900 cursor-pointer transition">
+                        <div class="flex items-center gap-2.5"><i class="fa-solid fa-van-shuttle text-blue-500 w-4 text-center"></i><span>UI-04-VAN • Suzuki Super Carry Mini Van</span></div>
+                        <span class="inline-flex items-center rounded-md border border-blue-200/80 bg-blue-50 px-1.5 py-0.2 text-[9px] font-semibold text-blue-700">750 kg</span>
+                    </div>
+                    <div onclick="cmdFocusVehicle(5)" class="cmd-item flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-slate-100 text-slate-700 hover:text-slate-900 cursor-pointer transition">
+                        <div class="flex items-center gap-2.5"><i class="fa-solid fa-bus text-uinavy w-4 text-center"></i><span>UI-05-BUS • Toyota HiAce Commuter Van</span></div>
+                        <span class="inline-flex items-center rounded-md border border-uinavy-200 bg-uinavy-50 px-1.5 py-0.2 text-[9px] font-semibold text-uinavy">1200 kg</span>
+                    </div>
+                    <div onclick="cmdFocusVehicle(6)" class="cmd-item flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-slate-100 text-slate-700 hover:text-slate-900 cursor-pointer transition">
+                        <div class="flex items-center gap-2.5"><i class="fa-solid fa-truck-pickup text-amber-600 w-4 text-center"></i><span>UI-06-WKS • Toyota Hilux Workhorse Pickup</span></div>
+                        <span class="inline-flex items-center rounded-md border border-amber-200/80 bg-amber-50 px-1.5 py-0.2 text-[9px] font-semibold text-amber-700">1100 kg</span>
+                    </div>
+                </div>
+
+                <!-- Group 3: Quick Actions -->
+                <div class="cmd-group space-y-1">
+                    <div class="px-2 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Quick Actions</div>
+                    <div onclick="triggerOptimization(); closeCommandPalette();" class="cmd-item flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-slate-100 text-slate-700 hover:text-slate-900 cursor-pointer transition">
+                        <div class="flex items-center gap-2.5"><i class="fa-solid fa-wand-magic-sparkles text-amber-500 w-4 text-center"></i><span>Run VRP Optimization (Clarke-Wright)</span></div>
+                        <span class="text-[10px] font-mono text-slate-400">Action</span>
+                    </div>
+                    <div onclick="toggleSimulation(); closeCommandPalette();" class="cmd-item flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-slate-100 text-slate-700 hover:text-slate-900 cursor-pointer transition">
+                        <div class="flex items-center gap-2.5"><i class="fa-solid fa-play-pause text-slate-400 w-4 text-center"></i><span>Play / Pause Simulation</span></div>
+                        <span class="text-[10px] font-mono text-slate-400">Action</span>
+                    </div>
+                    <div onclick="resetDemoData(); closeCommandPalette();" class="cmd-item flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-rose-50 text-slate-700 hover:text-rose-700 cursor-pointer transition">
+                        <div class="flex items-center gap-2.5"><i class="fa-solid fa-rotate-left text-rose-500 w-4 text-center"></i><span>Reset Campus Case Study Fleet</span></div>
+                        <span class="text-[10px] font-mono text-rose-500">Reset</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Command Footer Hint -->
+            <div class="border-t border-slate-100 px-3 py-2 bg-slate-50 flex items-center justify-between text-[10px] text-slate-400">
+                <span>Navigate with mouse or arrow keys</span>
+                <span>ESC to close</span>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notification Container -->
     <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col space-y-2 pointer-events-none max-w-sm w-full px-4"></div>
 
     <script src="/static/js/websocket.js"></script>
     <script>
-        // Shadcn Sidebar Toggle Function
+        // Shadcn Sidebar Toggle Function (Expands to w-64, collapses to icon mode w-16)
         function toggleSidebar(forceState) {
             const sidebar = document.getElementById('app-sidebar');
             const backdrop = document.getElementById('sidebar-backdrop');
@@ -250,19 +391,96 @@
                     if (backdrop) backdrop.classList.add('hidden');
                 }
             } else {
-                // Desktop Collapse to Mini Icon Sidebar
-                sidebar.classList.toggle('lg:w-16');
+                // Desktop Collapse to icon-only mode
+                sidebar.classList.toggle('sidebar-collapsed');
                 sidebar.classList.toggle('w-64');
-                const textElements = sidebar.querySelectorAll('.truncate, .uppercase, .shadow-xs, .space-y-2');
-                textElements.forEach(el => {
-                    if (sidebar.classList.contains('lg:w-16')) {
-                        if (!el.closest('.h-14')) el.classList.add('lg:hidden');
-                    } else {
-                        el.classList.remove('lg:hidden');
-                    }
-                });
+                const isNowCollapsed = sidebar.classList.contains('sidebar-collapsed');
+                localStorage.setItem('ui_sidebar_collapsed', isNowCollapsed ? 'true' : 'false');
             }
         }
+
+        // Restore user's preferred sidebar state on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.getElementById('app-sidebar');
+            if (sidebar && window.innerWidth >= 1024) {
+                const saved = localStorage.getItem('ui_sidebar_collapsed');
+                if (saved === 'true') {
+                    sidebar.classList.add('sidebar-collapsed');
+                    sidebar.classList.remove('w-64');
+                }
+            }
+        });
+
+        // Command Palette (cmdk) Controls
+        function openCommandPalette() {
+            const dialog = document.getElementById('cmd-dialog');
+            const input = document.getElementById('cmd-search-input');
+            if (!dialog || !input) return;
+
+            dialog.classList.remove('hidden');
+            input.value = '';
+            filterCommandItems('');
+            setTimeout(() => input.focus(), 50);
+        }
+
+        function closeCommandPalette() {
+            const dialog = document.getElementById('cmd-dialog');
+            if (dialog) dialog.classList.add('hidden');
+        }
+
+        function handleCmdBackdropClick(e) {
+            if (e.target && e.target.id === 'cmd-dialog') {
+                closeCommandPalette();
+            }
+        }
+
+        function filterCommandItems(query) {
+            const q = (query || '').toLowerCase().trim();
+            const items = document.querySelectorAll('.cmd-item');
+            const groups = document.querySelectorAll('.cmd-group');
+
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (!q || text.includes(q)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Hide empty groups
+            groups.forEach(g => {
+                const visibleItems = g.querySelectorAll('.cmd-item[style*="display: flex"], .cmd-item:not([style*="display: none"])');
+                const hasVisible = Array.from(g.querySelectorAll('.cmd-item')).some(it => it.style.display !== 'none');
+                g.style.display = hasVisible ? 'block' : 'none';
+            });
+        }
+
+        function cmdNavigate(url) {
+            closeCommandPalette();
+            window.location.href = url;
+        }
+
+        function cmdFocusVehicle(vehId) {
+            closeCommandPalette();
+            if (window.location.pathname === '/') {
+                if (window.campus3D) {
+                    window.campus3D.selectVehicle({ vehicle_id: vehId });
+                }
+            } else {
+                window.location.href = `/?focus=${vehId}`;
+            }
+        }
+
+        // Global Command Search (⌘K / Ctrl+K) & Escape Listener
+        document.addEventListener('keydown', (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                openCommandPalette();
+            } else if (e.key === 'Escape') {
+                closeCommandPalette();
+            }
+        });
 
         // Global Simulation Controls
         let isGlobalSimRunning = true;
@@ -304,12 +522,12 @@
                     
                     if (btn) {
                         btn.className = isSelected 
-                            ? 'px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-uinavy text-white shadow-xs' 
+                            ? 'px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-uinavy text-white shadow-2xs' 
                             : 'px-1.5 py-0.5 rounded text-[10px] font-mono text-slate-600 hover:text-slate-900';
                     }
                     if (pageBtn) {
                         pageBtn.className = isSelected 
-                            ? 'px-2 py-0.5 rounded text-[11px] font-mono font-semibold bg-uinavy text-white shadow-xs transition' 
+                            ? 'px-2 py-0.5 rounded text-[11px] font-mono font-semibold bg-uinavy text-white shadow-2xs transition' 
                             : 'px-2 py-0.5 rounded text-[11px] font-mono text-slate-600 hover:text-slate-900 transition';
                     }
                 });
@@ -377,15 +595,6 @@
                 setTimeout(() => toast.remove(), 250);
             }, 3500);
         }
-
-        // Global Command Search (⌘K / Ctrl+K) Focus
-        document.addEventListener('keydown', (e) => {
-            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-                e.preventDefault();
-                const search = document.getElementById('global-search-input');
-                if (search) search.focus();
-            }
-        });
     </script>
     {% block scripts %}{% endblock %}
 </body>
