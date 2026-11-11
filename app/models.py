@@ -13,10 +13,13 @@ class VehicleStatus(str, enum.Enum):
     MAINTENANCE = "maintenance"
 
 class VehicleType(str, enum.Enum):
-    ELECTRIC_VAN = "Electric Van"
-    CARGO_TRUCK = "Cargo Truck"
-    CARGO_BIKE = "Cargo Bike"
-    HYBRID_VAN = "Hybrid Van"
+    CAMPUS_SHUTTLE = "Campus Shuttle Bus"
+    UTILITY_PICKUP = "Works Utility Pickup"
+    DISPATCH_BIKE = "Campus Dispatch Bike"
+    MEDICAL_AMBULANCE = "Medical Logistics Ambulance"
+    HEAVY_TRUCK = "Heavy Maintenance Truck"
+    ELECTRIC_VAN = "Eco Solar Shuttle"
+
 
 class DriverStatus(str, enum.Enum):
     AVAILABLE = "available"

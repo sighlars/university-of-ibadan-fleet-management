@@ -2,15 +2,16 @@ import pytest
 from app.engine.router import VRPOptimizer
 
 def test_vrp_optimizer_basic():
-    depot = {"id": 1, "latitude": 37.78912, "longitude": -122.39845}
+    # University of Ibadan Works Depot
+    depot = {"id": 1, "latitude": 7.445210, "longitude": 3.899015}
     vehicles = [
-        {"id": 1, "plate_number": "VAN-01", "capacity_kg": 500.0},
-        {"id": 2, "plate_number": "VAN-02", "capacity_kg": 500.0}
+        {"id": 1, "plate_number": "UI-08-BUS", "capacity_kg": 1500.0},
+        {"id": 2, "plate_number": "UI-14-WKS", "capacity_kg": 1000.0}
     ]
     orders = [
-        {"id": 101, "customer_name": "Cust A", "delivery_address": "Addr A", "destination_lat": 37.790, "destination_lng": -122.400, "weight_kg": 50.0, "status": "pending"},
-        {"id": 102, "customer_name": "Cust B", "delivery_address": "Addr B", "destination_lat": 37.795, "destination_lng": -122.405, "weight_kg": 70.0, "status": "pending"},
-        {"id": 103, "customer_name": "Cust C", "delivery_address": "Addr C", "destination_lat": 37.785, "destination_lng": -122.410, "weight_kg": 40.0, "status": "pending"}
+        {"id": 101, "customer_name": "Kenneth Dike Library", "delivery_address": "KDL, UI", "destination_lat": 7.4478, "destination_lng": 3.9008, "weight_kg": 45.0, "status": "pending"},
+        {"id": 102, "customer_name": "Faculty of Technology", "delivery_address": "Tech, UI", "destination_lat": 7.4520, "destination_lng": 3.8985, "weight_kg": 70.0, "status": "pending"},
+        {"id": 103, "customer_name": "Jaja Clinic", "delivery_address": "Jaja, UI", "destination_lat": 7.4462, "destination_lng": 3.8970, "weight_kg": 20.0, "status": "pending"}
     ]
 
     routes = VRPOptimizer.optimize_fleet_routes(depot, vehicles, orders)
@@ -22,16 +23,16 @@ def test_vrp_optimizer_basic():
         assert len(r["polyline"]) > 0
 
 def test_vrp_capacity_constraint():
-    depot = {"id": 1, "latitude": 37.78912, "longitude": -122.39845}
-    # Vehicle can only carry 60kg
+    depot = {"id": 1, "latitude": 7.445210, "longitude": 3.899015}
+    # Dispatch Bike with 50kg capacity limit
     vehicles = [
-        {"id": 1, "plate_number": "TINY-VAN", "capacity_kg": 60.0},
-        {"id": 2, "plate_number": "TINY-VAN-2", "capacity_kg": 60.0}
+        {"id": 1, "plate_number": "UI-02-DSP", "capacity_kg": 50.0},
+        {"id": 2, "plate_number": "UI-03-DSP", "capacity_kg": 50.0}
     ]
-    # Orders are 40kg each -> cannot combine on 1 vehicle without exceeding 60kg
+    # Two parcels of 40kg each -> cannot combine on one 50kg bike
     orders = [
-        {"id": 1, "customer_name": "A", "delivery_address": "Addr A", "destination_lat": 37.790, "destination_lng": -122.400, "weight_kg": 40.0, "status": "pending"},
-        {"id": 2, "customer_name": "B", "delivery_address": "Addr B", "destination_lat": 37.795, "destination_lng": -122.405, "weight_kg": 40.0, "status": "pending"}
+        {"id": 1, "customer_name": "A", "delivery_address": "Addr A", "destination_lat": 7.448, "destination_lng": 3.900, "weight_kg": 40.0, "status": "pending"},
+        {"id": 2, "customer_name": "B", "delivery_address": "Addr B", "destination_lat": 7.450, "destination_lng": 3.898, "weight_kg": 40.0, "status": "pending"}
     ]
 
     routes = VRPOptimizer.optimize_fleet_routes(depot, vehicles, orders)

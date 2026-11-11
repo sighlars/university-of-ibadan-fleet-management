@@ -39,8 +39,9 @@ class DriverResponse(DriverBase):
 class VehicleBase(BaseModel):
     plate_number: str
     model: str
-    vehicle_type: VehicleType = VehicleType.ELECTRIC_VAN
+    vehicle_type: VehicleType = VehicleType.UTILITY_PICKUP
     capacity_kg: float = 500.0
+
     current_lat: float
     current_lng: float
     status: VehicleStatus = VehicleStatus.IDLE

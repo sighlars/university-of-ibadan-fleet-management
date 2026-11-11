@@ -9,16 +9,17 @@ class FleetMapController {
         this.vehicleMarkers = new Map(); // vehicle_id -> L.Marker
         this.routeLayers = new Map();   // route_id -> L.Polyline
         this.stopMarkers = new Map();    // order_id -> L.Marker
-        this.depotCoords = [37.78912, -122.39845];
+        // University of Ibadan Central Works & Transport Depot
+        this.depotCoords = [7.445210, 3.899015];
         this.init();
     }
 
     init() {
-        // Initialize Map
+        // Initialize Map centered on University of Ibadan campus
         this.map = L.map('map', {
             zoomControl: false,
             attributionControl: false
-        }).setView(this.depotCoords, 13);
+        }).setView(this.depotCoords, 15);
 
         // Dark Basemap Tiles
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
@@ -31,6 +32,7 @@ class FleetMapController {
 
         // Add Central Depot Marker
         this.renderDepot();
+
 
         // Load initial routes & stops
         this.loadRoutesAndStops();
@@ -65,14 +67,15 @@ class FleetMapController {
         this.depotMarker = L.marker(this.depotCoords, { icon: depotIcon }).addTo(this.map);
         this.depotMarker.bindPopup(`
             <div class="space-y-1">
-                <div class="font-bold text-teal-400 text-sm flex items-center gap-1.5">
+                <div class="font-bold text-amber-400 text-sm flex items-center gap-1.5">
                     <i class="fa-solid fa-warehouse"></i>
-                    Central Logistics Hub
+                    UI Central Transport & Works Pool
                 </div>
-                <div class="text-slate-300">500 Howard Street, San Francisco</div>
-                <div class="text-slate-400 text-[11px]">Primary Dispatch & EV Charging Depot</div>
+                <div class="text-slate-300 font-medium">Works & Maintenance Dept, University of Ibadan</div>
+                <div class="text-slate-400 text-[11px]">Central Logistics Depot, Fueling & Maintenance Facility</div>
             </div>
         `);
+
     }
 
     async loadRoutesAndStops() {

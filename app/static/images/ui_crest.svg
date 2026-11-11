@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="uiGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFD700"/>
+      <stop offset="100%" stop-color="#DAA520"/>
+    </linearGradient>
+    <linearGradient id="uiBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#002147"/>
+      <stop offset="100%" stop-color="#00142B"/>
+    </linearGradient>
+  </defs>
+  <!-- Shield Outer -->
+  <path d="M50 5 C75 5 90 20 90 45 C90 70 50 95 50 95 C50 95 10 70 10 45 C10 20 25 5 50 5 Z" fill="url(#uiBlue)" stroke="url(#uiGold)" stroke-width="4"/>
+  <!-- Gold Inner Border -->
+  <path d="M50 12 C70 12 83 24 83 45 C83 66 50 87 50 87 C50 87 17 66 17 45 C17 24 30 12 50 12 Z" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <!-- Open Book of Knowledge -->
+  <path d="M50 42 C45 35 30 35 25 38 L25 58 C30 55 45 55 50 62 C55 55 70 55 75 58 L75 38 C70 35 55 35 50 42 Z" fill="#FFFFFF" stroke="#002147" stroke-width="1.5"/>
+  <line x1="50" y1="42" x2="50" y2="62" stroke="#002147" stroke-width="2"/>
+  <!-- Rising Sun / Fountain Rays -->
+  <circle cx="50" cy="27" r="5" fill="url(#uiGold)"/>
+  <line x1="50" y1="18" x2="50" y2="21" stroke="#FFD700" stroke-width="2"/>
+  <line x1="43" y1="20" x2="45" y2="23" stroke="#FFD700" stroke-width="2"/>
+  <line x1="57" y1="20" x2="55" y2="23" stroke="#FFD700" stroke-width="2"/>
+  <line x1="40" y1="27" x2="43" y2="27" stroke="#FFD700" stroke-width="2"/>
+  <line x1="60" y1="27" x2="57" y2="27" stroke="#FFD700" stroke-width="2"/>
+  <!-- Motto Banner -->
+  <rect x="22" y="70" width="56" height="12" rx="3" fill="#D4AF37"/>
+  <text x="50" y="79" font-family="serif" font-size="6.5" font-weight="bold" fill="#002147" text-anchor="middle" letter-spacing="0.5">RECTE SAPERE FONS</text>
+</svg>

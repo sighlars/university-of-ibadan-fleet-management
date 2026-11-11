@@ -7,42 +7,43 @@
     <!-- Left Floating Fleet Sidebar -->
     <aside class="absolute left-4 top-4 bottom-4 w-96 z-20 flex flex-col bg-slate-900/90 backdrop-blur-md border border-slate-800/80 rounded-2xl shadow-2xl overflow-hidden transition-all duration-300">
         <!-- Sidebar Header -->
-        <div class="p-4 border-b border-slate-800 flex items-center justify-between shrink-0">
+        <div class="p-4 border-b border-slate-800 flex items-center justify-between shrink-0 bg-[#001733]/60">
             <div>
-                <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-                    <i class="fa-solid fa-satellite-dish text-teal-400"></i>
-                    Live Fleet Telematics
+                <h2 class="text-xs font-bold uppercase tracking-wider text-amber-300 flex items-center gap-2">
+                    <i class="fa-solid fa-satellite-dish text-amber-400"></i>
+                    UI Campus Telematics
                 </h2>
-                <p class="text-xs text-slate-500">Real-time GPS tracking & vehicle status</p>
+                <p class="text-[11px] text-slate-400">Real-time GPS tracking & vehicle telemetry</p>
             </div>
-            <span id="vehicle-count-badge" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-800 text-teal-400 border border-slate-700">0 Active</span>
+            <span id="vehicle-count-badge" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-800 text-amber-300 border border-slate-700">0 Active</span>
         </div>
 
         <!-- Vehicle List Container -->
         <div id="vehicle-card-list" class="flex-1 overflow-y-auto p-3 space-y-2.5">
             <div class="text-center py-10 text-slate-500 text-xs">
                 <i class="fa-solid fa-spinner fa-spin text-lg mb-2"></i>
-                <p>Loading fleet telematics...</p>
+                <p>Loading UI fleet telematics...</p>
             </div>
         </div>
 
         <!-- Sidebar Quick Dispatch Action Bar -->
-        <div class="p-4 border-t border-slate-800 bg-slate-950/60 shrink-0 space-y-2">
-            <button id="btn-quick-optimize" onclick="triggerOptimization()" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white font-semibold text-xs shadow-lg shadow-teal-500/25 flex items-center justify-center gap-2 transition active:scale-[0.98]">
+        <div class="p-4 border-t border-slate-800 bg-slate-950/80 shrink-0 space-y-2">
+            <button id="btn-quick-optimize" onclick="triggerOptimization()" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-600 hover:to-yellow-600 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 transition active:scale-[0.98]">
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
-                <span>Optimize & Dispatch All</span>
+                <span>Optimize & Dispatch UI Fleet</span>
             </button>
             <div class="flex gap-2">
-                <button onclick="addSampleOrders()" class="flex-1 py-1.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 flex items-center justify-center gap-1.5 transition">
-                    <i class="fa-solid fa-plus"></i>
-                    <span>+5 Orders</span>
+                <button onclick="addSampleOrders()" class="flex-1 py-1.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 flex items-center justify-center gap-1.5 transition">
+                    <i class="fa-solid fa-plus text-amber-400"></i>
+                    <span>+5 Dispatches</span>
                 </button>
-                <a href="/orders" class="flex-1 py-1.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 flex items-center justify-center gap-1.5 transition text-center">
-                    <i class="fa-solid fa-list-check"></i>
+                <a href="/orders" class="flex-1 py-1.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 flex items-center justify-center gap-1.5 transition text-center">
+                    <i class="fa-solid fa-list-check text-amber-400"></i>
                     <span>Manage</span>
                 </a>
             </div>
         </div>
+
     </aside>
 
     <!-- Map Canvas Container -->
@@ -109,24 +110,25 @@
 
     <!-- Map Legend -->
     <div class="absolute bottom-6 right-6 z-20 bg-slate-900/90 backdrop-blur-md border border-slate-800 p-3 rounded-xl shadow-xl text-xs space-y-1.5 pointer-events-auto">
-        <div class="font-bold text-slate-300 uppercase tracking-wider text-[10px] mb-1">Map Legend</div>
+        <div class="font-bold text-amber-300 uppercase tracking-wider text-[10px] mb-1">UI Campus Map Legend</div>
         <div class="flex items-center gap-2">
             <span class="w-3 h-3 rounded-full bg-teal-500 border border-white"></span>
-            <span class="text-slate-300">Delivery Vehicle (Live)</span>
+            <span class="text-slate-300">UI Fleet Vehicle (Live GPS)</span>
         </div>
         <div class="flex items-center gap-2">
             <span class="w-3 h-3 rounded-full bg-amber-500 border border-white"></span>
-            <span class="text-slate-300">Customer Delivery Stop</span>
+            <span class="text-slate-300">Faculty / Department Delivery Stop</span>
         </div>
         <div class="flex items-center gap-2">
             <span class="w-3 h-3 rounded-md bg-blue-600 border border-white"></span>
-            <span class="text-slate-300">Central Distribution Hub</span>
+            <span class="text-slate-300">UI Central Works & Transport Pool</span>
         </div>
         <div class="flex items-center gap-2">
-            <span class="w-4 h-0.5 bg-teal-400"></span>
-            <span class="text-slate-300">Optimized VRP Route</span>
+            <span class="w-4 h-0.5 bg-amber-400"></span>
+            <span class="text-slate-300">Optimized Campus Logistics Route</span>
         </div>
     </div>
+
 </div>
 {% endblock %}
 

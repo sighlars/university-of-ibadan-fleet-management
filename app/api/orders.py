@@ -12,8 +12,8 @@ router = APIRouter(prefix="/orders", tags=["Orders"])
 
 def generate_tracking_number() -> str:
     chars = string.ascii_uppercase + string.digits
-    suffix = ''.join(random.choices(chars, k=7))
-    return f"FLT-{suffix}"
+    suffix = ''.join(random.choices(chars, k=5))
+    return f"UI-LOG-{suffix}"
 
 @router.get("", response_model=List[OrderResponse])
 def get_orders(status_filter: Optional[str] = None, db: Session = Depends(get_db)):
@@ -49,45 +49,46 @@ def create_order(order_in: OrderCreate, db: Session = Depends(get_db)):
 
 @router.post("/batch-sample", response_model=List[OrderResponse])
 def create_batch_sample_orders(count: int = 5, db: Session = Depends(get_db)):
-    """Quickly spawn realistic sample orders around SF for demonstration and routing"""
+    """Spawns realistic campus logistics dispatch orders across University of Ibadan facilities."""
     depot = db.query(Depot).first()
     depot_id = depot.id if depot else 1
 
     sample_locations = [
-        ("Mission Dolores Park", "566 Dolores St, San Francisco", 37.7596, -122.4270),
-        ("Civic Center Plaza", "335 McAllister St, San Francisco", 37.7793, -122.4172),
-        ("Embarcadero Ferry Building", "1 Ferry Building, San Francisco", 37.7955, -122.3937),
-        ("Presidio Main Post", "103 Montgomery St, San Francisco", 37.7997, -122.4580),
-        ("Sunset District Hub", "1900 Irving St, San Francisco", 37.7638, -122.4770),
-        ("Fisherman's Wharf", "2801 Leavenworth St, San Francisco", 37.8080, -122.4177),
-        ("Castro Theatre", "429 Castro St, San Francisco", 37.7620, -122.4348),
-        ("Oracle Park Logistics Gate", "24 Willie Mays Plaza, San Francisco", 37.7786, -122.3893),
-        ("Potrero Hill Library", "1616 20th St, San Francisco", 37.7615, -122.3986),
-        ("Financial District Tower", "555 California St, San Francisco", 37.7925, -122.4040),
+        ("Faculty of Veterinary Medicine", "Vet Medicine Clinical Complex, UI", 7.4475, 3.9042),
+        ("Department of Computer Science", "Computer Science Annex, Faculty of Science, UI", 7.4502, 3.9025),
+        ("Faculty of Law Auditorium", "Faculty of Law, Off Tech Road, UI", 7.4515, 3.8995),
+        ("Abdulsalami Abubakar PG Hall", "Abubakar Hall, UI Postgraduate Village", 7.4510, 3.8955),
+        ("UI Botanical Gardens & Zoological Garden", "Zoological Gardens Boulevard, UI", 7.4430, 3.9005),
+        ("Faculty of Education Complex", "Education Building, UI Campus", 7.4485, 3.8970),
+        ("Sub-Deanery / Student Affairs Division", "Student Affairs Complex, UI", 7.4472, 3.8988),
+        ("Distance Learning Centre (DLC) Resource Hub", "DLC Administrative Complex, UI", 7.4418, 3.8982),
+        ("UI Water Treatment Plant", "Works Water Division, Barth Road, UI", 7.4438, 3.9030),
+        ("Trenchard Hall Central Examinations Desk", "Trenchard Hall, University of Ibadan", 7.4482, 3.9001),
     ]
 
-    customer_names = [
-        "TechCorp Inc.", "Apex BioLabs", "GreenEats Cafe", "BlueSky Robotics", 
-        "Vertex Hardware", "Marina Groceries", "Soma Design Studio", "CloudPeak Networks"
+    department_units = [
+        "Registry Examinations Unit", "Faculty Stores Division", "Laboratory Diagnostics Center",
+        "Student Affairs Logistics", "University Health Board", "Works Maintenance Dispatch",
+        "PG College Records Desk", "Distance Learning Delivery Hub"
     ]
 
     created = []
     for _ in range(min(count, len(sample_locations))):
         name, addr, lat, lng = random.choice(sample_locations)
-        # Add slight jitter so orders don't exactly stack
-        lat += random.uniform(-0.003, 0.003)
-        lng += random.uniform(-0.003, 0.003)
+        # Slight jitter
+        lat += random.uniform(-0.0005, 0.0005)
+        lng += random.uniform(-0.0005, 0.0005)
 
         tracking = generate_tracking_number()
         order = Order(
             tracking_number=tracking,
-            customer_name=f"{random.choice(customer_names)}",
-            customer_phone=f"+1 415-555-{random.randint(1000, 9999)}",
+            customer_name=f"{random.choice(department_units)} ({name})",
+            customer_phone=f"+234 {random.choice(['803', '802', '813', '805', '816'])}-{random.randint(100, 999)}-{random.randint(1000, 9999)}",
             delivery_address=addr,
             destination_lat=round(lat, 6),
             destination_lng=round(lng, 6),
-            weight_kg=round(random.uniform(2.0, 35.0), 1),
-            priority=random.choice([OrderPriority.MEDIUM, OrderPriority.HIGH, OrderPriority.LOW]),
+            weight_kg=round(random.uniform(5.0, 75.0), 1),
+            priority=random.choice([OrderPriority.MEDIUM, OrderPriority.HIGH, OrderPriority.URGENT]),
             status=OrderStatus.PENDING,
             depot_id=depot_id
         )
@@ -98,6 +99,7 @@ def create_batch_sample_orders(count: int = 5, db: Session = Depends(get_db)):
     for o in created:
         db.refresh(o)
     return created
+
 
 @router.get("/{order_id}", response_model=OrderResponse)
 def get_order(order_id: int, db: Session = Depends(get_db)):

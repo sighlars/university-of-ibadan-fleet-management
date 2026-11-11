@@ -7,14 +7,18 @@
     <!-- Header with Action Button -->
     <div class="flex items-center justify-between">
         <div>
-            <h2 class="text-2xl font-bold text-white tracking-tight">Fleet Vehicles & Drivers</h2>
-            <p class="text-sm text-slate-400">Manage vehicle telemetry profiles, maintenance status, and licensed driver assignments</p>
+            <h2 class="text-2xl font-bold text-white tracking-tight flex items-center gap-2.5">
+                <span>UI Transport Pool Fleet & Drivers</span>
+                <span class="text-xs px-2.5 py-0.5 rounded-full bg-amber-400/10 text-amber-300 border border-amber-400/30 font-semibold">Works & Maintenance</span>
+            </h2>
+            <p class="text-sm text-slate-400">Institutional vehicle assets, fuel efficiency tracking, and authorized university driver allocations</p>
         </div>
-        <button onclick="openAddVehicleModal()" class="px-4 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-600 text-white font-semibold text-xs shadow-lg shadow-teal-500/20 flex items-center gap-2 transition">
+        <button onclick="openAddVehicleModal()" class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 flex items-center gap-2 transition">
             <i class="fa-solid fa-plus"></i>
-            <span>Register Vehicle</span>
+            <span>Register Fleet Vehicle</span>
         </button>
     </div>
+
 
     <!-- Quick Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -68,14 +72,17 @@
             </div>
             <!-- Search & Filter -->
             <div class="flex items-center gap-3">
-                <select id="vehicle-type-filter" onchange="filterVehicles()" class="bg-slate-800 text-xs text-slate-300 rounded-lg px-3 py-1.5 border border-slate-700 focus:outline-none focus:border-teal-500">
-                    <option value="">All Vehicle Types</option>
-                    <option value="Electric Van">Electric Van</option>
-                    <option value="Cargo Truck">Cargo Truck</option>
-                    <option value="Cargo Bike">Cargo Bike</option>
-                    <option value="Hybrid Van">Hybrid Van</option>
+                <select id="vehicle-type-filter" onchange="filterVehicles()" class="bg-slate-800 text-xs text-slate-300 rounded-lg px-3 py-1.5 border border-slate-700 focus:outline-none focus:border-amber-500">
+                    <option value="">All Vehicle Categories</option>
+                    <option value="Campus Shuttle Bus">Campus Shuttle Bus</option>
+                    <option value="Works Utility Pickup">Works Utility Pickup</option>
+                    <option value="Campus Dispatch Bike">Campus Dispatch Bike</option>
+                    <option value="Medical Logistics Ambulance">Medical Logistics Ambulance</option>
+                    <option value="Heavy Maintenance Truck">Heavy Maintenance Truck</option>
+                    <option value="Eco Solar Shuttle">Eco Solar Shuttle</option>
                 </select>
             </div>
+
         </div>
 
         <div class="overflow-x-auto">
@@ -110,33 +117,36 @@
 
         <form id="add-vehicle-form" onsubmit="submitVehicleForm(event)" class="space-y-4 text-xs">
             <div>
-                <label class="block text-slate-300 font-semibold mb-1">Plate Number</label>
-                <input type="text" id="veh-plate" required placeholder="e.g. EV-VAN-105" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-teal-500">
+                <label class="block text-slate-300 font-semibold mb-1">Official Plate Number</label>
+                <input type="text" id="veh-plate" required placeholder="e.g. UI-09-BUS or UI-25-WKS" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
             </div>
             <div>
-                <label class="block text-slate-300 font-semibold mb-1">Make & Model</label>
-                <input type="text" id="veh-model" required placeholder="e.g. BrightDrop Zevo 600" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-teal-500">
+                <label class="block text-slate-300 font-semibold mb-1">Vehicle Make & Model</label>
+                <input type="text" id="veh-model" required placeholder="e.g. Toyota HiAce 2.7L Commuter" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
             </div>
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-slate-300 font-semibold mb-1">Vehicle Type</label>
-                    <select id="veh-type" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-teal-500">
-                        <option value="Electric Van">Electric Van</option>
-                        <option value="Cargo Truck">Cargo Truck</option>
-                        <option value="Cargo Bike">Cargo Bike</option>
-                        <option value="Hybrid Van">Hybrid Van</option>
+                    <label class="block text-slate-300 font-semibold mb-1">Vehicle Category</label>
+                    <select id="veh-type" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+                        <option value="Campus Shuttle Bus">Campus Shuttle Bus</option>
+                        <option value="Works Utility Pickup">Works Utility Pickup</option>
+                        <option value="Campus Dispatch Bike">Campus Dispatch Bike</option>
+                        <option value="Medical Logistics Ambulance">Medical Logistics Ambulance</option>
+                        <option value="Heavy Maintenance Truck">Heavy Maintenance Truck</option>
+                        <option value="Eco Solar Shuttle">Eco Solar Shuttle</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-slate-300 font-semibold mb-1">Capacity (kg)</label>
-                    <input type="number" id="veh-cap" required min="50" max="10000" value="800" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-teal-500">
+                    <label class="block text-slate-300 font-semibold mb-1">Payload Capacity (kg)</label>
+                    <input type="number" id="veh-cap" required min="50" max="10000" value="1000" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500">
                 </div>
             </div>
             <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
                 <button type="button" onclick="closeAddVehicleModal()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium">Cancel</button>
-                <button type="submit" class="px-5 py-2 rounded-lg bg-teal-500 hover:bg-teal-600 text-white font-semibold">Register</button>
+                <button type="submit" class="px-5 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold">Register Fleet Asset</button>
             </div>
         </form>
+
     </div>
 </div>
 {% endblock %}
@@ -254,12 +264,13 @@
             model: document.getElementById('veh-model').value,
             vehicle_type: document.getElementById('veh-type').value,
             capacity_kg: parseFloat(document.getElementById('veh-cap').value),
-            current_lat: 37.78912,
-            current_lng: -122.39845,
+            current_lat: 7.445210,
+            current_lng: 3.899015,
             status: "idle",
             battery_fuel_pct: 100.0,
             mileage_km: 0.0,
-            max_range_km: 250.0
+            max_range_km: 500.0
+
         };
 
         try {

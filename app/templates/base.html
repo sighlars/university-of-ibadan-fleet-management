@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{{ app_name }}{% endblock %}</title>
+    <link rel="icon" type="image/svg+xml" href="/static/images/ui_crest.svg">
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -13,6 +14,13 @@
             theme: {
                 extend: {
                     colors: {
+                        ui: {
+                            navy: '#002147',
+                            darknavy: '#00142b',
+                            gold: '#D4AF37',
+                            amber: '#f59e0b',
+                            blue: '#1e3a8a',
+                        },
                         brand: {
                             50: '#f0fdfa',
                             500: '#14b8a6',
@@ -40,53 +48,60 @@
 </head>
 <body class="h-full flex flex-col font-sans antialiased overflow-hidden">
     <!-- Top Navigation Bar -->
-    <header class="bg-slate-900 border-b border-slate-800 px-6 py-3.5 flex items-center justify-between z-30 shrink-0">
+    <header class="bg-[#001733] border-b border-amber-500/20 px-6 py-3 flex items-center justify-between z-30 shrink-0 shadow-lg">
         <div class="flex items-center space-x-4">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-teal-600 to-emerald-400 flex items-center justify-center shadow-lg shadow-teal-500/20">
-                    <i class="fa-solid fa-truck-fast text-white text-lg"></i>
+            <div class="flex items-center space-x-3.5">
+                <!-- University of Ibadan Crest / Logo -->
+                <div class="flex items-center gap-3">
+                    <img src="/static/images/ui_crest.svg" alt="University of Ibadan Crest" class="w-10 h-10 drop-shadow-md">
+                    <div class="h-8 w-px bg-slate-700/60 hidden sm:block"></div>
+                    <img src="/static/images/ui_logo.png" alt="University of Ibadan" class="h-8 max-w-[130px] object-contain hidden md:block brightness-110">
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
-                        FleetFlow
-                        <span class="text-xs px-2 py-0.5 rounded-full bg-teal-500/10 text-teal-400 border border-teal-500/20 font-medium">Logistics AI</span>
+                    <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
+                        UI-FleetFlow
+                        <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-300 border border-amber-400/30 font-semibold uppercase tracking-wider">Works & Transport Pool</span>
                     </h1>
-                    <p class="text-xs text-slate-400">Intelligent Fleet & Real-Time Logistics Routing</p>
+                    <p class="text-[11px] text-slate-300 flex items-center gap-1.5 font-medium">
+                        <span>University of Ibadan</span>
+                        <span class="text-amber-400/80">•</span>
+                        <span class="italic text-amber-300/80">Recte Sapere Fons</span>
+                    </p>
                 </div>
             </div>
         </div>
 
         <!-- Navigation Links -->
-        <nav class="flex items-center space-x-1">
-            <a href="/" class="px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 {% if active_tab == 'dashboard' %}bg-teal-500/15 text-teal-400 border border-teal-500/30{% else %}text-slate-400 hover:text-white hover:bg-slate-800/60{% endif %}">
-                <i class="fa-solid fa-map-location-dot"></i>
-                <span>Live Map</span>
+        <nav class="flex items-center space-x-1.5">
+            <a href="/" class="px-3.5 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 {% if active_tab == 'dashboard' %}bg-amber-500/15 text-amber-300 border border-amber-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/60{% endif %}">
+                <i class="fa-solid fa-map-location-dot text-amber-400"></i>
+                <span>Campus Live Map</span>
             </a>
-            <a href="/vehicles" class="px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 {% if active_tab == 'vehicles' %}bg-teal-500/15 text-teal-400 border border-teal-500/30{% else %}text-slate-400 hover:text-white hover:bg-slate-800/60{% endif %}">
-                <i class="fa-solid fa-truck"></i>
-                <span>Fleet & Drivers</span>
+            <a href="/vehicles" class="px-3.5 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 {% if active_tab == 'vehicles' %}bg-amber-500/15 text-amber-300 border border-amber-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/60{% endif %}">
+                <i class="fa-solid fa-truck text-amber-400"></i>
+                <span>UI Fleet & Drivers</span>
             </a>
-            <a href="/orders" class="px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 {% if active_tab == 'orders' %}bg-teal-500/15 text-teal-400 border border-teal-500/30{% else %}text-slate-400 hover:text-white hover:bg-slate-800/60{% endif %}">
-                <i class="fa-solid fa-box-open"></i>
-                <span>Orders & Dispatch</span>
+            <a href="/orders" class="px-3.5 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 {% if active_tab == 'orders' %}bg-amber-500/15 text-amber-300 border border-amber-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/60{% endif %}">
+                <i class="fa-solid fa-box-open text-amber-400"></i>
+                <span>Dispatches & Logistics</span>
             </a>
-            <a href="/analytics" class="px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 {% if active_tab == 'analytics' %}bg-teal-500/15 text-teal-400 border border-teal-500/30{% else %}text-slate-400 hover:text-white hover:bg-slate-800/60{% endif %}">
-                <i class="fa-solid fa-chart-line"></i>
-                <span>Analytics & KPIs</span>
+            <a href="/analytics" class="px-3.5 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 {% if active_tab == 'analytics' %}bg-amber-500/15 text-amber-300 border border-amber-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/60{% endif %}">
+                <i class="fa-solid fa-chart-line text-amber-400"></i>
+                <span>Analytics & Fuel KPIs</span>
             </a>
         </nav>
 
         <!-- Right System Status & Quick Actions -->
         <div class="flex items-center space-x-3">
-            <div id="ws-status" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700/60 text-xs font-mono text-slate-300">
+            <div id="ws-status" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700/80 text-xs font-mono text-slate-300">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                 <span id="ws-status-text">Live Telemetry</span>
             </div>
-            <a href="/docs" target="_blank" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-300 border border-slate-700 transition flex items-center gap-1.5">
-                <i class="fa-solid fa-code"></i>
+            <a href="/docs" target="_blank" class="px-3 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-xs font-medium text-slate-200 border border-slate-700 transition flex items-center gap-1.5">
+                <i class="fa-solid fa-code text-amber-400"></i>
                 <span>API Docs</span>
             </a>
-            <button onclick="resetDemoData()" title="Reset to initial clean demo state" class="px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-medium transition flex items-center gap-1.5">
+            <button onclick="resetDemoData()" title="Reset to initial clean University of Ibadan data" class="px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-medium transition flex items-center gap-1.5">
                 <i class="fa-solid fa-rotate-left"></i>
                 <span>Reset Demo</span>
             </button>
@@ -105,14 +120,14 @@
     <script src="/static/js/websocket.js"></script>
     <script>
         async function resetDemoData() {
-            if (!confirm("Reset database to clean initial state with sample fleet, drivers, and orders?")) return;
+            if (!confirm("Reset database to clean University of Ibadan campus fleet, drivers, and dispatch records?")) return;
             try {
                 const res = await fetch('/api/analytics/seed/reset', { method: 'POST' });
                 if (res.ok) {
-                    showToast("Fleet data successfully reset!", "success");
+                    showToast("University of Ibadan fleet data reset!", "success");
                     setTimeout(() => window.location.reload(), 800);
                 } else {
-                    showToast("Failed to reset demo data.", "error");
+                    showToast("Failed to reset UI fleet data.", "error");
                 }
             } catch (err) {
                 showToast("Network error resetting data.", "error");
@@ -125,14 +140,14 @@
             const colors = {
                 success: 'bg-emerald-950 border-emerald-500/40 text-emerald-300',
                 error: 'bg-rose-950 border-rose-500/40 text-rose-300',
-                info: 'bg-slate-900 border-teal-500/40 text-teal-300'
+                info: 'bg-[#001733] border-amber-500/40 text-amber-200'
             };
             const icons = {
                 success: 'fa-circle-check',
                 error: 'fa-triangle-exclamation',
                 info: 'fa-circle-info'
             };
-            toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border shadow-xl transition-all duration-300 transform translate-y-2 opacity-0 text-sm ${colors[type] || colors.info}`;
+            toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border shadow-2xl transition-all duration-300 transform translate-y-2 opacity-0 text-sm ${colors[type] || colors.info}`;
             toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.info}"></i> <span>${message}</span>`;
             container.appendChild(toast);
             
