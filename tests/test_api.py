@@ -69,3 +69,16 @@ def test_optimize_and_dispatch():
 
         disp_res = client.post("/api/routes/dispatch-all")
         assert disp_res.status_code == 200
+
+def test_research_report_endpoints():
+    rep_res = client.get("/report")
+    assert rep_res.status_code == 200
+    assert "CSC 476 Research Paper" in rep_res.text or "Group 25" in rep_res.text
+
+    pdf_res = client.get("/report.pdf")
+    assert pdf_res.status_code == 200
+    assert pdf_res.headers.get("content-type") == "application/pdf"
+
+    docx_res = client.get("/report.docx")
+    assert docx_res.status_code == 200
+    assert "wordprocessingml" in docx_res.headers.get("content-type", "")

@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request, Depends
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 
 from app.config import settings
 from app.database import Base, engine, get_db
@@ -104,4 +104,38 @@ async def analytics_page(request: Request):
         name="analytics.html",
         context={"app_name": settings.APP_NAME, "active_tab": "analytics"}
     )
+
+@app.get("/report.pdf")
+@app.get("/research.pdf")
+async def get_report_pdf():
+    pdf_path = os.path.abspath(os.path.join(base_dir, "..", "CSC476_Group25_Research_Report.pdf"))
+    if os.path.exists(pdf_path):
+        return FileResponse(
+            pdf_path,
+            media_type="application/pdf",
+            headers={"Content-Disposition": "inline; filename=CSC476_Group25_Research_Report.pdf"}
+        )
+    return HTMLResponse("<h1>PDF Report Not Found</h1>", status_code=404)
+
+@app.get("/report.docx")
+@app.get("/research.docx")
+async def get_report_docx():
+    docx_path = os.path.abspath(os.path.join(base_dir, "..", "CSC476_Group25_Research_Report.docx"))
+    if os.path.exists(docx_path):
+        return FileResponse(
+            docx_path,
+            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            filename="CSC476_Group25_Research_Report.docx"
+        )
+    return HTMLResponse("<h1>DOCX Report Not Found</h1>", status_code=404)
+
+@app.get("/report", response_class=HTMLResponse)
+@app.get("/research", response_class=HTMLResponse)
+async def report_browser_page(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="report.html",
+        context={"app_name": settings.APP_NAME, "active_tab": "report"}
+    )
+
 

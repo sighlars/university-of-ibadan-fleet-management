@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Research Project Report — Group 25 | {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="h-full flex flex-col overflow-hidden bg-slate-50">
+    <!-- Top Action Toolbar -->
+    <div class="p-4 sm:px-6 sm:py-3.5 bg-white border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 shrink-0">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-lg bg-uinavy-50 text-uinavy border border-uinavy-200 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-book-open text-sm text-uigold-dark"></i>
+            </div>
+            <div>
+                <h1 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                    <span>CSC 476 Research Paper</span>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">20 Pages</span>
+                </h1>
+                <p class="text-[11px] text-slate-500">University of Ibadan • Faculty of Computing • Department of Computer Science • Group 25</p>
+            </div>
+        </div>
+
+        <!-- Download & View Actions -->
+        <div class="flex items-center gap-2 flex-wrap">
+            <a href="/report.pdf" target="_blank" class="h-9 px-3.5 rounded-lg bg-uinavy hover:bg-uinavy-light text-white font-semibold text-xs flex items-center gap-1.5 shadow-xs transition active:scale-95">
+                <i class="fa-solid fa-file-pdf text-uigold-light"></i>
+                <span>Open PDF in Browser</span>
+            </a>
+            <a href="/report.docx" download class="h-9 px-3.5 rounded-lg bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs border border-slate-200 flex items-center gap-1.5 shadow-2xs transition active:scale-95">
+                <i class="fa-solid fa-file-word text-blue-600"></i>
+                <span>Download Word (.docx)</span>
+            </a>
+            <a href="/" class="h-9 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs border border-slate-200 flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-cube text-slate-500"></i>
+                <span class="hidden sm:inline">3D Simulation</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Embedded Browser PDF Viewer -->
+    <div class="flex-1 p-2 sm:p-4 overflow-hidden flex flex-col">
+        <div class="w-full h-full bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden relative">
+            <iframe 
+                src="/report.pdf#toolbar=1&navpanes=1&scrollbar=1" 
+                class="w-full h-full border-0"
+                title="CSC 476 Group 25 20-Page Research Report">
+                <div class="p-8 text-center space-y-4">
+                    <p class="text-slate-600 text-sm">Your browser doesn't have an inline PDF plugin. Click below to view directly:</p>
+                    <a href="/report.pdf" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-uinavy text-white text-xs font-semibold rounded-lg shadow-sm">
+                        <i class="fa-solid fa-external-link"></i>
+                        <span>Open 20-Page PDF Report in New Tab</span>
+                    </a>
+                </div>
+            </iframe>
+        </div>
+    </div>
+</div>
+{% endblock %}
