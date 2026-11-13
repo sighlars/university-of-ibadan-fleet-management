@@ -41,7 +41,7 @@
     <a href="https://threejs.org/"><img src="https://img.shields.io/badge/Three.js-WebGL%203D-049EF4.svg?style=flat-square&logo=threedotjs&logoColor=white" alt="Three.js"/></a>
     <a href="https://ui.shadcn.com/"><img src="https://img.shields.io/badge/shadcn%2Fui-Components-000000.svg?style=flat-square&logo=shadcnui&logoColor=white" alt="shadcn/ui"/></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" alt="License"/></a>
-    <img src="https://img.shields.io/badge/Tests-12%20Passing-brightgreen.svg?style=flat-square" alt="Tests"/>
+    <img src="https://img.shields.io/badge/Tests-13%20Passing-brightgreen.svg?style=flat-square" alt="Tests"/>
   </p>
 
   <p>
