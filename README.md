@@ -3,7 +3,7 @@
   <br/><br/>
   <p><b>UNIVERSITY OF IBADAN</b><br/>
   FACULTY OF COMPUTING | DEPARTMENT OF COMPUTER SCIENCE<br/>
-  <b>Course:</b> CSC 476 (Special Topics in Computer Science / Advanced Software Engineering)<br/>
+  <b>Course Code:</b> CSC 476<br/>
   <b>Project Research Group:</b> Group 25 | Academic Session: 2025/2026</p>
   
   <h1>Fleet Management System for a Delivery Company</h1>
