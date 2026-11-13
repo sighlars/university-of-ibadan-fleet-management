@@ -27,6 +27,10 @@
     <a href="RESEARCH_PROJECT_REPORT.md">
       <img src="https://img.shields.io/badge/📄%20READ%20FULL%20RESEARCH%20PAPER-TECHNICAL%20REPORT-002147?style=for-the-badge&logo=readthedocs&logoColor=white" alt="Read Full Research Paper" height="38"/>
     </a>
+    &nbsp;
+    <a href="CSC476_Group25_Research_Report.docx">
+      <img src="https://img.shields.io/badge/📥%20DOWNLOAD%2020--PAGE%20DOCX-MICROSOFT%20WORD%20REPORT-1E3A8A?style=for-the-badge&logo=microsoftword&logoColor=white" alt="Download 20-Page Word Document" height="38"/>
+    </a>
   </p>
 
   <p>
@@ -75,7 +79,8 @@ Last-mile courier and inter-departmental parcel logistics within sprawling colle
 ## 📑 Research Write-Up and Documentation
 
 A comprehensive, publication-grade academic research paper accompanies this repository:
-- **Full Research Paper**: [RESEARCH_PROJECT_REPORT.md](RESEARCH_PROJECT_REPORT.md) (or [docs/RESEARCH_PROJECT_REPORT.md](docs/RESEARCH_PROJECT_REPORT.md))
+- **Download Official Word Document**: [CSC476_Group25_Research_Report.docx](CSC476_Group25_Research_Report.docx) (or [docs/CSC476_Group25_Research_Report.docx](docs/CSC476_Group25_Research_Report.docx)) - Official 20-page formal research report complete with institutional cover page, certification, dedication, lists of tables and figures, mathematical formulations, live demonstration figures, empirical benchmark tables, and references.
+- **Read Online Markdown Version**: [RESEARCH_PROJECT_REPORT.md](RESEARCH_PROJECT_REPORT.md) (or [docs/RESEARCH_PROJECT_REPORT.md](docs/RESEARCH_PROJECT_REPORT.md))
 - **Institutional Details**: University of Ibadan, Faculty of Computing, Department of Computer Science, Course CSC 476, Group 25
 - **Paper Coverage**: Full mathematical integer linear programming (ILP) formulation, Clarke-Wright and 2-opt algorithmic complexity proofs, Three.js isometric projection equations, geodesic Haversine derivations, empirical benchmark tables, and formal citations.
 

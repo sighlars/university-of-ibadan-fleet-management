@@ -15,6 +15,12 @@
     <b>Research Group 25:</b> Department of Computer Science, Faculty of Computing, University of Ibadan, Nigeria<br/>
     <b>Course Code:</b> CSC 476 | <b>Project Domain:</b> Intelligent Transportation Systems, Operations Research & 3D Telematics
   </p>
+
+  <p>
+    <a href="CSC476_Group25_Research_Report.docx">
+      <img src="https://img.shields.io/badge/📥%20DOWNLOAD%20OFFICIAL%2020--PAGE%20REPORT-MICROSOFT%20WORD%20(.DOCX)-1E3A8A?style=for-the-badge&logo=microsoftword&logoColor=white" alt="Download 20-Page Word Report" height="36"/>
+    </a>
+  </p>
 </div>
 
 <br/>
