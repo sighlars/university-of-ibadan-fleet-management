@@ -8,8 +8,8 @@
 <div align="center">
   <img src="app/static/images/ui_logo.png" alt="University of Ibadan Crest" width="200"/>
   <br/><br/>
-  <h1>Algorithmic Routing Optimization and Real-Time State Telematics in Intra-Campus Logistics</h1>
-  <h2>An Empirical Research Investigation and 3D Interactive Demonstration for the University of Ibadan Network</h2>
+  <h1>Fleet Management System for a Delivery Company</h1>
+  <h2>Sub-topic: Optimizing Logistics and Real-Time Tracking: Case Study of the University of Ibadan Campus Delivery Network</h2>
   <p><b>Computer Science Research Technical Report and Empirical Demonstration Testbed</b></p>
   
   <p>
