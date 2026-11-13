@@ -1,0 +1,15 @@
+# GitHub Linguist Language Configuration
+# Ensure the repository reflects its true nature as a Python Computer Science project
+
+# 1. Exclude Jinja2 server-rendered HTML templates from language statistics
+*.html linguist-detectable=false
+app/templates/** linguist-detectable=false
+
+# 2. Treat static client visualizer assets and third-party libraries as vendored
+app/static/** linguist-vendored
+
+# 3. Mark academic documentation and research artifacts as documentation
+docs/** linguist-documentation
+RESEARCH_PROJECT_REPORT.md linguist-documentation
+*.docx linguist-documentation
+*.pdf linguist-documentation
