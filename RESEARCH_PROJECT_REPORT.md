@@ -58,19 +58,31 @@ Intra-campus logistics in large tertiary institutions face chronic operational i
 | **Chapter 1** | **The Research Problem and Institutional Context**: UI spatial layout, micro-transit bottlenecks, RQs | Page 5 |
 | **Chapter 1 (Cont.)** | **Problem Statement, Research Questions and Hypotheses**: Failures of manual dispatch, formal RQs | Page 6 |
 | **Chapter 2** | **Theoretical Foundations and Literature Review**: VRP history, exact vs heuristic methods, telematics | Page 7 |
-| **Chapter 2 (Cont.)** | **Algorithmic Foundations of the Solution**: Clarke-Wright savings logic, 2-opt search, Table 1 | Page 8 |
+| **Chapter 2 (Cont.)** | **Algorithmic Foundations of the Solution**: Clarke-Wright savings logic, 2-opt search, Figure 1 | Page 8 |
 | **Chapter 3** | **Mathematical Modeling and Problem Formulation**: Graph G = (V, E), objective function, constraints | Page 9 |
-| **Chapter 3 (Cont.)** | **Computational Complexity and Proofs**: Geodesic math, forward azimuth, O(n² log n) proof | Page 10 |
-| **Chapter 4** | **Research Methodology and Experimental Testbed Design**: Empirical testbed architecture, async core | Page 11 |
-| **Chapter 4 (Cont.)** | **Experimental Fleet Modeling & Dataset**: Fleet matrix, consignment dataset, Figure 1 (Testbed Ledger) | Page 12 |
-| **Chapter 5** | **Empirical Demonstration: 3D Digital Twin and Telematics**: WebGL spatial projection, Figure 2 (3D Twin) | Page 13 |
-| **Chapter 5 (Cont.)** | **Telematics Synchronization and Fleet Monitoring**: WebSocket telemetry, Figure 3 (Fleet Roster) | Page 14 |
+| **Chapter 3 (Cont.)** | **Computational Complexity and Proofs**: Geodesic math, forward azimuth, O(n² log n) proof, Figure 2 | Page 10 |
+| **Chapter 4** | **Research Methodology and Experimental Testbed Design**: Empirical testbed architecture, Table 1 | Page 11 |
+| **Chapter 4 (Cont.)** | **Experimental Fleet Modeling & Dataset**: Fleet matrix, consignment dataset, Figure 3 (Testbed Ledger) | Page 12 |
+| **Chapter 5** | **Empirical Demonstration: 3D Digital Twin and Telematics**: WebGL spatial projection, Figure 4 (3D Twin) | Page 13 |
+| **Chapter 5 (Cont.)** | **Telematics Synchronization and Fleet Monitoring**: WebSocket telemetry, Figure 5 (Fleet Roster) | Page 14 |
 | **Chapter 6** | **Empirical Findings and Algorithmic Evaluation**: 18-consignment benchmark, Table 3 (Gains) | Page 15 |
-| **Chapter 6 (Cont.)** | **Scalability, Telemetry Benchmarks and Analytics**: Table 4 (Latency), Figure 4 (Analytics) | Page 16 |
+| **Chapter 6 (Cont.)** | **Scalability, Telemetry Benchmarks and Analytics**: Table 4 (Latency), Figure 6 (Analytics) | Page 16 |
 | **Chapter 7** | **Academic Discussion and Operational Feasibility**: UI economic impact, emissions, resilient 2D GIS | Page 17 |
 | **Chapter 8** | **Conclusions, Limitations and Future Work**: Summary of discoveries, VRPTW, IoT sensors | Page 18 |
 | **References** | **Scholarly Bibliography**: 14 formal academic citations in IEEE/ACM format | Page 19 |
 | **Appendix** | **Experimental Verification and Research Artifacts**: 13 automated tests, repository, Group 25 | Page 20 |
+
+### List of Figures and Tables
+- **Figure 1**: Algorithmic Optimization Pipeline: Clarke-Wright Savings Heuristic with 2-Opt Local Search
+- **Figure 2**: Decoupled Research Testbed Architecture: Computational Core & Telematics Engine
+- **Figure 3**: Experimental Testbed Consignment Ledger Interface (Shadcn UI Orders Table)
+- **Figure 4**: Live 3D Digital Twin Viewport of University of Ibadan Campus (Three.js WebGL Engine)
+- **Figure 5**: Telematics Fleet Monitoring and Driver Roster Testbed Interface
+- **Figure 6**: Logistics Analytics and Empirical KPI Evaluation Dashboard
+- **Table 1**: Geospatial Landmark Database of the University of Ibadan Logistics Network
+- **Table 2**: University of Ibadan Experimental Fleet Specifications and Payload Thresholds
+- **Table 3**: Empirical Optimization Findings: Direct Radial Baseline vs Clarke-Wright + 2-Opt Solver
+- **Table 4**: Algorithmic Convergence Latencies Across Consignment Batch Sizes
 
 ---
 
@@ -85,6 +97,53 @@ Large university campuses function as self-contained micro-cities. Academic comp
 
 ### 1.2 Institutional Case Study: University of Ibadan Spatial Fabric
 The physical road layout of the University of Ibadan is structured around central radial arteries, including Oduduwa Road, Niger Road, Benue Road, and Appleton Road. The campus spans over 1,000 hectares with geographically separated zones: the Central Administrative Core, the Science and Technology corridor, the Medical and Health axis, and the residential perimeter. The radial topology forces vehicles to funnel through central choke-points, magnifying the travel penalty of uncoordinated routing.
+
+```mermaid
+graph TD
+    subgraph UI_CAMPUS_GRAPH["University of Ibadan Campus Delivery Network Topology Graph G = (V, E)"]
+        DEPOT["v_0: Central Logistics Depot<br/>(Starting & Return Hub)"]
+        
+        subgraph ACADEMIC_CORE["Central Academic Core"]
+            SENATE["v_1: Senate Building"]
+            TRENCHARD["v_2: Trenchard Hall"]
+            KDL["v_3: Kenneth Dike Library"]
+        end
+
+        subgraph HEALTH_AXIS["Medical & Health Axis"]
+            JAJA["v_4: Jaja Clinic"]
+            PHARM["v_5: Faculty of Pharmacy"]
+            MED["v_6: College of Medicine"]
+        end
+
+        subgraph TECH_CORRIDOR["Science & Technology Corridor"]
+            TECH["v_7: Faculty of Technology"]
+            SCI["v_8: Faculty of Science"]
+            PG["v_9: Postgraduate College"]
+        end
+
+        subgraph RESIDENTIAL_PERIMETER["Residential & Commercial Perimeter"]
+            HALLS["v_10: Zik & Independence Halls"]
+            VENTURES["v_11: UI Ventures Commercial"]
+            FARM["v_12: Teaching & Research Farm"]
+            ICC["v_13: International Conference Centre"]
+        end
+
+        DEPOT -->|"c_01 (1.1 km)"| SENATE
+        DEPOT -->|"c_04 (0.8 km)"| JAJA
+        DEPOT -->|"c_07 (1.4 km)"| TECH
+        DEPOT -->|"c_10 (2.2 km)"| HALLS
+        DEPOT -->|"c_11 (0.6 km)"| VENTURES
+
+        SENATE <--> TRENCHARD
+        TRENCHARD <--> KDL
+        JAJA <--> PHARM
+        PHARM <--> MED
+        TECH <--> SCI
+        SCI <--> PG
+        HALLS <--> ICC
+        VENTURES <--> FARM
+    end
+```
 
 ### 1.3 Inefficiencies of Status-Quo Manual Dispatch
 Across African tertiary institutions, intra-campus courier movements are conducted through uncoordinated, manual dispatching. When a department requires an item to be delivered, a vehicle is dispatched on a dedicated single-hop round trip: traveling from the depot to a single destination and returning empty to base. This status-quo model induces four severe operational failures:
@@ -139,6 +198,33 @@ $$\Delta_{\text{cost}} = [ d(v_i, v_j) + d(v_{i+1}, v_{j+1}) ] - [ d(v_i, v_{i+1
 
 Whenever $\Delta_{\text{cost}} < 0$, the swap is accepted. The algorithm repeats iteratively until no further improving 2-edge exchange exists, converging to a 2-optimal local minimum.
 
+```mermaid
+flowchart TD
+    START(["Start: Consignment Demands & Fleet Intake"]) --> DIST["Compute Pairwise Geodesic Distance Matrix c_ij<br/>(Haversine Spherical Metric)"]
+    DIST --> INIT["Initialize Dedicated Radial Tours<br/>Route_i = [0 -> i -> 0] for all stops"]
+    INIT --> SAVINGS["Calculate Clarke-Wright Savings Metric<br/>S_ij = d(0, i) + d(0, j) - d(i, j) for all i != j"]
+    SAVINGS --> SORT["Sort Savings List in Descending Order<br/>O(n² log n) QuickSort"]
+    
+    SORT --> EVAL{"Evaluate Next Highest S_ij Pair (i, j):<br/>Are stops on distinct routes AND<br/>SUM(q_i) <= Q_k payload bound?"}
+    
+    EVAL --"Yes: Capacity Feasible"--> MERGE["Merge Tours: Connect i to j<br/>Update Disjoint-Set Route Table"]
+    EVAL --"No: Exceeds Q_k"--> REJECT["Reject Pair (i, j)<br/>Preserve Distinct Routes"]
+    
+    MERGE --> MORE{"Remaining Pairs in<br/>Savings List?"}
+    REJECT --> MORE
+    
+    MORE --"Yes"--> EVAL
+    MORE --"No"--> TWOOPT["Run 2-Opt Local Search on Consolidated Routes<br/>Swap Edges (i, i+1) and (j, j+1) if Delta_cost < 0"]
+    
+    TWOOPT --> CONVERGE(["Optimal Dispatch Schedule Generated<br/>(Sub-15ms Execution, 32.4% Distance Reduction)"])
+```
+
+<div align="center">
+  <img src="docs/screenshots/cvrp_algorithm_flowchart.png" alt="Algorithmic Optimization Pipeline" width="750"/>
+  <br/>
+  <i>Figure 1: Algorithmic Optimization Pipeline demonstrating Clarke-Wright savings computation, descending QuickSort, capacity feasibility evaluation, and 2-opt edge exchange untangling.</i>
+</div>
+
 ---
 
 ## 3. Mathematical Modeling and Problem Formulation
@@ -147,7 +233,7 @@ Whenever $\Delta_{\text{cost}} < 0$, the swap is accepted. The algorithm repeats
 We formally model the University of Ibadan campus delivery network as a complete directed weighted graph $G = (V, E)$:
 - **Vertices ($V$)**: The vertex set $V = \{v_0, v_1, v_2, \dots, v_n\}$ comprises $n + 1$ locations. Vertex $v_0$ denotes the Central Logistics Depot (7.445210° N, 3.899015° E). Vertices $v_1$ through $v_n$ represent campus faculties, libraries, clinics, and residential halls.
 - **Edges ($E$)**: The edge set $E = \{(v_i, v_j) : i \neq j, v_i, v_j \in V\}$ represents traversable road links connecting university landmarks.
-- **Weight Matrix ($c_{ij}$)**: The non-negative cost matrix $c_{ij} \ge 0$ denotes the physical geodesic driving distance between landmarks $v_i$ and $v_j$ in kilometers.
+- **Weight Matrix ($c_{ij}$)**: The non-negative cost matrix $c_{ij} \ge 0$ denotes the physical geodesic driving distance between landmarks $v_i and v_j$ in kilometers.
 - **Cargo Demands ($q_i$)**: Each customer location $v_i$ ($i \ge 1$) has a deterministic parcel cargo demand $q_i > 0$ measured in kilograms.
 - **Fleet Capacities ($Q_k$)**: A heterogeneous fleet $K = \{k_1, k_2, \dots, k_m\}$ of $m$ vehicles is available, where each vehicle $k$ has a maximum payload capacity $Q_k$.
 
@@ -194,6 +280,51 @@ To scientifically evaluate the theoretical formulation and validate the research
 - **Telematics Broadcaster**: A full-duplex WebSocket telematics engine that streams vehicle kinematic updates at 1Hz frequencies to investigate push-based state synchronization.
 - **Spatial Twin Interface**: A dual-viewport spatial visualizer featuring an interactive Three.js 3D WebGL digital twin and a 2D Leaflet GIS fallback to evaluate dispatcher cognitive load.
 
+```mermaid
+flowchart LR
+    subgraph CLIENT_TIER["Presentation & Spatial Viewport Tier (Browser)"]
+        direction TB
+        TWIN["Three.js 3D WebGL Digital Twin<br/>(Dynamic Isometric Projections)"]
+        LEAFLET["Leaflet.js 2D GIS Fallback<br/>(OpenStreetMap Basemap)"]
+        UI_PANEL["Shadcn/UI Operations Ledger<br/>(Consignments & Driver Turntable)"]
+    end
+
+    subgraph NETWORKING_TIER["Real-Time Communication Protocols"]
+        direction TB
+        WS["Full-Duplex WebSockets (/ws/telematics)<br/>1Hz Kinematic Telemetry Push (128 Bytes)"]
+        REST["RESTful JSON API (/api/v1)<br/>Consignment Ingestion & Solver Triggers"]
+    end
+
+    subgraph SERVER_TIER["Application Core (FastAPI Engine)"]
+        direction TB
+        ASYNC["Asynchronous Event Loop<br/>(Non-blocking I/O Broadcaster)"]
+        SOLVER["CVRP Optimization Solver<br/>(Clarke-Wright + 2-Opt Engine)"]
+        KINEMATICS["Kinematic Delta-Time Simulator<br/>(Forward Azimuth & Bearing Calc)"]
+    end
+
+    subgraph STORAGE_TIER["Persistence & Isolation"]
+        direction TB
+        ORM["SQLAlchemy 2.0 Async ORM"]
+        DB[("Session-Isolated SQLite Data Stores<br/>14 Landmarks & 6 Fleet Classes")]
+    end
+
+    CLIENT_TIER <-->|"Bidirectional Stream"| WS
+    CLIENT_TIER -->|"HTTP Requests"| REST
+    WS <--> ASYNC
+    REST --> ASYNC
+    ASYNC --> SOLVER
+    ASYNC --> KINEMATICS
+    SOLVER <--> ORM
+    KINEMATICS <--> ORM
+    ORM <--> DB
+```
+
+<div align="center">
+  <img src="docs/screenshots/testbed_system_architecture.png" alt="Testbed Architecture" width="750"/>
+  <br/>
+  <i>Figure 2: Decoupled Research Testbed Architecture showing client presentation tier, bidirectional WebSocket streaming protocols, asynchronous FastAPI computational core, and session-isolated SQLite persistence.</i>
+</div>
+
 ### 4.2 University of Ibadan Geospatial Landmark Geodatabase
 Table 1 catalogs the 14 verified University of Ibadan geographic landmarks integrated into the experimental testbed database, representing authentic operational delivery nodes.
 
@@ -231,12 +362,12 @@ To reflect authentic operational conditions across Nigerian universities, the di
 *Table 2: University of Ibadan Experimental Fleet Specifications and Payload Thresholds*
 
 ### 4.4 Consignment Ingestion and Priority Stratification
-Consignments are stratified by operational urgency: Urgent (red badge), High (amber badge), Medium (blue badge), and Low (slate badge). Figure 1 shows the experimental testbed interface displaying the live consignment ledger with priority meters, delivery addresses, and batch optimization triggers.
+Consignments are stratified by operational urgency: Urgent (red badge), High (amber badge), Medium (blue badge), and Low (slate badge). Figure 3 shows the experimental testbed interface displaying the live consignment ledger with priority meters, delivery addresses, and batch optimization triggers.
 
 <div align="center">
   <img src="docs/screenshots/orders_logistics_shadcn.png" alt="Orders Logistics Ledger" width="750"/>
   <br/>
-  <i>Figure 1: Experimental Testbed Consignment Ledger demonstrating priority stratification, consignment weights, destination landmarks, and vehicle tour assignments.</i>
+  <i>Figure 3: Experimental Testbed Consignment Ledger demonstrating priority stratification, cargo weights, destination landmarks, and vehicle tour assignments.</i>
 </div>
 
 ---
@@ -257,10 +388,36 @@ The digital twin demonstrates what was discovered during the spatial analysis of
 - **Road Mesh Networks**: Traversable highway ribbons connecting landmark nodes, matching primary university corridors including Oduduwa Road and Niger Road.
 - **Vehicle Digital Twins**: Procedural 3D multi-component meshes for each vehicle class (chassis, wheels, cabin glass, and telemetry status lights).
 
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Dispatcher as Dispatch Operator (UI)
+    participant Client3D as 3D WebGL Digital Twin (Browser)
+    participant WSManager as FastAPI WebSocket Broadcaster
+    participant CVRPSolver as Clarke-Wright + 2-Opt Engine
+    participant DB as SQLite Session Store
+
+    Dispatcher->>Client3D: Ingest batch consignments & click "Optimize Routes"
+    Client3D->>CVRPSolver: POST /api/optimize-and-dispatch
+    CVRPSolver->>DB: Query pending orders & vehicle capacities
+    DB-->>CVRPSolver: Return locations, weights, and fleet specs
+    Note over CVRPSolver: Calculate Haversine savings & run 2-opt search (11.4 ms)
+    CVRPSolver->>DB: Save consolidated routes & driver assignments
+    CVRPSolver-->>Client3D: Return optimized multi-stop tour manifests
+    
+    loop Real-Time Telematics Loop (1Hz Frequency)
+        WSManager->>DB: Fetch vehicle kinematic updates (X, Z, heading, fuel)
+        DB-->>WSManager: Return current vehicle positions
+        WSManager->>Client3D: Push telemetry JSON packet (128 bytes)
+        Client3D->>Client3D: Interpolate 3D vehicle position along road ribbon
+        Client3D->>Client3D: Update third-person chase camera & fuel decay gauge
+    end
+```
+
 <div align="center">
   <img src="docs/screenshots/ui_campus_3d_viewport.png" alt="3D Campus Viewport" width="750"/>
   <br/>
-  <i>Figure 2: Live 3D Digital Twin Viewport demonstrating georeferenced campus landmarks, road navigation ribbons, real-time vehicle models, and the telematics drawer.</i>
+  <i>Figure 4: Live 3D Digital Twin Viewport demonstrating georeferenced campus landmarks, road navigation ribbons, real-time vehicle models, and the telematics drawer.</i>
 </div>
 
 ### 5.3 Dynamic Third-Person Chase Camera Kinematics
@@ -272,12 +429,12 @@ $$C_{t+1} = C_t + \alpha \cdot (C_{\text{target}} - C_t)$$
 Where $d_{\text{follow}} = 24.0\text{ units}$, $h_{\text{cam}} = 14.0\text{ units}$, $\alpha = 0.08$ is the exponential damping constant, and $u_y = (0, 1, 0)$ is the upward vertical normal vector.
 
 ### 5.4 Interactive Asset Inspection and State Telematics Roster
-To validate powertrain monitoring under field conditions, an interactive asset inspection modal was implemented. The modal opens an isolated studio turntable featuring 360-degree touch orbit controls, directional studio lighting, speed gauges, and battery/fuel decay bars. Figure 3 illustrates the active fleet telematics roster in the experimental demonstration.
+To validate powertrain monitoring under field conditions, an interactive asset inspection modal was implemented. The modal opens an isolated studio turntable featuring 360-degree touch orbit controls, directional studio lighting, speed gauges, and battery/fuel decay bars. Figure 5 illustrates the active fleet telematics roster in the experimental demonstration.
 
 <div align="center">
   <img src="docs/screenshots/fleet_drivers_shadcn.png" alt="Fleet Drivers Roster" width="750"/>
   <br/>
-  <i>Figure 3: Experimental Telematics Fleet Roster displaying driver assignments, live fuel/battery progress meters, driver ratings, and asset status filters.</i>
+  <i>Figure 5: Experimental Telematics Fleet Roster displaying driver assignments, live fuel/battery progress meters, driver ratings, and asset status filters.</i>
 </div>
 
 ---
@@ -323,7 +480,7 @@ To validate Hypothesis 2, client-server network bandwidth was profiled under 1Hz
 <div align="center">
   <img src="docs/screenshots/analytics_dashboard_shadcn.png" alt="Logistics Analytics Dashboard" width="750"/>
   <br/>
-  <i>Figure 4: Experimental Analytics Dashboard displaying delivery throughput area charts, fleet capacity utilization meters, and carbon abatement counters.</i>
+  <i>Figure 6: Experimental Analytics Dashboard displaying delivery throughput area charts, fleet capacity utilization meters, and carbon abatement counters.</i>
 </div>
 
 ---
@@ -435,4 +592,3 @@ tests/test_router.py::test_vrp_capacity_constraint PASSED                 [100%]
 - **Institution**: Department of Computer Science, Faculty of Computing, University of Ibadan, Nigeria
 - **Course Code**: CSC 476
 - **Project Research Group**: Group 25 (2025/2026 Academic Session)
-- **Supervision**: Prof. / Dr. / Project Supervisor, Department of Computer Science, University of Ibadan
